@@ -16,7 +16,7 @@ class BatchNormalization(tf.keras.layers.BatchNormalization):
         training = tf.logical_and(training, self.trainable)
         return super().call(x, training)
 
-def convolutional(input_layer, filters_shape, downsample=False, activate=True, bn=True, activate_type='leaky'):
+def convolutional(input_layer, filters_shape, downsample=False, activate=True, bn=True, activate_type='relu'):
     if downsample:
         input_layer = tf.keras.layers.ZeroPadding2D(((1, 0), (1, 0)))(input_layer)
         padding = 'valid'
@@ -28,23 +28,20 @@ def convolutional(input_layer, filters_shape, downsample=False, activate=True, b
     conv = tf.keras.layers.Conv2D(filters=filters_shape[-1], kernel_size = filters_shape[0], strides=strides, padding=padding,
                                   use_bias=not bn, kernel_regularizer=tf.keras.regularizers.l2(0.0005),
                                   kernel_initializer=tf.random_normal_initializer(stddev=0.01),
-                                  bias_initializer=tf.constant_initializer(0.))(input_layer)
+                                  bias_initializer=tf.random_normal_initializer(stddev=0.0001))(input_layer)
 
     if bn: conv = BatchNormalization()(conv)
     if activate == True:
         if activate_type == "leaky":
-            #ori
-            #conv = tf.nn.leaky_relu(conv, alpha=0.1)
+            conv = tf.nn.leaky_relu(conv, alpha=0.1)
+        elif activate_type == 'relu':
             conv = tf.nn.relu(conv)
         elif activate_type == "mish":
-            #ori
-            #conv = mish(conv)
-            conv = tf.nn.relu(conv)
+            conv = mish(conv)
     return conv
 
 def mish(x):
     return x * tf.math.tanh(tf.math.softplus(x))
-    # return tf.keras.layers.Lambda(lambda x: x*tf.tanh(tf.math.log(1+tf.exp(x))))(x)
 
 class MishLayer(tf.keras.layers.Layer):
     def __init__(self):

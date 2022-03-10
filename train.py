@@ -17,46 +17,10 @@ flags.DEFINE_string('weights', None, 'pretrained weights')
 flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
 flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
 
-# LastValueQuantizer = tfmot.quantization.keras.quantizers.LastValueQuantizer
-# MovingAverageQuantizer = tfmot.quantization.keras.quantizers.MovingAverageQuantizer
-
-# class DefaultDenseQuantizeConfig(tfmot.quantization.keras.QuantizeConfig):
-#     # Configure how to quantize weights.
-#     def get_weights_and_quantizers(self, layer):
-#       return [(layer.kernel, LastValueQuantizer(num_bits=8, symmetric=True, narrow_range=False, per_axis=False))]
-
-#     # Configure how to quantize activations.
-#     def get_activations_and_quantizers(self, layer):
-#       return [(layer.activation, MovingAverageQuantizer(num_bits=8, symmetric=False, narrow_range=False, per_axis=False))]
-
-#     def set_quantize_weights(self, layer, quantize_weights):
-#       # Add this line for each item returned in `get_weights_and_quantizers`
-#       # , in the same order
-#       layer.kernel = quantize_weights[0]
-
-#     def set_quantize_activations(self, layer, quantize_activations):
-#       # Add this line for each item returned in `get_activations_and_quantizers`
-#       # , in the same order.
-#       layer.activation = quantize_activations[0]
-
-#     # Configure how to quantize outputs (may be equivalent to activations).
-#     def get_output_quantizers(self, layer):
-#       return []
-
-#     def get_config(self):
-#       return {}
-
 def apply_quantization(layer):
-    
-    # if isinstance(layer, tf.keras.layers.UpSampling2D) or isinstance(layer, tf.keras.layers.BatchNormalization) or isinstance(layer, tf.python.keras.engine.base_layer.TensorFlowOpLayer):
-    #     return layer
     if isinstance(layer, tf.python.keras.engine.base_layer.TensorFlowOpLayer):
          return layer
     return tfmot.quantization.keras.quantize_annotate_layer(layer)
-
-    #if isinstance(layer , tf.keras.layers.Conv2D):
-    #    return tfmot.quantization.keras.quantize_annotate_layer(layer)
-    #return layer
 
 def qa_train(model):
     # qa_train part
@@ -68,20 +32,10 @@ def qa_train(model):
     )
 
     quant_aware_model = tfmot.quantization.keras.quantize_apply(annotated_model)
-    # quant_aware_model.summary()
-
-
-    # with quantize_scope(
-    #     {'DefaultDenseQuantizeConfig': DefaultDenseQuantizeConfig,
-    #     'CustomLayer': {MishLayer,BatchNormalization}}):
-    #     # Use `quantize_apply` to actually make the model quantization aware.
-    #     quant_aware_model = tfmot.quantization.keras.quantize_apply(annotated_model)
     return quant_aware_model
     
 def main(_argv):
     physical_devices = tf.config.experimental.list_physical_devices('GPU')
-    #if len(physical_devices) > 0:
-    #    tf.config.experimental.set_memory_growth(physical_devices[5], True)
 
     trainset = Dataset(FLAGS, is_training=True)
     testset = Dataset(FLAGS, is_training=False)
@@ -102,6 +56,8 @@ def main(_argv):
     freeze_layers = utils.load_freeze_layer(FLAGS.model, FLAGS.tiny)
 
     feature_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny)
+
+    # Decoding YOLOv4 Output
     if FLAGS.tiny:
         bbox_tensors = []
         for i, fm in enumerate(feature_maps):
@@ -134,8 +90,6 @@ def main(_argv):
             model.load_weights(FLAGS.weights)
         print('Restoring weights from: %s ... ' % FLAGS.weights)
     
-    #model.summary()
-
     #####################################################################################################
     if (FLAGS.qat):
         model = qa_train(model)
@@ -149,7 +103,7 @@ def main(_argv):
     writer = tf.summary.create_file_writer(logdir)
 
     # define training step function
-    # @tf.function
+    @tf.function
     def train_step(image_data, target):
         with tf.GradientTape() as tape:
             pred_result = model(image_data, training=True)
@@ -190,6 +144,8 @@ def main(_argv):
                 tf.summary.scalar("loss/conf_loss", conf_loss, step=global_steps)
                 tf.summary.scalar("loss/prob_loss", prob_loss, step=global_steps)
             writer.flush()
+
+    @tf.function
     def test_step(image_data, target):
         with tf.GradientTape() as tape:
             pred_result = model(image_data, training=True)

@@ -1,3 +1,4 @@
+from builtins import NotImplementedError
 from absl import app, flags, logging
 from absl.flags import FLAGS
 import cv2
@@ -12,13 +13,13 @@ from core.config import cfg
 
 flags.DEFINE_string('weights', './data/yolov4.weights',
                     'path to weights file')
-flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite, trt)'
+flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite, tf_ckpt, trt)'
                     'path to weights file')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_boolean('tiny', False, 'yolov3 or yolov3-tiny')
 flags.DEFINE_integer('input_size', 416, 'resize images to')
 flags.DEFINE_string('annotation_path', "./data/dataset/val2017.txt", 'annotation path')
-flags.DEFINE_string('write_image_path', "./data/detection/", 'write image path')
+flags.DEFINE_string('write_image_path', "./data/detection_result/", 'write image path')
 flags.DEFINE_float('iou', 0.5, 'iou threshold')
 flags.DEFINE_float('score', 0.25, 'score threshold')
 
@@ -37,7 +38,7 @@ def main(_argv):
     os.mkdir(ground_truth_dir_path)
     os.mkdir(cfg.TEST.DECTECTED_IMAGE_PATH)
 
-    # Build Model
+    # Build Model According to different model weight format
     if FLAGS.framework == 'tflite':
         interpreter = tf.lite.Interpreter(model_path=FLAGS.weights)
         interpreter.allocate_tensors()
@@ -45,21 +46,29 @@ def main(_argv):
         output_details = interpreter.get_output_details()
         print(input_details)
         print(output_details)
-    else:
+    elif FLAGS.framework == 'tf_ckpt':
+        infer = tf.keras.models.load_model(FLAGS.weights)
+        infer.summary()
+    elif FLAGS.framework == 'tf':
         saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
         infer = saved_model_loaded.signatures['serving_default']
+    else:
+        raise NotImplementedError(f"no such frame detected: {FLAGS.framework}")
 
+    # Number of object in annotation path
     num_lines = sum(1 for line in open(FLAGS.annotation_path))
     with open(FLAGS.annotation_path, 'r') as annotation_file:
         print(FLAGS.annotation_path, '  #########################################')
         for num, line in enumerate(annotation_file):
+            # Load Image From Annotation File
             annotation = line.strip().split()
             image_path = annotation[0]
             image_name = image_path.split('/')[-1]
             image = cv2.imread(image_path)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            bbox_data_gt = np.array([list(map(int, box.split(','))) for box in annotation[1:]])
 
+            # Process Annotation in each line 
+            bbox_data_gt = np.array([list(map(int, box.split(','))) for box in annotation[1:]])
             if len(bbox_data_gt) == 0:
                 bboxes_gt = []
                 classes_gt = []
@@ -69,26 +78,24 @@ def main(_argv):
 
             print('=> ground truth of %s:' % image_name)
             num_bbox_gt = len(bboxes_gt)
+            # Write ground truth  Of each image and write them to another folder
             with open(ground_truth_path, 'w') as f:
                 for i in range(num_bbox_gt):
-                    # ori code
                     class_name = CLASSES[classes_gt[i]]
-                    
-                    #class_name = 'TL'
-                    
                     xmin, ymin, xmax, ymax = list(map(str, bboxes_gt[i]))
                     bbox_mess = ' '.join([class_name, xmin, ymin, xmax, ymax]) + '\n'
                     f.write(bbox_mess)
                     print('\t' + str(bbox_mess).strip())
+
             print('=> predict result of %s:' % image_name)
             predict_result_path = os.path.join(predicted_dir_path, str(num) + '.txt')
             # Predict Process
             image_size = image.shape[:2]
-            # image_data = utils.image_preprocess(np.copy(image), [INPUT_SIZE, INPUT_SIZE])
             image_data = cv2.resize(np.copy(image), (INPUT_SIZE, INPUT_SIZE))
             image_data = image_data / 255.
             image_data = image_data[np.newaxis, ...].astype(np.float32)
 
+            # Inference Code for different format of model
             if FLAGS.framework == 'tflite':
                 interpreter.set_tensor(input_details[0]['index'], image_data)
                 interpreter.invoke()
@@ -97,7 +104,16 @@ def main(_argv):
                     boxes, pred_conf = filter_boxes(pred[1], pred[0], score_threshold=0.25, input_shape = tf.constant([INPUT_SIZE,INPUT_SIZE]))
                 else:
                     boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25, input_shape = tf.constant([INPUT_SIZE,INPUT_SIZE]))
-            else:
+            elif FLAGS.framework == 'tf_ckpt':
+                batch_data = tf.constant(image_data)
+                pred_bbox = infer(batch_data)
+                boxes = pred_bbox[0] / np.array([INPUT_SIZE,INPUT_SIZE,INPUT_SIZE,INPUT_SIZE], dtype='float32')
+                boxes = tf.concat([
+                    (boxes[..., :2] - boxes[..., 2:] / 2.0)[...,::-1],
+                    (boxes[..., :2] + boxes[..., 2:] / 2.0)[...,::-1],
+                ], axis=-1)
+                pred_conf = pred_bbox[1]
+            elif FLAGS.framework == 'tf':
                 batch_data = tf.constant(image_data)
                 pred_bbox = infer(batch_data)
                 for key, value in pred_bbox.items():
@@ -105,9 +121,8 @@ def main(_argv):
                     pred_conf = value[:, :, 4:]
 
             boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
-                boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
-                scores=tf.reshape(
-                    pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
+                boxes=tf.reshape(boxes, (1, -1, 1, 4)),
+                scores=tf.reshape(pred_conf, (1, -1, tf.shape(pred_conf)[-1])),
                 max_output_size_per_class=50,
                 max_total_size=50,
                 iou_threshold=FLAGS.iou,
@@ -134,10 +149,10 @@ def main(_argv):
                     class_name = CLASSES[class_ind]
                     score = '%.4f' % score
                     ymin, xmin, ymax, xmax = list(map(str, coor))
-                    bbox_mess = ' '.join([class_name, score, xmin, ymin, xmax, ymax]) + '\n'
-                    f.write(bbox_mess)
+                    bbox_mess = f'{class_name:6s} {xmin:>4s} {ymin:>4s} {xmax:>4s} {ymax:>4s} {score}'
+                    f.write(' '.join([class_name, score, xmin, ymin, xmax, ymax]) + '\n')
                     print('\t' + str(bbox_mess).strip())
-            print(num, num_lines)
+            print(f'{num:5d}/{num_lines:5d}')
 
 if __name__ == '__main__':
     try:

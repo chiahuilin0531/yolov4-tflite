@@ -18,8 +18,8 @@ class Dataset(object):
         self.strides, self.anchors, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
         self.dataset_type = dataset_type
 
-        self.annot_path = (
-            cfg.TRAIN.ANNOT_PATH if is_training else cfg.TEST.ANNOT_PATH
+        self.annot_paths = (
+            cfg.TRAIN.ANNOT_PATHS if is_training else cfg.TEST.ANNOT_PATHS
         )
         self.input_sizes = (
             cfg.TRAIN.INPUT_SIZE if is_training else cfg.TEST.INPUT_SIZE
@@ -41,39 +41,39 @@ class Dataset(object):
         self.batch_count = 0
 
     def load_annotations(self):
-        with open(self.annot_path, "r") as f:
-            txt = f.readlines()
-            if self.dataset_type == "converted_coco":
-                annotations = [
-                    line.strip()
-                    for line in txt
-                    if len(line.strip().split()[1:]) != 0
-                ]
-            elif self.dataset_type == "yolo":
-                annotations = []
-                for line in txt:
-                    image_path = line.strip()
-                    root, _ = os.path.splitext(image_path)
-                    with open(root + ".txt") as fd:
-                        boxes = fd.readlines()
-                        string = ""
-                        for box in boxes:
-                            box = box.strip()
-                            box = box.split()
-                            class_num = int(box[0])
-                            center_x = float(box[1])
-                            center_y = float(box[2])
-                            half_width = float(box[3]) / 2
-                            half_height = float(box[4]) / 2
-                            string += " {},{},{},{},{}".format(
-                                center_x - half_width,
-                                center_y - half_height,
-                                center_x + half_width,
-                                center_y + half_height,
-                                class_num,
-                            )
-                        annotations.append(image_path + string)
-
+        annotations=[]
+        for annotations in self.annot_paths:
+            with open(self.annot_path, "r") as f:
+                txt = f.readlines()
+                if self.dataset_type == "converted_coco":
+                    annotations += [
+                        line.strip()
+                        for line in txt
+                        if len(line.strip().split()[1:]) != 0
+                    ]
+                elif self.dataset_type == "yolo":
+                    for line in txt:
+                        image_path = line.strip()
+                        root, _ = os.path.splitext(image_path)
+                        with open(root + ".txt") as fd:
+                            boxes = fd.readlines()
+                            string = ""
+                            for box in boxes:
+                                box = box.strip()
+                                box = box.split()
+                                class_num = int(box[0])
+                                center_x = float(box[1])
+                                center_y = float(box[2])
+                                half_width = float(box[3]) / 2
+                                half_height = float(box[4]) / 2
+                                string += " {},{},{},{},{}".format(
+                                    center_x - half_width,
+                                    center_y - half_height,
+                                    center_x + half_width,
+                                    center_y + half_height,
+                                    class_num,
+                                )
+                            annotations.append(image_path + string)
         np.random.shuffle(annotations)
         return annotations
 

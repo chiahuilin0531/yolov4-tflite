@@ -1,0 +1,1234 @@
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0085.MP4/frame_000410.jpg 807,417,853,426,2 522,54,706,110,2
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0085.MP4/frame_000445.jpg 806,418,852,427,1
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0086.MP4/frame_000000.jpg 806,419,853,428,1 519,53,705,111,1
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0086.MP4/frame_000145.jpg 802,419,851,428,1 519,50,707,108,1
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0086.MP4/frame_000175.jpg 517,47,709,112,1
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0086.MP4/frame_000195.jpg 516,47,705,106,1
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0086.MP4/frame_000205.jpg 512,45,701,101,1
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0086.MP4/frame_000210.jpg 511,40,701,99,1
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0086.MP4/frame_000275.jpg 800,419,850,429,1
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0086.MP4/frame_000280.jpg 509,36,701,97,1
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0086.MP4/frame_000325.jpg 502,29,697,92,1
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0086.MP4/frame_000330.jpg 495,21,693,84,1
+/home/tsneg-aimm/Garmin/countdowns/images/Hans_0628_0702/GRMN0086.MP4/frame_000335.jpg 487,10,686,73,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0065.MP4/frame_000190.jpg 376,471,391,508,2 233,539,254,548,0 945,449,989,460,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0065.MP4/frame_000195.jpg 308,444,326,492,2 201,530,221,539,0 967,424,1018,438,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0065.MP4/frame_000200.jpg 221,427,239,477,2 1001,394,1063,409,0 173,531,195,540,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0065.MP4/frame_000315.jpg 734,480,757,490,1 1063,406,1117,420,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0065.MP4/frame_000320.jpg 814,474,838,484,1 1164,385,1228,405,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0065.MP4/frame_000325.jpg 843,478,871,486,1 1222,376,1286,395,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0065.MP4/frame_000340.jpg 842,468,873,477,1 1292,331,1369,356,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0065.MP4/frame_000345.jpg 837,467,871,476,1 1306,322,1383,345,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0065.MP4/frame_000350.jpg 835,463,870,474,1 1314,316,1391,339,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0065.MP4/frame_000355.jpg 834,465,870,474,1 1314,314,1397,337,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0065.MP4/frame_000360.jpg 834,466,870,475,1 1314,315,1397,341,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0066.MP4/frame_000270.jpg 1285,180,1372,218,2 295,389,317,466,2 750,410,810,425,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0066.MP4/frame_000275.jpg 1241,103,1345,147,2 112,366,137,454,2 619,393,684,414,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0066.MP4/frame_000280.jpg 1197,8,1323,58,2 487,373,558,395,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0066.MP4/frame_000285.jpg 366,368,440,390,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0066.MP4/frame_000295.jpg 168,343,248,371,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0066.MP4/frame_000300.jpg 88,337,170,368,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0093.MP4/frame_000095.jpg 1091,74,1237,126,2 990,492,1017,501,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0093.MP4/frame_000105.jpg 1101,51,1259,102,2 991,496,1016,504,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0093.MP4/frame_000110.jpg 991,497,1018,506,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0093.MP4/frame_000115.jpg 991,496,1017,505,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0094.MP4/frame_000000.jpg 1101,51,1258,106,1 991,496,1017,504,1 1560,469,1581,477,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0094.MP4/frame_000030.jpg 1411,481,1427,486,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0094.MP4/frame_000040.jpg 1412,480,1428,486,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0094.MP4/frame_000045.jpg 1413,480,1428,487,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0094.MP4/frame_000050.jpg 1410,480,1429,486,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0094.MP4/frame_000065.jpg 1410,479,1428,487,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0094.MP4/frame_000075.jpg 1418,478,1429,488,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0094.MP4/frame_000080.jpg 1410,479,1428,486,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0095.MP4/frame_000000.jpg 1101,51,1258,106,1 989,496,1018,504,1 1411,480,1429,487,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0095.MP4/frame_000145.jpg 1728,435,1752,445,1 1015,460,1050,469,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0095.MP4/frame_000150.jpg 1761,442,1786,452,2 1014,465,1051,476,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0095.MP4/frame_000155.jpg 1801,440,1826,451,2 1017,463,1055,474,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0095.MP4/frame_000160.jpg 1849,436,1874,446,2 1026,453,1064,463,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0095.MP4/frame_000165.jpg 1901,433,1920,444,2 1030,450,1071,461,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0095.MP4/frame_000175.jpg 1774,428,1803,440,2 1040,419,1089,433,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000000.jpg 1872,113,1920,157,1 853,192,988,240,0 696,452,730,465,0 563,480,578,513,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000145.jpg 856,480,883,487,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000150.jpg 847,474,876,482,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000160.jpg 833,451,869,461,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000165.jpg 829,453,866,463,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000170.jpg 831,431,870,441,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000175.jpg 834,425,876,436,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000180.jpg 834,416,878,428,2 1119,453,1134,465,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000190.jpg 825,403,877,417,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000195.jpg 821,389,876,404,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000205.jpg 811,361,873,379,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000210.jpg 800,338,870,361,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0246.MP4/frame_000215.jpg 791,322,869,345,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0247.MP4/frame_000030.jpg 780,299,866,326,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0248.MP4/frame_000000.jpg 780,300,866,326,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000065.jpg 891,412,925,425,1 889,447,915,456,1 891,481,918,486,1 937,501,952,510,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000070.jpg 889,394,929,408,1 888,436,918,447,1 892,476,921,484,1 942,500,957,507,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000075.jpg 890,362,935,378,1 889,417,923,430,1 896,463,924,470,1 949,491,960,500,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000080.jpg 891,337,941,355,1 891,407,927,420,1 898,462,928,469,1 955,493,972,503,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000085.jpg 890,298,948,319,1 891,386,931,400,1 900,451,932,459,1 956,487,979,494,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000090.jpg 886,256,956,279,1 889,368,934,383,1 902,442,934,451,1 960,482,983,488,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000095.jpg 885,209,965,237,1 890,349,938,366,1 903,435,937,444,1 963,479,986,486,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000100.jpg 884,161,974,194,1 889,329,940,349,1 904,427,940,435,1 965,473,990,481,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000110.jpg 880,78,988,118,1 891,304,947,326,1 902,419,945,429,1 970,472,995,480,1 568,473,578,481,1 624,475,631,482,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000115.jpg 879,41,996,86,1 890,295,950,318,1 905,419,945,428,1 970,474,996,481,1 562,473,571,481,1 621,476,629,484,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000120.jpg 876,6,1000,53,1 888,286,950,309,1 905,417,945,427,1 556,473,564,482,1 618,476,625,483,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000125.jpg 875,0,1000,32,1 889,280,951,304,1 905,416,945,426,1 972,474,997,481,1 553,473,560,481,1 616,477,623,484,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000130.jpg 876,0,1003,24,1 972,475,998,481,1 552,473,559,481,1 614,477,622,484,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000135.jpg 972,476,998,482,1 552,475,559,482,1 614,478,622,485,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000140.jpg 906,418,945,428,1 972,476,998,483,1 552,476,558,483,1 614,479,622,485,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000150.jpg 876,1,1002,26,1 905,418,945,429,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000155.jpg 888,282,951,305,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000165.jpg 552,476,559,485,1 614,478,633,486,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000170.jpg 900,419,946,430,0 972,478,999,484,0 553,496,558,504,0 627,480,631,486,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000190.jpg 553,497,558,504,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000195.jpg 627,481,631,486,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000200.jpg 554,497,558,504,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000205.jpg 554,498,558,504,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000220.jpg 553,497,557,504,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000230.jpg 552,497,557,504,0 626,481,630,486,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000235.jpg 551,498,556,504,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000240.jpg 887,278,952,301,1 901,417,946,429,0 549,498,553,504,0 625,481,629,486,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000245.jpg 887,271,952,297,1 901,416,946,428,0 546,495,551,502,0 624,479,628,485,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000250.jpg 887,269,954,294,1 545,495,550,502,0 623,479,627,484,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000255.jpg 887,266,954,292,1 901,415,947,426,0 544,496,548,502,0 622,479,626,485,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000270.jpg 887,260,953,286,2 540,496,545,502,0 621,479,625,485,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000565.jpg 720,22,919,68,1 891,480,921,490,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000575.jpg 871,455,903,464,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000580.jpg 794,464,827,473,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000585.jpg 686,458,722,468,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000590.jpg 552,447,592,456,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000595.jpg 380,431,420,443,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0249.MP4/frame_000600.jpg 186,396,229,408,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0250.MP4/frame_000000.jpg 100,387,142,400,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0272.MP4/frame_000595.jpg 729,449,774,457,1 815,460,824,480,1 933,484,961,490,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0272.MP4/frame_000600.jpg 822,446,866,454,2 910,458,919,488,1 1033,484,1060,491,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0273.MP4/frame_000030.jpg 889,421,903,489,1 1038,473,1073,481,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0273.MP4/frame_000035.jpg 982,457,1023,468,2 821,396,837,472,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0273.MP4/frame_000040.jpg 956,437,1001,450,2 778,363,795,451,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0273.MP4/frame_000045.jpg 958,429,1003,440,2 755,337,774,436,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0273.MP4/frame_000050.jpg 958,411,1008,425,2 732,299,756,410,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0273.MP4/frame_000065.jpg 692,200,725,353,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0273.MP4/frame_000070.jpg 671,169,714,337,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0273.MP4/frame_000075.jpg 662,154,708,327,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0273.MP4/frame_000080.jpg 660,152,706,323,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0273.MP4/frame_000090.jpg 657,149,702,315,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0274.MP4/frame_000000.jpg 658,148,703,326,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000495.jpg 938,447,976,458,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000500.jpg 940,438,981,449,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000510.jpg 945,424,991,436,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000515.jpg 947,418,997,431,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000520.jpg 950,407,1002,420,1 853,493,873,499,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000525.jpg 953,396,1009,412,1 847,490,872,497,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000535.jpg 961,373,1027,393,1 847,490,872,496,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000540.jpg 965,358,1036,379,1 847,488,873,494,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000545.jpg 971,342,1045,365,1 847,484,873,490,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000550.jpg 973,322,1055,347,1 842,481,871,487,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000555.jpg 979,306,1062,333,1 841,479,869,485,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000560.jpg 981,291,1072,319,1 839,476,869,482,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000565.jpg 984,284,1076,313,1 836,475,869,482,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0276.MP4/frame_000575.jpg 837,477,869,485,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0277.MP4/frame_000000.jpg 838,476,867,485,1 985,283,1078,313,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0278.MP4/frame_000080.jpg 1326,266,1406,297,1 1,393,10,406,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0278.MP4/frame_000085.jpg 1165,203,1269,242,1 752,305,808,327,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0284.MP4/frame_000215.jpg 1050,472,1074,480,2 1223,479,1240,486,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0284.MP4/frame_000220.jpg 1056,472,1084,479,2 1238,478,1258,486,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0284.MP4/frame_000225.jpg 1076,459,1106,469,2 1270,466,1291,474,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0285.MP4/frame_000100.jpg 155,382,197,397,1 1266,474,1278,519,0 1383,439,1426,451,0 1298,548,1312,551,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0285.MP4/frame_000105.jpg 453,376,498,391,1 1613,478,1625,526,0 1726,442,1766,453,0 1622,557,1634,560,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0285.MP4/frame_000110.jpg 835,366,884,382,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0285.MP4/frame_000115.jpg 1288,349,1344,366,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0285.MP4/frame_000250.jpg 1092,228,1168,252,1 686,428,712,436,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0286.MP4/frame_000000.jpg 1087,228,1169,252,1 686,428,715,437,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000000.jpg 1089,224,1174,249,1 685,426,712,436,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000010.jpg 685,427,712,437,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000015.jpg 1095,221,1179,246,1 684,427,711,436,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000025.jpg 680,424,709,433,1 1103,198,1190,228,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000400.jpg 919,406,961,416,1 726,475,744,480,1 837,478,857,484,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000405.jpg 941,399,984,410,1 738,476,759,482,1 853,480,875,485,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000415.jpg 996,391,1050,403,1 779,483,799,490,1 901,488,923,494,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000420.jpg 1024,382,1077,396,1 794,486,815,491,1 920,489,941,495,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000425.jpg 1047,372,1103,386,1 807,483,830,488,1 937,486,958,493,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000430.jpg 1064,366,1122,381,1 817,482,838,488,1 948,487,971,494,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000435.jpg 1076,361,1136,377,1 820,482,843,488,1 953,487,977,494,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000440.jpg 1081,359,1142,375,1 824,482,847,488,1 957,487,979,494,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000445.jpg 957,486,979,494,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0287.MP4/frame_000450.jpg 1081,362,1145,378,1 823,486,847,493,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000415.jpg 1012,436,1055,447,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000420.jpg 1019,425,1066,438,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000425.jpg 1028,411,1082,425,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000430.jpg 1039,389,1099,404,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000435.jpg 1051,373,1117,391,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000440.jpg 1065,363,1137,382,1 809,465,842,475,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000445.jpg 1079,336,1156,361,1 804,458,837,469,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000450.jpg 1097,322,1177,345,1 800,457,835,467,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000455.jpg 1108,299,1201,325,1 798,451,833,462,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000460.jpg 1121,279,1220,308,1 795,449,831,461,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000465.jpg 1132,266,1235,297,1 793,448,830,459,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000470.jpg 1138,261,1244,294,1 793,450,830,462,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000475.jpg 1143,256,1250,289,1 793,449,830,460,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000480.jpg 1144,255,1252,287,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000485.jpg 793,449,832,462,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000495.jpg 1144,258,1252,290,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000505.jpg 793,451,832,462,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000515.jpg 793,452,832,463,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000525.jpg 795,451,832,464,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0293.MP4/frame_000590.jpg 793,453,832,464,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0294.MP4/frame_000000.jpg 1145,257,1252,290,1 794,452,831,463,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0294.MP4/frame_000490.jpg 987,461,1013,470,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0294.MP4/frame_000500.jpg 998,416,1033,428,2 937,471,955,479,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0294.MP4/frame_000510.jpg 1019,356,1071,375,2 928,457,954,465,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0294.MP4/frame_000520.jpg 927,433,958,444,2 1091,209,1180,244,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0294.MP4/frame_000530.jpg 951,392,993,408,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0294.MP4/frame_000550.jpg 1750,214,1822,251,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000095.jpg 924,461,958,470,1 718,480,743,487,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000100.jpg 923,451,961,463,1 698,479,725,486,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000105.jpg 679,458,714,466,1 927,427,969,440,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000115.jpg 631,432,670,444,1 934,387,988,404,1 882,482,906,488,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000125.jpg 560,405,616,422,1 941,331,1013,356,1 878,474,907,482,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000130.jpg 516,383,580,401,1 944,286,1030,316,1 875,466,906,475,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000135.jpg 473,371,543,391,1 950,248,1050,284,1 874,469,906,479,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000145.jpg 398,332,479,358,1 875,461,910,470,1 968,147,1098,200,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000150.jpg 876,458,912,469,1 974,99,1118,163,1 368,321,453,347,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000155.jpg 981,53,1139,126,1 877,455,913,465,1 342,308,436,336,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000160.jpg 878,452,914,463,1 328,299,421,328,1 986,24,1152,102,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000165.jpg 878,453,915,463,1 324,298,418,328,1 988,16,1156,96,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000175.jpg 879,457,915,467,1 324,301,419,331,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000220.jpg 989,20,1156,100,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000275.jpg 879,458,915,469,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000320.jpg 318,301,413,330,1 990,10,1161,91,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0295.MP4/frame_000325.jpg 314,298,412,328,1 990,5,1164,88,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0296.MP4/frame_000265.jpg 1015,436,1045,448,1 972,362,1023,382,1 952,466,976,475,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0296.MP4/frame_000270.jpg 973,365,1024,383,1 1014,439,1046,450,1 605,502,624,509,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0296.MP4/frame_000275.jpg 604,501,624,509,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0296.MP4/frame_000315.jpg 951,469,976,477,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0298.MP4/frame_000265.jpg 984,477,1006,484,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0298.MP4/frame_000285.jpg 1010,406,1050,420,2 922,467,943,474,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0298.MP4/frame_000305.jpg 888,348,941,364,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0298.MP4/frame_000390.jpg 905,468,926,477,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0298.MP4/frame_000400.jpg 911,432,939,441,2 911,478,928,484,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0298.MP4/frame_000410.jpg 902,358,945,372,2 905,453,930,461,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0298.MP4/frame_000420.jpg 899,396,937,410,2 887,99,985,135,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0298.MP4/frame_000430.jpg 890,259,955,281,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000090.jpg 888,443,928,455,1 743,444,775,457,1 893,512,911,517,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000100.jpg 722,429,756,441,1 885,425,928,438,2 892,505,910,512,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000105.jpg 712,422,746,434,1 885,416,929,432,2 892,503,910,510,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000110.jpg 700,411,736,425,1 881,407,931,422,2 892,502,910,508,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000115.jpg 690,401,728,417,1 880,396,931,412,2 891,498,909,505,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000120.jpg 681,396,720,411,1 879,390,931,407,2 891,497,908,503,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000125.jpg 675,392,715,407,1 877,385,930,403,2 890,496,908,503,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000135.jpg 672,391,713,408,1 876,386,929,401,2 889,498,907,505,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000140.jpg 671,394,712,411,1 876,389,928,405,2 888,500,906,507,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000160.jpg 888,501,907,507,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000180.jpg 888,501,907,508,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000235.jpg 889,502,907,508,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000240.jpg 672,395,713,411,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000245.jpg 889,502,907,509,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000265.jpg 877,390,928,406,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000290.jpg 889,503,907,509,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000310.jpg 889,503,907,510,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000335.jpg 876,389,928,407,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000340.jpg 672,397,712,413,1 876,391,928,407,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000350.jpg 669,396,711,411,1 889,504,908,510,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000355.jpg 668,394,709,410,1 889,504,908,511,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000360.jpg 875,388,929,404,2 663,393,706,410,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000370.jpg 874,382,928,400,2 656,389,700,406,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000375.jpg 874,380,929,395,2 654,387,696,402,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000380.jpg 872,377,930,394,2 650,384,693,401,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000385.jpg 872,375,929,392,2 647,384,690,401,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0299.MP4/frame_000390.jpg 646,382,690,399,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0300.MP4/frame_000000.jpg 872,372,931,390,2 646,381,690,400,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0300.MP4/frame_000570.jpg 387,400,431,418,1 791,449,817,461,0 1164,476,1198,487,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0300.MP4/frame_000575.jpg 258,344,308,370,1 775,429,807,439,0 1220,468,1257,480,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0300.MP4/frame_000580.jpg 54,258,111,290,1 548,341,610,365,1 750,382,792,399,0 1293,434,1342,448,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0300.MP4/frame_000585.jpg 424,255,507,288,1 704,314,757,335,0 1405,379,1457,394,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0300.MP4/frame_000590.jpg 209,98,317,159,1 623,203,701,239,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0306.MP4/frame_000470.jpg 962,443,989,454,2 1159,404,1216,422,0 1160,452,1187,462,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0306.MP4/frame_000475.jpg 964,441,991,452,2 1175,397,1236,416,0 1174,451,1200,459,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0306.MP4/frame_000490.jpg 969,411,1001,424,2 1226,350,1297,377,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0306.MP4/frame_000495.jpg 971,401,1004,414,2 1241,336,1315,365,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0306.MP4/frame_000500.jpg 971,399,1005,412,2 1250,330,1326,359,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0306.MP4/frame_000515.jpg 972,403,1007,417,2 1253,334,1329,365,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0307.MP4/frame_000000.jpg 972,405,1007,416,2 1253,334,1330,364,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0307.MP4/frame_000405.jpg 972,404,1006,416,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0307.MP4/frame_000580.jpg 529,297,634,328,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0307.MP4/frame_000585.jpg 606,239,733,278,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0307.MP4/frame_000590.jpg 706,172,859,222,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0307.MP4/frame_000595.jpg 823,39,1031,112,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0308.MP4/frame_000160.jpg 945,431,1007,441,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0308.MP4/frame_000165.jpg 947,423,1014,435,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0308.MP4/frame_000170.jpg 950,415,1021,429,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0636.MP4/frame_000245.jpg 878,484,930,496,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0636.MP4/frame_000250.jpg 874,459,933,473,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0636.MP4/frame_000255.jpg 867,432,934,448,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0636.MP4/frame_000260.jpg 861,414,937,434,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0636.MP4/frame_000265.jpg 858,388,945,413,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0636.MP4/frame_000270.jpg 856,372,953,400,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0636.MP4/frame_000275.jpg 852,350,958,381,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0636.MP4/frame_000280.jpg 849,328,966,364,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0636.MP4/frame_000295.jpg 841,272,983,316,2 687,541,720,550,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0636.MP4/frame_000300.jpg 840,260,986,305,2 686,538,718,548,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0636.MP4/frame_000305.jpg 840,257,989,303,2 686,538,717,546,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0636.MP4/frame_000315.jpg 686,541,718,549,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0637.MP4/frame_000005.jpg 840,262,988,305,2 691,542,718,549,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0637.MP4/frame_000535.jpg 857,464,906,483,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0637.MP4/frame_000540.jpg 853,453,905,473,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0637.MP4/frame_000545.jpg 847,436,904,458,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0637.MP4/frame_000550.jpg 843,423,905,447,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0637.MP4/frame_000555.jpg 837,408,904,436,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0637.MP4/frame_000560.jpg 831,393,904,423,1 623,506,657,515,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0637.MP4/frame_000565.jpg 825,375,903,408,1 615,501,649,511,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0637.MP4/frame_000575.jpg 817,343,904,383,1 598,495,634,504,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0637.MP4/frame_000580.jpg 813,328,905,370,1 588,491,629,501,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0637.MP4/frame_000595.jpg 806,310,905,355,1 580,490,621,500,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0637.MP4/frame_000600.jpg 807,312,905,359,1 580,491,621,501,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0638.MP4/frame_000000.jpg 805,312,905,359,1 579,489,626,502,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000055.jpg 941,552,987,567,1 860,633,895,642,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000060.jpg 946,542,993,556,1 859,627,895,637,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000065.jpg 868,624,885,633,1 1124,534,1139,565,1 959,531,1011,548,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000070.jpg 977,522,1034,540,1 1154,525,1168,557,1 880,619,910,629,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000075.jpg 994,497,1056,517,1 1186,502,1199,536,1 889,603,923,613,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000080.jpg 1002,475,1069,499,1 1210,481,1224,517,1 888,589,926,601,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000090.jpg 1019,445,1098,466,1 884,582,924,594,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000095.jpg 1030,434,1116,457,1 1288,446,1306,504,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000100.jpg 1050,414,1140,437,1 893,572,935,584,1 1321,430,1342,496,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000105.jpg 1065,395,1159,422,1 897,565,940,577,1 1350,415,1370,472,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000115.jpg 1090,328,1195,353,1 905,521,951,534,1 1401,353,1426,409,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000120.jpg 1103,294,1213,325,1 909,499,957,511,1 1427,325,1455,418,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000125.jpg 1112,276,1226,309,1 912,489,961,502,1 1445,311,1472,408,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000130.jpg 1116,272,1232,305,1 1451,308,1479,413,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000135.jpg 1117,272,1234,308,1 913,490,962,505,1 1453,309,1479,416,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0644.MP4/frame_000160.jpg 913,491,963,506,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0645.MP4/frame_000070.jpg 959,517,999,529,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000445.jpg 801,522,842,531,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000450.jpg 827,501,872,511,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000455.jpg 834,479,883,492,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000460.jpg 834,460,889,475,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000465.jpg 839,460,897,475,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000470.jpg 840,456,906,472,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000475.jpg 840,463,907,479,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000485.jpg 860,439,937,456,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000495.jpg 864,386,955,409,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000500.jpg 855,369,951,393,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000505.jpg 853,358,958,387,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000510.jpg 850,340,960,373,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000515.jpg 850,327,964,363,1 1053,430,1087,513,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0651.MP4/frame_000530.jpg 1055,430,1090,515,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0652.MP4/frame_000000.jpg 849,328,965,363,1 1056,432,1090,515,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0652.MP4/frame_000600.jpg 851,329,965,358,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0653.MP4/frame_000000.jpg 850,326,966,363,1 1055,431,1088,516,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0653.MP4/frame_000025.jpg 1056,431,1090,514,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0653.MP4/frame_000030.jpg 851,328,968,364,1 1059,432,1092,516,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0653.MP4/frame_000035.jpg 851,319,970,357,1 1064,423,1097,513,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0653.MP4/frame_000040.jpg 845,315,971,352,1 1067,419,1099,513,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0653.MP4/frame_000045.jpg 839,305,967,343,1 1067,409,1102,508,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0653.MP4/frame_000055.jpg 837,296,965,334,1 1068,402,1103,508,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0654.MP4/frame_000430.jpg 878,511,912,523,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0654.MP4/frame_000435.jpg 879,500,915,512,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0654.MP4/frame_000445.jpg 871,477,917,492,2 881,532,904,539,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0654.MP4/frame_000450.jpg 863,454,914,471,2 874,518,899,527,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0654.MP4/frame_000455.jpg 853,443,910,462,2 867,516,893,525,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0654.MP4/frame_000475.jpg 843,432,905,454,1 718,543,743,549,1 860,518,888,528,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0654.MP4/frame_000480.jpg 843,431,906,453,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0655.MP4/frame_000005.jpg 843,431,906,454,1 861,518,888,528,1 718,543,744,548,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0663.MP4/frame_000060.jpg 792,478,848,494,1 893,527,922,536,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0663.MP4/frame_000065.jpg 791,464,850,479,1 898,519,928,528,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0663.MP4/frame_000075.jpg 784,444,847,460,1 897,508,930,518,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0663.MP4/frame_000080.jpg 778,441,844,458,1 897,509,930,519,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0663.MP4/frame_000090.jpg 773,436,843,454,1 898,512,936,522,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0663.MP4/frame_000100.jpg 772,430,847,450,1 905,511,944,522,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0663.MP4/frame_000105.jpg 776,428,853,450,1 913,513,950,524,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0663.MP4/frame_000115.jpg 782,424,860,445,1 922,513,961,524,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0663.MP4/frame_000120.jpg 782,423,862,444,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0663.MP4/frame_000130.jpg 924,514,964,526,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0701.MP4/frame_000005.jpg 896,519,929,529,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0701.MP4/frame_000015.jpg 896,518,930,529,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000140.jpg 879,531,900,539,2 749,550,768,557,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000150.jpg 872,524,897,532,2 725,546,747,553,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000170.jpg 858,471,895,486,2 666,520,695,530,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000180.jpg 855,415,904,436,2 628,491,664,504,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000190.jpg 833,326,905,359,2 562,464,610,480,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000200.jpg 774,97,902,172,2 456,414,518,437,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000345.jpg 877,446,931,464,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000360.jpg 869,386,943,412,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000365.jpg 869,364,950,393,1 742,554,769,563,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000370.jpg 866,332,955,365,1 741,547,768,556,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000375.jpg 869,306,964,342,1 741,543,768,552,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000380.jpg 867,291,971,332,1 741,548,767,557,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000385.jpg 866,276,975,319,1 738,551,767,560,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000390.jpg 866,262,980,310,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000400.jpg 913,651,1026,652,2 866,255,981,304,1 738,550,766,559,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000475.jpg 739,552,766,560,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0702.MP4/frame_000525.jpg 739,552,766,561,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0703.MP4/frame_000000.jpg 866,259,981,305,1 739,552,765,561,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0704.MP4/frame_000535.jpg 778,555,802,563,1 926,390,999,415,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0704.MP4/frame_000540.jpg 928,381,1005,408,1 776,558,801,567,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0704.MP4/frame_000545.jpg 931,368,1011,398,1 775,558,801,566,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0704.MP4/frame_000555.jpg 938,337,1026,370,1 775,549,802,557,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0704.MP4/frame_000565.jpg 943,313,1038,348,1 775,544,802,554,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0704.MP4/frame_000570.jpg 946,295,1043,341,1 775,543,803,551,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0704.MP4/frame_000575.jpg 949,300,1049,338,1 776,545,803,555,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0704.MP4/frame_000580.jpg 952,294,1054,333,1 776,546,803,557,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0704.MP4/frame_000585.jpg 954,290,1060,332,1 776,556,804,567,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0704.MP4/frame_000590.jpg 957,271,1069,315,1 775,553,803,563,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0704.MP4/frame_000595.jpg 958,248,1076,297,1 774,550,801,558,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0704.MP4/frame_000600.jpg 961,234,1083,284,1 774,548,801,558,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0713.MP4/frame_000265.jpg 988,431,1040,445,1 946,494,981,506,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0713.MP4/frame_000270.jpg 992,411,1055,427,1 946,488,985,501,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0713.MP4/frame_000275.jpg 1005,388,1076,408,1 950,481,991,496,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0713.MP4/frame_000280.jpg 1020,358,1099,380,1 955,471,1000,485,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0713.MP4/frame_000285.jpg 1034,330,1122,354,1 960,463,1006,478,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0713.MP4/frame_000290.jpg 1046,298,1146,324,1 961,453,1013,468,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0713.MP4/frame_000295.jpg 1061,272,1169,301,1 964,449,1019,464,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0713.MP4/frame_000305.jpg 1086,222,1209,260,1 973,440,1028,456,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0714.MP4/frame_000150.jpg 871,475,916,495,1 835,539,857,547,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0714.MP4/frame_000155.jpg 862,453,912,475,1 828,526,851,535,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0714.MP4/frame_000160.jpg 859,440,911,463,1 825,522,849,530,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0714.MP4/frame_000165.jpg 856,423,913,447,1 823,512,847,521,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0714.MP4/frame_000170.jpg 854,408,913,434,1 821,504,847,514,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0714.MP4/frame_000175.jpg 853,401,913,428,1 819,502,847,513,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0714.MP4/frame_000180.jpg 853,399,915,427,1 820,502,846,512,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0714.MP4/frame_000185.jpg 853,403,915,431,1 820,506,847,516,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000140.jpg 786,366,854,398,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000145.jpg 787,339,861,367,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000150.jpg 788,312,870,346,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000155.jpg 790,292,877,328,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000160.jpg 786,273,880,312,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000165.jpg 784,256,882,297,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000170.jpg 782,243,883,286,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000180.jpg 781,237,884,280,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000470.jpg 779,226,886,269,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000475.jpg 772,203,885,250,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000480.jpg 765,176,884,227,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000485.jpg 760,155,884,207,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000490.jpg 754,140,884,194,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000500.jpg 747,115,883,172,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000505.jpg 744,107,882,165,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0715.MP4/frame_000510.jpg 742,100,882,159,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000195.jpg 1654,434,1700,455,1 1627,487,1659,502,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000200.jpg 1472,436,1524,456,1 1439,494,1473,505,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000205.jpg 1339,446,1392,465,1 1297,504,1332,515,1 1006,525,1043,536,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000210.jpg 1239,439,1296,459,1 1194,501,1229,512,1 892,520,931,533,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000215.jpg 1168,433,1227,453,1 1117,498,1154,511,1 805,518,846,528,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000220.jpg 1145,424,1206,444,1 1090,494,1128,506,1 769,516,810,525,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000225.jpg 1155,413,1220,435,1 1095,487,1135,500,1 766,507,808,518,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000230.jpg 1166,404,1232,425,1 1100,483,1140,496,1 762,504,804,515,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000235.jpg 1178,398,1247,422,1 1108,482,1149,493,1 764,502,806,512,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000240.jpg 1196,407,1267,432,1 1120,495,1161,507,1 768,511,813,522,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000245.jpg 1202,394,1274,418,1 1123,485,1165,496,1 766,502,811,514,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000250.jpg 1205,386,1279,414,1 1123,482,1165,494,1 761,504,807,517,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000255.jpg 1212,378,1286,409,1 1128,477,1171,489,1 761,496,808,509,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000260.jpg 1217,378,1293,405,1 1130,478,1173,490,1 762,498,809,511,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000265.jpg 1131,479,1174,492,1 1217,380,1295,406,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000280.jpg 763,499,809,512,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000305.jpg 1131,478,1175,493,1 1218,380,1295,411,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000475.jpg 1131,479,1175,490,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0753.MP4/frame_000500.jpg 1131,480,1174,491,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0754.MP4/frame_000000.jpg 762,498,809,512,1 1130,479,1174,491,1 1218,379,1294,406,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0754.MP4/frame_000095.jpg 1218,379,1294,410,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000380.jpg 863,518,904,527,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000385.jpg 864,506,909,519,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000390.jpg 869,505,917,517,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000400.jpg 869,471,930,483,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000410.jpg 857,420,934,439,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000420.jpg 841,363,939,386,1 632,490,683,502,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000425.jpg 831,335,941,361,1 616,487,669,500,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000430.jpg 827,298,950,327,1 604,474,660,487,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000435.jpg 823,269,958,302,1 591,471,651,484,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000440.jpg 817,244,964,279,1 577,467,643,483,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000445.jpg 817,229,972,266,1 577,469,639,484,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000465.jpg 814,214,978,253,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0814.MP4/frame_000470.jpg 571,471,635,487,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0815.MP4/frame_000005.jpg 571,473,635,488,1 814,215,978,254,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0815.MP4/frame_000020.jpg 571,474,636,489,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0815.MP4/frame_000375.jpg 570,473,635,490,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0821.MP4/frame_000370.jpg 920,359,989,390,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0821.MP4/frame_000375.jpg 918,237,1015,286,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0821.MP4/frame_000380.jpg 937,1,1098,80,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000200.jpg 1008,452,1044,466,1 1069,535,1094,543,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000205.jpg 970,434,1011,451,1 1032,532,1056,540,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000210.jpg 940,416,986,435,1 1006,530,1032,539,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000220.jpg 901,374,954,396,1 971,517,1000,525,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000225.jpg 889,366,946,389,1 962,518,991,528,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000230.jpg 883,364,941,388,1 957,521,987,531,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000245.jpg 881,370,940,395,1 956,528,986,538,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000385.jpg 956,529,986,540,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000390.jpg 956,531,986,542,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000395.jpg 879,369,938,394,1 955,530,984,541,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000405.jpg 874,363,934,390,1 951,528,981,539,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000420.jpg 873,362,934,387,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000585.jpg 355,390,411,419,1 723,435,782,457,0 1117,555,1144,567,0 1146,618,1157,621,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000590.jpg 268,343,329,372,1 680,391,746,418,0 1113,537,1139,549,0 1130,602,1144,606,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0822.MP4/frame_000595.jpg 168,304,227,331,1 623,354,701,388,0 1105,527,1132,539,0 1119,597,1131,602,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0823.MP4/frame_000000.jpg 1,234,61,277,1 526,287,624,331,0 1095,516,1124,528,0 1102,593,1113,597,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0854.MP4/frame_000000.jpg 669,512,716,522,1 841,460,893,476,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0854.MP4/frame_000005.jpg 661,508,709,519,1 838,448,895,467,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0854.MP4/frame_000010.jpg 649,501,700,511,1 835,430,898,452,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0854.MP4/frame_000015.jpg 633,492,687,505,1 829,411,898,436,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0854.MP4/frame_000020.jpg 615,484,673,496,1 821,388,897,415,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0854.MP4/frame_000025.jpg 597,475,658,489,1 811,362,896,393,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0854.MP4/frame_000575.jpg 490,515,534,525,1 482,542,513,550,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0854.MP4/frame_000580.jpg 607,512,654,523,1 604,543,638,551,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0854.MP4/frame_000585.jpg 694,503,745,514,1 695,535,731,545,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0854.MP4/frame_000590.jpg 766,484,821,499,1 769,524,808,534,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0854.MP4/frame_000595.jpg 813,483,872,498,1 820,530,859,541,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0854.MP4/frame_000600.jpg 842,461,909,478,1 854,514,896,526,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000000.jpg 849,455,919,475,1 860,513,904,525,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000005.jpg 844,441,920,461,1 858,508,904,523,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000010.jpg 821,410,909,434,1 841,494,891,509,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000015.jpg 805,364,907,393,1 834,472,888,488,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000020.jpg 801,337,921,371,1 841,476,900,493,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000025.jpg 798,271,942,311,1 850,452,915,471,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000030.jpg 793,203,965,251,1 859,440,929,458,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000040.jpg 778,51,1011,116,1 872,415,951,437,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000045.jpg 872,409,954,431,1 766,0,1024,63,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000050.jpg 873,406,957,428,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000055.jpg 874,405,958,427,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000060.jpg 874,407,958,429,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000325.jpg 875,408,959,430,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000510.jpg 948,450,1012,468,1 750,504,787,515,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000515.jpg 952,440,1021,458,1 740,500,782,511,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000520.jpg 955,428,1029,448,1 731,495,776,508,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000525.jpg 959,415,1038,437,1 725,490,769,502,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000530.jpg 964,401,1048,424,1 718,483,763,497,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000535.jpg 968,387,1058,412,1 712,477,760,490,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000545.jpg 979,358,1079,386,1 698,467,752,481,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000550.jpg 984,342,1091,373,1 693,462,748,478,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000565.jpg 999,295,1124,332,1 674,448,734,465,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000570.jpg 1003,281,1133,321,1 668,444,730,462,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000575.jpg 1006,270,1139,312,1 666,441,728,459,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000580.jpg 1007,266,1143,308,1 663,440,726,459,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000585.jpg 1008,264,1145,306,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0855.MP4/frame_000595.jpg 662,439,725,458,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0856.MP4/frame_000000.jpg 1009,262,1146,305,1 662,440,725,460,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0856.MP4/frame_000010.jpg 935,557,964,564,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0856.MP4/frame_000020.jpg 1014,247,1156,293,1 656,437,722,457,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0856.MP4/frame_000025.jpg 1015,241,1159,287,1 654,435,720,455,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0856.MP4/frame_000250.jpg 907,511,939,520,1 825,535,852,544,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0856.MP4/frame_000255.jpg 903,513,935,523,1 818,538,847,546,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0859.MP4/frame_000150.jpg 721,433,782,452,2 530,506,573,516,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0859.MP4/frame_000465.jpg 1092,501,1125,514,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0859.MP4/frame_000475.jpg 1042,464,1083,478,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0859.MP4/frame_000480.jpg 1019,453,1067,468,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0859.MP4/frame_000485.jpg 1001,436,1053,455,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0859.MP4/frame_000490.jpg 988,422,1045,442,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0859.MP4/frame_000500.jpg 977,380,1045,404,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0859.MP4/frame_000505.jpg 977,378,1047,405,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0859.MP4/frame_000510.jpg 976,372,1048,400,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0859.MP4/frame_000515.jpg 975,368,1049,395,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0859.MP4/frame_000520.jpg 975,363,1051,392,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0859.MP4/frame_000525.jpg 974,361,1051,390,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0860.MP4/frame_000000.jpg 975,364,1051,392,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000100.jpg 882,493,912,507,2 872,517,897,525,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000110.jpg 835,451,878,472,2 827,495,860,508,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000120.jpg 746,341,817,380,2 755,442,802,462,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000130.jpg 627,329,707,364,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000445.jpg 919,495,945,506,2 913,546,930,552,2 861,549,874,554,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000455.jpg 940,480,970,492,2 931,540,949,548,2 875,543,891,550,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000475.jpg 979,471,1013,484,2 964,546,983,552,2 905,549,920,555,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000485.jpg 1004,476,1041,491,2 985,560,1004,568,2 923,564,937,570,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000495.jpg 1013,450,1055,467,2 986,552,1006,559,2 920,556,937,562,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000505.jpg 974,405,1027,427,2 934,543,955,551,2 863,549,880,556,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000525.jpg 923,14,1070,100,2 856,504,885,516,2 767,515,792,525,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000535.jpg 849,507,885,522,2 752,527,778,536,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000555.jpg 838,403,888,429,2 706,458,744,475,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000565.jpg 817,319,891,354,2 665,429,712,447,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0863.MP4/frame_000585.jpg 430,281,512,319,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000075.jpg 784,506,813,518,2 710,538,729,546,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000085.jpg 831,487,864,502,2 752,537,774,545,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000105.jpg 812,493,845,505,2 928,334,1000,370,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000115.jpg 997,1,1153,95,2 810,441,854,459,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000125.jpg 765,368,827,393,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000225.jpg 1038,543,1056,552,2 1021,567,1035,573,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000235.jpg 1027,525,1050,536,2 1005,556,1019,562,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000245.jpg 1021,506,1048,517,2 987,547,1004,553,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000255.jpg 1003,474,1035,486,2 955,529,977,537,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000265.jpg 984,443,1025,457,2 919,525,941,532,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000275.jpg 965,375,1023,398,2 878,513,904,522,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000285.jpg 942,213,1039,261,2 825,493,858,505,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000315.jpg 402,256,501,297,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000450.jpg 863,463,915,479,1 840,512,877,524,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000455.jpg 859,459,916,477,1 839,520,875,531,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000460.jpg 855,444,921,464,1 836,518,872,529,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000465.jpg 855,429,928,454,1 837,520,872,530,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000470.jpg 853,410,936,438,1 838,518,881,528,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000475.jpg 849,377,943,410,1 837,509,881,521,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000480.jpg 838,341,947,380,1 829,504,872,517,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000490.jpg 804,247,948,301,1 809,487,855,500,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000500.jpg 760,147,944,225,1 792,489,836,502,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000505.jpg 741,95,946,184,1 787,487,831,499,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000510.jpg 735,59,954,157,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0864.MP4/frame_000525.jpg 786,489,830,501,1 727,36,956,146,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0865.MP4/frame_000005.jpg 727,36,957,146,1 786,489,832,502,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000380.jpg 1105,428,1150,444,1 1151,480,1170,492,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000385.jpg 1070,415,1130,436,1 1119,478,1147,490,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000390.jpg 1046,411,1108,430,1 1088,485,1127,498,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000395.jpg 1013,388,1086,411,1 1057,475,1096,488,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000405.jpg 977,340,1059,363,1 1012,459,1054,471,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000410.jpg 967,316,1056,344,1 998,456,1048,472,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000415.jpg 967,286,1065,316,1 997,448,1047,463,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000420.jpg 971,256,1079,287,1 1000,443,1050,458,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000430.jpg 980,185,1113,226,1 1008,431,1060,446,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000435.jpg 990,141,1134,186,1 1014,418,1069,434,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000440.jpg 998,102,1153,151,1 1018,414,1075,430,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000445.jpg 1005,67,1171,119,1 1022,413,1079,428,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000450.jpg 1012,43,1185,98,1 1023,414,1083,431,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000460.jpg 1015,23,1196,78,1 1025,413,1085,431,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000465.jpg 1025,414,1085,432,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0868.MP4/frame_000470.jpg 1025,416,1085,432,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0869.MP4/frame_000000.jpg 1015,24,1195,80,1 1026,416,1085,432,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0869.MP4/frame_000225.jpg 1026,416,1085,434,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0869.MP4/frame_000395.jpg 1024,0,1216,49,1 1026,416,1089,436,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0869.MP4/frame_000405.jpg 1018,403,1080,423,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0870.MP4/frame_000580.jpg 963,412,1046,437,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0870.MP4/frame_000585.jpg 995,349,1105,382,2 971,506,1011,515,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0870.MP4/frame_000590.jpg 1018,226,1177,275,2 962,490,1005,499,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0870.MP4/frame_000595.jpg 918,466,966,479,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0870.MP4/frame_000600.jpg 864,452,920,463,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0889.MP4/frame_000540.jpg 741,510,782,519,1 701,539,729,546,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0889.MP4/frame_000545.jpg 751,501,795,511,1 714,534,743,541,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0889.MP4/frame_000555.jpg 775,488,826,501,1 740,533,774,542,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0889.MP4/frame_000560.jpg 786,478,842,493,1 755,531,789,540,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0889.MP4/frame_000565.jpg 797,459,859,476,1 767,522,805,532,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0889.MP4/frame_000575.jpg 840,419,917,439,1 816,508,856,519,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0889.MP4/frame_000580.jpg 849,385,937,409,1 825,494,869,506,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0889.MP4/frame_000585.jpg 853,352,955,380,1 832,488,880,501,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0889.MP4/frame_000590.jpg 851,307,970,339,1 833,478,882,491,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0889.MP4/frame_000595.jpg 847,256,986,294,1 832,468,887,481,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0889.MP4/frame_000600.jpg 841,202,1000,247,1 831,462,887,476,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000000.jpg 837,182,1005,229,1 828,461,888,476,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000010.jpg 822,92,1026,151,1 823,458,886,473,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000020.jpg 811,30,1039,97,1 821,456,884,470,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000035.jpg 822,460,884,474,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000230.jpg 822,461,884,475,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000445.jpg 822,462,884,476,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000465.jpg 807,19,1042,88,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000470.jpg 807,7,1048,78,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000480.jpg 816,456,882,471,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000540.jpg 1315,537,1336,545,2 1242,555,1260,560,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000550.jpg 982,550,1005,557,2 900,564,921,572,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000560.jpg 888,525,915,534,2 799,544,822,550,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000580.jpg 891,490,927,503,2 774,523,804,531,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000590.jpg 895,469,940,484,2 755,513,792,523,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0890.MP4/frame_000600.jpg 891,431,952,452,2 719,501,764,513,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000000.jpg 712,503,759,517,2 892,427,958,451,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000010.jpg 653,445,715,463,2 886,314,982,350,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000020.jpg 483,366,580,400,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000080.jpg 767,544,783,550,2 867,522,888,530,2 877,559,891,565,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000085.jpg 864,516,887,525,2 755,543,773,550,2 874,563,890,568,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000090.jpg 859,505,886,517,2 741,540,761,546,2 873,563,891,569,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000470.jpg 854,511,894,520,1 747,536,777,542,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000475.jpg 851,501,894,512,1 739,529,771,537,1 880,571,898,576,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000480.jpg 846,493,892,505,1 730,527,762,534,1 879,570,898,576,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000485.jpg 843,486,893,500,1 722,524,756,532,1 880,573,899,579,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000565.jpg 870,540,901,549,1 806,571,828,577,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000570.jpg 867,530,899,538,1 802,565,822,570,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000575.jpg 863,536,896,545,1 796,574,818,580,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000580.jpg 860,535,896,545,1 791,577,816,583,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000585.jpg 857,527,897,536,1 785,571,812,578,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000590.jpg 854,523,895,533,1 781,571,809,577,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000595.jpg 850,516,894,527,1 773,570,795,576,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0891.MP4/frame_000600.jpg 847,507,895,519,1 771,567,800,574,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0905.MP4/frame_000150.jpg 868,520,902,533,1 877,558,897,565,1 766,556,786,566,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0905.MP4/frame_000155.jpg 871,512,905,523,1 878,553,901,563,1 763,550,789,559,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0905.MP4/frame_000160.jpg 870,497,907,511,1 879,546,901,551,1 756,541,781,549,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0905.MP4/frame_000165.jpg 865,486,905,502,1 878,540,905,547,1 747,535,774,544,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0905.MP4/frame_000170.jpg 858,477,903,495,1 875,539,898,546,1 736,535,767,545,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0905.MP4/frame_000175.jpg 856,469,903,487,1 873,538,897,546,1 730,534,759,543,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0905.MP4/frame_000575.jpg 1328,487,1375,502,1 1264,541,1291,551,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0905.MP4/frame_000585.jpg 1189,445,1245,465,1 1096,518,1128,528,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0905.MP4/frame_000595.jpg 1022,400,1092,424,1 907,498,941,510,1 1020,561,1033,566,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0905.MP4/frame_000600.jpg 952,384,1029,411,1 826,501,863,513,1 948,569,961,575,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000000.jpg 931,377,1011,406,1 804,500,842,512,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000005.jpg 906,363,995,394,1 776,500,814,513,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000010.jpg 892,346,987,382,1 756,505,797,517,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000015.jpg 889,313,994,352,1 750,493,793,508,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000020.jpg 897,275,1011,319,1 753,482,797,497,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000025.jpg 913,247,1037,299,1 761,483,807,498,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000030.jpg 921,216,1056,274,1 765,482,812,498,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000040.jpg 934,145,1092,215,1 766,469,816,484,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000045.jpg 937,126,1102,199,1 766,467,817,484,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000050.jpg 939,115,1108,190,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000055.jpg 940,108,1111,185,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000060.jpg 766,467,818,482,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000095.jpg 766,467,817,477,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000100.jpg 766,467,817,473,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000110.jpg 766,468,818,486,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000120.jpg 927,571,946,579,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000270.jpg 896,561,917,569,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000275.jpg 905,552,927,560,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000280.jpg 910,545,935,553,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000285.jpg 908,539,933,547,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000295.jpg 895,539,921,548,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000300.jpg 893,535,922,545,1 851,552,875,560,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000315.jpg 880,499,915,512,1 833,525,860,533,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000320.jpg 880,501,917,514,1 831,528,860,537,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000325.jpg 829,530,860,541,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000330.jpg 879,486,922,500,1 824,520,857,530,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000335.jpg 875,476,922,493,1 819,516,854,526,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000340.jpg 872,456,921,471,1 813,499,849,510,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000345.jpg 872,446,924,464,1 809,495,850,507,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000355.jpg 868,440,926,460,1 804,500,846,513,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000360.jpg 868,432,929,453,1 802,494,845,508,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000365.jpg 870,426,932,448,1 802,492,845,506,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000370.jpg 870,416,934,438,1 801,485,846,499,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000375.jpg 869,409,935,433,1 800,482,844,495,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000380.jpg 869,404,937,426,1 800,478,845,492,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000385.jpg 870,401,937,425,1 798,476,846,491,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000390.jpg 869,397,937,421,1 799,475,846,489,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000395.jpg 868,396,938,419,1 798,475,844,488,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000400.jpg 869,395,939,420,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000405.jpg 797,475,843,490,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN0906.MP4/frame_000415.jpg 869,392,940,417,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1317.MP4/frame_000155.jpg 917,501,956,514,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1317.MP4/frame_000165.jpg 915,542,941,551,2 968,485,1010,499,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1317.MP4/frame_000175.jpg 952,544,983,553,2 1013,479,1060,494,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1317.MP4/frame_000185.jpg 848,543,881,552,2 917,470,968,485,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1318.MP4/frame_000320.jpg 971,399,1041,428,2 930,525,960,534,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1318.MP4/frame_000325.jpg 983,366,1064,400,2 933,519,965,530,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1318.MP4/frame_000335.jpg 981,254,1096,304,2 910,496,946,508,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1318.MP4/frame_000340.jpg 978,189,1114,253,2 893,495,931,507,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1318.MP4/frame_000345.jpg 969,123,1129,201,2 875,497,915,510,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1318.MP4/frame_000350.jpg 959,58,1141,149,1 857,496,899,509,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1318.MP4/frame_000355.jpg 954,7,1151,110,1 849,495,891,509,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1318.MP4/frame_000360.jpg 952,0,1160,90,1 845,495,888,510,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1318.MP4/frame_000365.jpg 845,498,888,512,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1318.MP4/frame_000370.jpg 845,499,888,514,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0913_0917/GRMN1319.MP4/frame_000005.jpg 845,499,887,514,1 952,0,1160,91,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000000.jpg 635,334,732,355,1 483,525,514,532,1 695,519,726,527,1 607,536,614,569,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000010.jpg 483,526,514,533,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000065.jpg 696,519,726,528,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000090.jpg 483,527,514,533,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000110.jpg 696,520,726,528,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000115.jpg 607,538,614,571,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000120.jpg 633,335,732,357,1 483,528,514,535,1 697,521,726,530,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000125.jpg 482,530,512,536,1 695,523,725,532,1 606,542,613,575,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000130.jpg 629,334,730,356,1 480,531,511,538,1 695,525,726,533,1 606,543,612,575,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000135.jpg 625,330,726,351,1 605,543,612,576,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000140.jpg 615,323,719,345,1 476,533,507,540,1 693,524,724,534,1 603,545,610,577,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000150.jpg 611,322,717,346,1 474,537,505,544,1 693,531,724,539,1 602,546,609,579,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000160.jpg 474,538,504,544,1 693,531,724,540,1 601,547,608,579,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000195.jpg 601,547,608,568,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000200.jpg 601,547,608,575,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0226.MP4/frame_000285.jpg 601,547,608,571,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0832.MP4/frame_000000.jpg 853,264,939,297,1 858,498,871,523,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0832.MP4/frame_000025.jpg 858,498,872,537,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0832.MP4/frame_000050.jpg 853,260,940,295,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000465.jpg 904,533,921,540,2 952,551,966,557,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000470.jpg 909,523,927,530,2 960,544,976,551,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000475.jpg 907,527,927,535,2 962,550,978,557,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000485.jpg 879,511,905,519,2 948,542,966,548,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000540.jpg 729,289,813,328,1 947,468,986,482,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000545.jpg 718,266,808,308,1 950,465,991,481,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000550.jpg 699,249,796,294,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000555.jpg 685,226,787,275,1 950,463,993,480,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000560.jpg 670,198,781,253,1 952,458,997,475,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000565.jpg 654,173,770,232,1 952,453,997,471,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000570.jpg 638,148,762,213,1 952,447,999,465,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000575.jpg 621,122,751,192,1 952,439,1000,459,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000580.jpg 608,96,744,170,1 953,435,1003,455,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000585.jpg 594,72,736,151,1 953,431,1004,451,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0841.MP4/frame_000600.jpg 555,1,713,95,1 954,414,1006,435,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0842.MP4/frame_000000.jpg 955,413,1007,435,1 551,0,711,88,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0842.MP4/frame_000005.jpg 955,411,1008,432,1 543,0,707,77,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0842.MP4/frame_000020.jpg 955,405,1009,427,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0842.MP4/frame_000035.jpg 954,403,1010,426,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0896.MP4/frame_000105.jpg 833,476,865,487,2 866,527,887,535,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0896.MP4/frame_000115.jpg 835,500,865,510,2 771,407,818,424,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0896.MP4/frame_000125.jpg 607,211,693,247,2 783,442,823,456,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0896.MP4/frame_000135.jpg 660,337,725,360,2 860,549,883,555,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0922.MP4/frame_000005.jpg 830,440,901,458,1 805,532,838,538,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0929.MP4/frame_000270.jpg 1010,395,1078,418,1 896,515,933,525,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0930.MP4/frame_000000.jpg 1010,394,1078,418,1 896,514,933,525,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0930.MP4/frame_000535.jpg 894,322,966,359,1 846,514,874,525,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0930.MP4/frame_000540.jpg 890,305,970,347,1 843,521,872,531,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0930.MP4/frame_000545.jpg 886,279,973,326,1 842,518,872,529,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0930.MP4/frame_000550.jpg 885,262,976,312,1 841,514,871,526,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0930.MP4/frame_000555.jpg 885,252,977,305,1 840,513,870,525,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0930.MP4/frame_000565.jpg 841,516,871,527,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0931.MP4/frame_000000.jpg 885,254,978,308,1 840,515,871,527,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0931.MP4/frame_000030.jpg 840,516,871,528,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0931.MP4/frame_000075.jpg 840,518,871,529,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0931.MP4/frame_000085.jpg 885,248,979,302,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0931.MP4/frame_000090.jpg 884,244,979,299,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0931.MP4/frame_000095.jpg 884,237,982,293,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0934.MP4/frame_000420.jpg 941,430,987,448,1 885,530,909,539,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0934.MP4/frame_000460.jpg 886,531,909,539,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0935.MP4/frame_000395.jpg 946,541,964,548,2 859,556,876,561,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0935.MP4/frame_000405.jpg 943,523,967,532,2 842,545,861,552,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0935.MP4/frame_000410.jpg 943,507,969,517,2 833,535,854,542,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0935.MP4/frame_000415.jpg 945,491,976,502,2 826,525,848,533,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0935.MP4/frame_000420.jpg 948,471,981,482,2 818,513,842,522,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0935.MP4/frame_000475.jpg 701,438,743,454,1 935,136,1052,201,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0935.MP4/frame_000480.jpg 699,436,741,452,1 934,127,1054,192,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0935.MP4/frame_000575.jpg 700,439,742,455,1 935,130,1054,196,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0936.MP4/frame_000080.jpg 699,438,743,456,1 935,130,1054,196,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0942.MP4/frame_000330.jpg 960,372,1020,397,1 812,527,832,535,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0942.MP4/frame_000335.jpg 965,345,1030,373,1 810,526,829,533,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0942.MP4/frame_000345.jpg 972,263,1056,304,1 800,515,822,523,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0942.MP4/frame_000350.jpg 980,226,1072,273,1 800,515,822,524,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0942.MP4/frame_000360.jpg 992,167,1099,226,1 803,513,826,521,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0942.MP4/frame_000365.jpg 995,161,1102,221,1 803,516,827,524,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0942.MP4/frame_000370.jpg 803,518,827,526,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0942.MP4/frame_000375.jpg 803,519,827,527,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000000.jpg 995,166,1103,226,1 803,519,829,527,1 561,473,601,492,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000175.jpg 146,149,241,218,1 978,410,1031,431,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000180.jpg 181,130,281,205,1 1072,405,1127,427,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000185.jpg 223,104,334,185,1 1189,398,1246,421,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000435.jpg 952,581,965,586,2 940,586,949,591,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000455.jpg 964,554,978,560,2 950,560,961,566,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000465.jpg 960,553,974,558,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000500.jpg 959,525,980,532,2 934,541,953,548,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000510.jpg 959,511,984,520,2 928,531,952,540,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000520.jpg 955,487,986,498,2 924,517,947,526,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000530.jpg 956,461,993,475,2 918,504,947,513,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000540.jpg 961,407,1011,427,2 913,474,948,487,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0943.MP4/frame_000570.jpg 858,238,948,281,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0951.MP4/frame_000015.jpg 836,56,979,142,1 840,491,871,502,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0951.MP4/frame_000065.jpg 840,490,873,502,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0951.MP4/frame_000070.jpg 836,48,980,135,1 840,492,873,502,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0951.MP4/frame_000075.jpg 834,31,982,122,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0951.MP4/frame_000080.jpg 829,7,984,102,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0951.MP4/frame_000410.jpg 878,352,961,389,1 853,486,888,495,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0951.MP4/frame_000415.jpg 878,343,962,381,1 853,482,889,492,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0951.MP4/frame_000430.jpg 854,485,889,494,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0951.MP4/frame_000440.jpg 877,345,963,383,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0952.MP4/frame_000000.jpg 878,345,963,383,1 854,486,890,495,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0978.MP4/frame_000125.jpg 836,485,885,496,2 985,342,1069,366,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0978.MP4/frame_000130.jpg 816,490,867,502,2 981,302,1082,330,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0978.MP4/frame_000135.jpg 799,459,856,473,2 981,198,1107,237,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0978.MP4/frame_000140.jpg 782,439,844,452,2 982,54,1151,109,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0978.MP4/frame_000265.jpg 981,535,1004,541,0 472,150,632,204,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0978.MP4/frame_000270.jpg 881,491,925,501,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0991.MP4/frame_000120.jpg 929,226,1055,279,1 720,473,762,485,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0991.MP4/frame_000130.jpg 1047,141,1199,210,1 813,465,857,478,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0991.MP4/frame_000135.jpg 1085,110,1249,184,1 838,467,883,480,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0991.MP4/frame_000140.jpg 1099,86,1273,168,1 845,468,892,481,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0991.MP4/frame_000145.jpg 1108,72,1286,157,1 846,469,893,482,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0991.MP4/frame_000150.jpg 1110,61,1292,148,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0991.MP4/frame_000160.jpg 1112,54,1297,142,1 844,470,891,483,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0991.MP4/frame_000180.jpg 1112,49,1300,139,1 843,471,890,483,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0991.MP4/frame_000195.jpg 1116,28,1311,122,1 840,471,888,484,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0991.MP4/frame_000405.jpg 841,471,888,480,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0992.MP4/frame_000000.jpg 1116,28,1311,123,1 841,469,888,484,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0992.MP4/frame_000080.jpg 840,471,888,484,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0992.MP4/frame_000150.jpg 841,472,888,485,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0992.MP4/frame_000265.jpg 841,472,888,483,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0992.MP4/frame_000490.jpg 1120,16,1318,113,1 840,470,888,483,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0992.MP4/frame_000495.jpg 1123,0,1327,97,1 838,468,887,480,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0992.MP4/frame_000500.jpg 1130,0,1341,76,1 837,466,885,479,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000115.jpg 1047,499,1072,509,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000120.jpg 1055,490,1081,500,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000135.jpg 1079,444,1126,456,2 920,492,953,501,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000140.jpg 1083,422,1137,439,2 902,490,939,500,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000150.jpg 1103,361,1176,386,1 865,474,908,488,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000160.jpg 1125,285,1229,319,1 825,456,879,469,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000165.jpg 1136,245,1251,287,1 810,448,865,462,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000170.jpg 1144,219,1267,264,1 802,444,857,459,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000185.jpg 1153,185,1290,238,1 788,441,846,458,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000195.jpg 788,443,845,459,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000220.jpg 1153,188,1290,241,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000230.jpg 788,444,846,460,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000455.jpg 787,444,845,462,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000500.jpg 787,446,844,462,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0996.MP4/frame_000505.jpg 1161,184,1302,238,1 784,451,842,467,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0997.MP4/frame_000285.jpg 994,559,1007,566,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0997.MP4/frame_000305.jpg 1018,540,1036,550,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0997.MP4/frame_000315.jpg 1036,514,1062,525,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0997.MP4/frame_000325.jpg 853,544,874,552,2 1056,478,1092,493,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0997.MP4/frame_000335.jpg 804,513,833,524,2 1111,363,1177,395,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0997.MP4/frame_000345.jpg 705,471,743,485,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN0997.MP4/frame_000355.jpg 498,363,568,389,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1009.MP4/frame_000390.jpg 962,396,1018,419,1 876,510,910,521,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1009.MP4/frame_000395.jpg 962,370,1023,396,1 872,504,908,513,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1009.MP4/frame_000400.jpg 961,339,1030,366,1 867,496,905,506,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1009.MP4/frame_000405.jpg 958,299,1035,332,1 859,486,899,499,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1009.MP4/frame_000410.jpg 956,254,1042,293,1 852,476,893,489,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1009.MP4/frame_000415.jpg 951,207,1050,256,1 843,469,887,483,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1009.MP4/frame_000420.jpg 949,156,1059,208,1 837,465,883,477,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1009.MP4/frame_000425.jpg 942,104,1066,179,1 827,460,875,475,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1009.MP4/frame_000435.jpg 928,11,1071,101,1 810,448,860,464,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1009.MP4/frame_000440.jpg 928,0,1077,88,1 810,447,860,463,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1010.MP4/frame_000005.jpg 928,0,1077,89,1 809,448,860,464,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1010.MP4/frame_000460.jpg 1360,503,1379,510,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1010.MP4/frame_000465.jpg 1279,508,1297,515,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1010.MP4/frame_000470.jpg 1198,526,1216,533,2 1134,552,1151,558,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1010.MP4/frame_000475.jpg 1121,515,1140,522,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1010.MP4/frame_000480.jpg 1063,513,1082,519,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1010.MP4/frame_000485.jpg 1024,499,1043,505,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1018.MP4/frame_000485.jpg 1583,512,1604,520,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1018.MP4/frame_000505.jpg 979,494,1005,504,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1018.MP4/frame_000525.jpg 907,474,942,487,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1018.MP4/frame_000535.jpg 910,439,953,455,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1018.MP4/frame_000545.jpg 909,378,964,400,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1018.MP4/frame_000595.jpg 1149,408,1195,423,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000000.jpg 1114,416,1161,432,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000005.jpg 1095,414,1144,432,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000015.jpg 1047,404,1102,424,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000025.jpg 1014,392,1075,415,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000035.jpg 993,380,1056,404,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000045.jpg 973,357,1042,385,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000055.jpg 932,308,1012,343,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000075.jpg 678,33,825,115,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000225.jpg 934,336,1001,363,1 867,476,897,487,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000230.jpg 933,323,1002,349,1 865,474,894,485,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000235.jpg 933,314,1003,341,1 863,477,893,487,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000240.jpg 931,307,1005,334,1 862,478,892,489,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1019.MP4/frame_000255.jpg 859,486,891,498,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1020.MP4/frame_000000.jpg 929,307,1006,334,1 858,485,891,498,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1020.MP4/frame_000110.jpg 858,486,892,498,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1020.MP4/frame_000270.jpg 859,486,892,499,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1020.MP4/frame_000385.jpg 1458,482,1493,495,2 1321,540,1342,547,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1020.MP4/frame_000395.jpg 1147,468,1188,482,2 990,528,1014,539,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1020.MP4/frame_000405.jpg 1024,444,1072,459,2 846,520,873,530,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1020.MP4/frame_000415.jpg 1023,409,1080,427,2 824,509,853,519,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1020.MP4/frame_000435.jpg 1079,262,1177,300,2 799,484,832,495,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1020.MP4/frame_000445.jpg 1145,64,1305,136,2 776,464,815,476,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1020.MP4/frame_000455.jpg 743,436,786,451,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1020.MP4/frame_000465.jpg 682,386,743,405,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1020.MP4/frame_000475.jpg 569,298,656,325,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1033.MP4/frame_000065.jpg 1018,430,1090,445,2 693,495,728,505,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1033.MP4/frame_000070.jpg 1032,401,1107,416,2 676,485,715,495,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1033.MP4/frame_000090.jpg 1094,268,1225,298,1 613,463,662,475,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1033.MP4/frame_000095.jpg 1120,229,1266,265,1 610,459,658,472,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1033.MP4/frame_000100.jpg 1142,196,1300,235,1 601,459,651,471,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1033.MP4/frame_000105.jpg 1158,162,1326,211,1 595,459,649,471,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1033.MP4/frame_000115.jpg 1173,144,1350,191,1 592,458,645,470,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1033.MP4/frame_000120.jpg 1173,147,1350,194,1 592,461,645,473,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1033.MP4/frame_000385.jpg 592,461,646,475,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1034.MP4/frame_000000.jpg 1173,147,1352,194,1 590,460,649,477,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1034.MP4/frame_000280.jpg 546,124,687,219,1 1746,173,1885,213,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1034.MP4/frame_000285.jpg 766,13,950,136,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000225.jpg 950,416,1012,433,1 928,480,965,491,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000230.jpg 948,394,1014,412,1 923,467,964,478,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000240.jpg 943,365,1024,388,1 918,462,963,474,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000245.jpg 940,338,1028,365,1 915,452,960,465,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000250.jpg 935,320,1031,351,1 910,454,959,467,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000255.jpg 927,283,1034,319,1 902,441,953,456,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000260.jpg 923,254,1043,297,1 898,442,952,457,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000270.jpg 911,133,1065,195,1 887,409,947,423,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000275.jpg 903,56,1082,133,1 884,398,946,412,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000280.jpg 892,0,1096,54,1 879,380,944,396,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000285.jpg 876,374,944,391,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000290.jpg 875,363,946,381,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000295.jpg 875,360,947,379,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000300.jpg 874,357,947,376,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1035.MP4/frame_000315.jpg 874,358,947,378,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1036.MP4/frame_000000.jpg 874,358,947,380,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000015.jpg 901,556,920,563,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000025.jpg 898,547,920,553,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000035.jpg 887,537,909,544,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000055.jpg 891,525,919,535,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000065.jpg 889,526,919,537,2 964,539,990,547,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000075.jpg 882,515,915,526,2 966,530,993,537,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000085.jpg 861,493,899,504,2 959,514,989,522,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000095.jpg 834,469,880,482,2 950,497,985,507,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000100.jpg 951,487,988,498,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000105.jpg 811,436,865,451,2 951,476,991,488,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000115.jpg 775,396,844,418,2 949,455,996,468,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000125.jpg 734,348,817,371,2 945,431,1000,448,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000140.jpg 943,392,1011,414,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000145.jpg 626,223,750,265,2 944,382,1018,405,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000155.jpg 538,108,698,174,2 945,342,1031,371,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000165.jpg 921,272,1027,312,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000185.jpg 278,12,444,94,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000360.jpg 992,321,1090,353,1 826,514,857,523,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000365.jpg 987,311,1091,344,1 820,518,851,527,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000370.jpg 988,293,1097,332,1 817,516,848,526,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000375.jpg 993,273,1110,314,1 814,510,847,520,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000390.jpg 1006,183,1144,236,1 812,488,846,498,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000395.jpg 1017,162,1164,218,1 813,494,848,504,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000405.jpg 1030,86,1200,160,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000410.jpg 1037,39,1219,123,1 810,487,846,496,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000415.jpg 1041,6,1232,97,1 808,486,845,497,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000420.jpg 1043,0,1238,83,1 809,488,845,498,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1046.MP4/frame_000430.jpg 808,489,845,500,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1047.MP4/frame_000000.jpg 1042,0,1239,83,1 808,488,846,501,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1047.MP4/frame_000230.jpg 808,490,846,501,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1047.MP4/frame_000415.jpg 808,489,845,501,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1048.MP4/frame_000005.jpg 1043,0,1239,83,1 809,489,845,500,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1048.MP4/frame_000170.jpg 86,156,184,206,1 805,369,890,399,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1048.MP4/frame_000510.jpg 981,76,1115,155,2 860,439,903,454,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1048.MP4/frame_000515.jpg 998,0,1152,52,2 861,413,905,432,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1048.MP4/frame_000520.jpg 871,400,916,420,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1048.MP4/frame_000525.jpg 876,403,922,422,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1048.MP4/frame_000575.jpg 877,407,923,427,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1049.MP4/frame_000085.jpg 877,407,924,427,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1049.MP4/frame_000290.jpg 879,409,924,429,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1049.MP4/frame_000295.jpg 882,408,930,430,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1053.MP4/frame_000520.jpg 869,539,885,545,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1053.MP4/frame_000535.jpg 954,520,979,529,2 862,541,879,547,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1053.MP4/frame_000585.jpg 956,455,996,470,1 818,514,845,523,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1054.MP4/frame_000010.jpg 947,395,1005,417,1 780,495,812,507,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1054.MP4/frame_000020.jpg 943,355,1008,381,1 767,483,801,493,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1054.MP4/frame_000025.jpg 943,338,1014,366,1 761,480,798,490,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1054.MP4/frame_000035.jpg 945,297,1026,332,1 752,470,792,483,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1054.MP4/frame_000045.jpg 951,244,1045,285,1 746,458,789,473,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1054.MP4/frame_000050.jpg 956,210,1056,257,1 745,450,787,465,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1054.MP4/frame_000055.jpg 959,178,1066,233,1 741,443,786,458,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1054.MP4/frame_000060.jpg 959,148,1073,209,1 738,437,784,453,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1054.MP4/frame_000065.jpg 960,135,1078,198,1 736,437,782,452,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1054.MP4/frame_000070.jpg 961,129,1080,193,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1054.MP4/frame_000085.jpg 735,437,781,453,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1059.MP4/frame_000025.jpg 948,407,1015,427,1 839,486,878,499,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1059.MP4/frame_000030.jpg 945,388,1017,409,1 830,480,870,493,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1059.MP4/frame_000035.jpg 945,365,1024,390,1 823,475,866,487,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1059.MP4/frame_000040.jpg 944,337,1034,364,1 816,466,860,479,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1059.MP4/frame_000045.jpg 943,300,1045,333,1 807,457,853,471,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1059.MP4/frame_000050.jpg 943,253,1058,293,1 799,444,852,459,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1059.MP4/frame_000055.jpg 941,207,1071,255,1 790,437,845,453,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1059.MP4/frame_000060.jpg 939,158,1084,214,1 782,427,838,445,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1059.MP4/frame_000065.jpg 937,118,1096,180,1 775,422,835,441,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1059.MP4/frame_000070.jpg 936,84,1108,153,1 771,418,833,438,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1059.MP4/frame_000075.jpg 936,59,1114,132,1 768,416,830,436,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1059.MP4/frame_000080.jpg 935,46,1117,123,1 767,415,829,434,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1063.MP4/frame_000120.jpg 795,474,833,487,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1063.MP4/frame_000125.jpg 785,460,826,475,2 966,525,989,535,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1063.MP4/frame_000130.jpg 764,448,811,465,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1063.MP4/frame_000135.jpg 742,431,793,450,2 962,522,988,533,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1063.MP4/frame_000140.jpg 713,398,772,421,2 962,508,991,519,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1063.MP4/frame_000145.jpg 680,365,747,391,2 961,502,992,513,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1063.MP4/frame_000225.jpg 529,224,638,275,1 968,487,1005,500,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1069.MP4/frame_000470.jpg 820,438,864,456,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1069.MP4/frame_000475.jpg 837,413,888,436,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1069.MP4/frame_000480.jpg 870,381,927,407,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1069.MP4/frame_000485.jpg 886,356,950,386,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1069.MP4/frame_000490.jpg 885,323,957,357,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1069.MP4/frame_000505.jpg 878,235,973,285,1 739,498,773,509,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1069.MP4/frame_000515.jpg 873,202,976,257,1 736,493,770,504,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1069.MP4/frame_000520.jpg 736,492,770,505,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1069.MP4/frame_000525.jpg 736,495,769,505,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1070.MP4/frame_000000.jpg 873,202,976,258,1 736,494,769,505,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1072.MP4/frame_000235.jpg 768,448,813,464,1 966,525,991,537,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1072.MP4/frame_000260.jpg 966,526,991,536,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1072.MP4/frame_000310.jpg 966,526,990,537,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1072.MP4/frame_000400.jpg 767,449,812,465,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1072.MP4/frame_000440.jpg 966,527,991,538,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1072.MP4/frame_000445.jpg 966,528,990,538,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1073.MP4/frame_000585.jpg 1004,60,1192,167,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1073.MP4/frame_000590.jpg 761,0,989,92,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1074.MP4/frame_000440.jpg 927,444,983,459,1 880,520,909,529,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1074.MP4/frame_000445.jpg 931,423,990,439,1 882,510,912,519,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1074.MP4/frame_000450.jpg 933,410,997,428,1 883,507,914,516,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1074.MP4/frame_000455.jpg 937,398,1004,415,1 884,505,918,514,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1074.MP4/frame_000460.jpg 946,386,1018,405,1 892,504,927,513,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000000.jpg 635,267,764,312,2 753,467,805,484,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000215.jpg 752,468,805,485,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000360.jpg 753,467,805,486,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000370.jpg 626,251,763,298,1 758,467,811,487,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000375.jpg 619,233,763,286,1 761,466,814,486,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000380.jpg 606,210,759,268,1 766,464,819,485,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000385.jpg 588,175,758,240,1 765,455,822,474,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000390.jpg 573,150,752,220,1 764,450,823,469,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000395.jpg 559,129,745,205,1 763,446,822,467,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000400.jpg 544,109,736,190,1 759,443,819,465,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000405.jpg 529,88,728,174,1 755,439,817,461,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000415.jpg 499,45,712,141,1 751,431,815,456,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000420.jpg 487,27,706,128,1 750,429,816,452,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1078.MP4/frame_000425.jpg 484,20,704,123,1 749,427,815,450,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1079.MP4/frame_000000.jpg 484,21,705,123,1 748,427,816,447,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1079.MP4/frame_000070.jpg 361,276,470,324,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1079.MP4/frame_000255.jpg 935,440,992,457,1 678,491,719,502,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1079.MP4/frame_000260.jpg 936,429,995,447,1 667,483,711,497,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1079.MP4/frame_000265.jpg 936,417,999,437,1 657,476,701,489,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1079.MP4/frame_000270.jpg 935,407,1000,428,1 649,474,692,486,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1079.MP4/frame_000275.jpg 934,401,1002,423,1 643,471,686,484,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1079.MP4/frame_000280.jpg 934,397,1003,419,1 636,470,684,483,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1079.MP4/frame_000285.jpg 933,392,1004,415,1 632,468,681,481,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1079.MP4/frame_000290.jpg 933,389,1005,414,1 630,468,677,481,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1079.MP4/frame_000295.jpg 933,388,1006,412,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1079.MP4/frame_000310.jpg 628,468,676,482,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1080.MP4/frame_000440.jpg 859,545,876,551,2 733,554,747,559,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1084.MP4/frame_000395.jpg 827,348,912,373,2 1020,483,1065,495,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1084.MP4/frame_000400.jpg 812,320,907,348,2 1023,478,1067,492,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1084.MP4/frame_000405.jpg 790,287,897,316,2 1023,474,1070,488,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1084.MP4/frame_000410.jpg 767,245,886,282,2 1021,468,1070,484,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1084.MP4/frame_000415.jpg 740,196,873,239,2 1016,458,1069,473,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1084.MP4/frame_000420.jpg 714,148,860,204,2 1013,448,1068,465,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1084.MP4/frame_000430.jpg 670,77,839,142,1 1009,442,1072,459,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1084.MP4/frame_000435.jpg 658,56,833,128,1 1009,440,1071,458,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1084.MP4/frame_000440.jpg 654,46,831,121,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1085.MP4/frame_000305.jpg 1008,443,1069,460,1 654,48,831,130,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1085.MP4/frame_000375.jpg 1008,442,1068,461,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1085.MP4/frame_000460.jpg 1008,445,1069,463,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1085.MP4/frame_000465.jpg 649,41,829,127,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1085.MP4/frame_000470.jpg 643,26,827,113,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1085.MP4/frame_000475.jpg 1008,444,1069,461,1 627,0,820,86,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1085.MP4/frame_000485.jpg 984,439,1048,459,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1086.MP4/frame_000130.jpg 1012,447,1069,467,1 753,508,791,519,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1122.MP4/frame_000575.jpg 944,416,1007,437,1 835,516,866,524,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1122.MP4/frame_000580.jpg 948,398,1020,421,1 832,514,865,521,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1122.MP4/frame_000590.jpg 953,342,1039,373,1 821,499,859,510,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1122.MP4/frame_000595.jpg 946,299,1043,334,1 809,487,848,496,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1122.MP4/frame_000600.jpg 940,263,1051,307,1 799,487,841,497,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000000.jpg 940,247,1055,293,1 797,483,839,495,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000005.jpg 936,218,1061,269,1 792,480,835,492,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000010.jpg 934,179,1071,236,1 785,476,829,488,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000015.jpg 933,150,1078,212,1 781,474,826,486,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000020.jpg 931,131,1085,197,1 779,473,824,486,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000025.jpg 931,122,1087,191,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000030.jpg 778,475,824,487,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000375.jpg 943,458,995,473,1 873,540,900,547,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000380.jpg 938,440,998,458,1 865,538,894,546,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000385.jpg 933,407,1000,428,1 857,525,887,534,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000390.jpg 924,386,1000,411,1 849,527,879,536,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000400.jpg 918,326,1015,359,1 841,517,874,527,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000405.jpg 922,300,1029,337,1 842,516,877,526,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000410.jpg 923,270,1037,312,1 842,510,877,520,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000415.jpg 923,246,1045,291,1 838,506,876,517,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000420.jpg 921,230,1048,279,1 836,504,875,515,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000430.jpg 920,226,1050,277,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1123.MP4/frame_000435.jpg 836,507,875,518,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1134.MP4/frame_000230.jpg 641,268,776,300,2 851,509,890,517,2 909,549,932,557,0 885,564,901,570,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1134.MP4/frame_000235.jpg 625,244,767,276,2 850,505,890,512,2 910,546,932,554,0 885,560,901,566,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1134.MP4/frame_000250.jpg 601,215,752,250,2 848,502,889,509,2 881,558,897,565,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1134.MP4/frame_000255.jpg 601,217,752,252,2 848,504,889,512,2 881,561,897,567,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1134.MP4/frame_000265.jpg 882,561,898,567,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1134.MP4/frame_000270.jpg 885,561,901,568,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1134.MP4/frame_000315.jpg 913,546,932,554,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1134.MP4/frame_000335.jpg 596,214,749,249,1 848,505,888,513,1 914,548,932,555,1 885,563,900,570,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1134.MP4/frame_000340.jpg 589,208,746,245,1 914,548,933,556,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1134.MP4/frame_000350.jpg 574,192,735,229,1 846,506,887,514,1 913,549,932,556,1 886,564,900,571,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1134.MP4/frame_000355.jpg 568,185,732,223,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1134.MP4/frame_000440.jpg 886,564,903,571,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1135.MP4/frame_000015.jpg 568,183,732,222,1 845,504,887,513,1 914,549,931,555,1 885,564,900,570,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1135.MP4/frame_000070.jpg 914,549,931,556,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1135.MP4/frame_000110.jpg 885,564,900,569,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1135.MP4/frame_000155.jpg 914,548,931,556,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1135.MP4/frame_000190.jpg 913,548,932,556,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1135.MP4/frame_000245.jpg 912,549,932,555,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1155.MP4/frame_000160.jpg 929,519,952,527,2 935,565,950,569,2 1068,521,1090,527,0 1017,555,1025,577,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1155.MP4/frame_000165.jpg 923,504,949,512,2 932,560,945,564,2 1082,507,1105,514,0 1023,546,1031,572,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1155.MP4/frame_000170.jpg 919,490,950,500,2 932,561,947,566,2 1100,496,1128,505,0 1035,541,1044,569,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1155.MP4/frame_000175.jpg 917,453,955,465,2 933,544,949,549,2 1129,464,1161,474,0 1053,514,1064,548,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1155.MP4/frame_000180.jpg 913,416,958,431,2 934,535,952,540,2 1162,435,1201,447,0 1074,493,1088,532,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1155.MP4/frame_000185.jpg 906,367,961,387,2 934,525,953,531,2 1204,397,1248,415,0 1100,467,1118,513,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1155.MP4/frame_000520.jpg 1345,234,1408,368,2 1526,120,1620,174,2 925,510,951,518,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1165.MP4/frame_000355.jpg 1220,352,1304,375,1 1059,513,1094,523,1 140,412,177,425,0 1417,444,1446,460,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1165.MP4/frame_000380.jpg 140,411,177,426,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1165.MP4/frame_000400.jpg 1417,444,1446,463,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1165.MP4/frame_000460.jpg 140,410,175,426,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1165.MP4/frame_000515.jpg 140,409,175,427,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1223.MP4/frame_000535.jpg 741,495,789,505,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1223.MP4/frame_000540.jpg 730,487,781,497,2 841,536,872,544,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1223.MP4/frame_000555.jpg 692,461,753,474,2 835,526,868,535,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1234.MP4/frame_000130.jpg 972,432,1028,450,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000075.jpg 968,476,1002,489,2 957,533,980,542,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000080.jpg 963,463,999,477,2 950,528,974,536,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000090.jpg 965,430,1008,446,2 950,517,973,525,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000110.jpg 984,324,1053,356,1 961,497,991,509,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000115.jpg 991,304,1066,338,1 965,495,995,508,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000120.jpg 995,287,1074,323,1 967,492,998,504,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000125.jpg 997,278,1078,316,1 968,490,999,503,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000130.jpg 969,490,1000,504,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000140.jpg 968,492,1000,505,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000170.jpg 997,279,1079,319,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000430.jpg 969,493,1000,505,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000525.jpg 969,495,1000,507,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000530.jpg 969,494,1001,507,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000535.jpg 1000,273,1084,315,1 970,494,1002,506,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000540.jpg 1000,265,1086,307,1 971,492,1003,503,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000545.jpg 1002,253,1089,298,1 971,490,1003,502,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000550.jpg 1007,242,1097,289,1 974,490,1006,502,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1262.MP4/frame_000555.jpg 1010,228,1103,276,1 975,487,1009,500,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1263.MP4/frame_000020.jpg 0,48,81,123,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1276.MP4/frame_000065.jpg 782,382,913,404,1 1076,531,1106,537,1 985,547,992,578,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1276.MP4/frame_000070.jpg 769,370,903,395,1 1073,530,1102,536,1 979,547,986,578,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1276.MP4/frame_000075.jpg 755,361,893,386,1 1068,531,1100,537,1 973,546,981,579,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1276.MP4/frame_000080.jpg 744,352,888,378,1 1066,530,1098,536,1 968,547,977,579,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1276.MP4/frame_000085.jpg 731,341,880,370,1 1063,527,1094,533,1 965,546,973,578,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1276.MP4/frame_000090.jpg 728,333,879,362,1 1063,525,1094,531,1 964,545,973,577,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1276.MP4/frame_000095.jpg 964,543,972,575,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1276.MP4/frame_000100.jpg 1062,526,1094,531,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1276.MP4/frame_000110.jpg 1062,526,1094,532,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1276.MP4/frame_000155.jpg 1062,525,1094,532,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1277.MP4/frame_000005.jpg 724,334,878,363,1 964,543,972,576,1 1061,525,1095,532,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000475.jpg 1193,455,1227,469,2 1037,498,1062,507,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000480.jpg 1105,455,1141,468,2 946,502,972,511,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000485.jpg 1054,450,1091,464,2 885,500,914,510,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000490.jpg 1022,447,1061,462,2 846,502,876,512,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000505.jpg 924,418,972,437,1 727,492,760,505,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000510.jpg 913,405,964,425,1 710,486,744,498,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000515.jpg 906,392,959,414,1 695,481,731,494,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000520.jpg 900,383,956,406,1 685,478,721,491,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000530.jpg 892,354,955,380,1 667,465,705,478,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000535.jpg 888,341,953,369,1 659,461,698,475,1 956,518,971,524,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000540.jpg 885,334,953,363,1 651,462,692,475,1 956,520,971,526,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000545.jpg 883,328,951,359,1 647,461,689,475,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1278.MP4/frame_000560.jpg 882,325,952,356,1 645,459,687,475,1 956,521,971,527,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1281.MP4/frame_000550.jpg 830,479,875,489,2 772,538,793,543,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1281.MP4/frame_000555.jpg 830,481,876,490,2 773,539,794,545,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1281.MP4/frame_000570.jpg 830,482,876,492,2 773,540,794,545,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1283.MP4/frame_000405.jpg 829,482,876,491,1 773,540,794,545,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1289.MP4/frame_000000.jpg 914,344,1014,370,1 960,526,986,533,1 838,541,847,562,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1297.MP4/frame_000440.jpg 951,467,989,482,1 823,517,850,525,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1297.MP4/frame_000450.jpg 948,448,992,465,1 811,511,842,520,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1297.MP4/frame_000455.jpg 948,445,993,462,1 806,512,837,521,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1297.MP4/frame_000460.jpg 948,438,996,456,1 803,510,834,520,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1297.MP4/frame_000465.jpg 948,433,997,452,1 800,508,831,519,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1297.MP4/frame_000470.jpg 949,429,999,448,1 798,508,830,518,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1297.MP4/frame_000475.jpg 948,427,1000,447,1 797,507,829,517,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1297.MP4/frame_000480.jpg 948,430,1000,449,1 797,509,829,519,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1297.MP4/frame_000540.jpg 798,509,830,520,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1316.MP4/frame_000050.jpg 841,159,988,220,2 771,527,802,535,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1316.MP4/frame_000055.jpg 791,0,999,58,2 757,515,788,525,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1316.MP4/frame_000060.jpg 737,511,770,520,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1316.MP4/frame_000070.jpg 680,488,720,498,2 1058,0,1279,78,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1316.MP4/frame_000075.jpg 654,472,700,485,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1317.MP4/frame_000040.jpg 654,522,679,532,2 383,529,403,537,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1317.MP4/frame_000050.jpg 698,488,729,500,2 381,501,406,511,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1317.MP4/frame_000060.jpg 431,480,460,491,2 811,440,853,457,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1317.MP4/frame_000065.jpg 879,426,925,445,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1317.MP4/frame_000070.jpg 926,381,986,407,2 437,473,475,487,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1317.MP4/frame_000080.jpg 323,405,380,426,2 1042,153,1161,221,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1318.MP4/frame_000475.jpg 1126,428,1172,448,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1318.MP4/frame_000480.jpg 1127,427,1173,446,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1318.MP4/frame_000495.jpg 1128,425,1175,444,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1330.MP4/frame_000140.jpg 1001,456,1064,473,1 737,541,766,548,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1330.MP4/frame_000165.jpg 736,542,766,549,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1330.MP4/frame_000175.jpg 1002,455,1067,473,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1330.MP4/frame_000190.jpg 1004,451,1069,470,1 733,542,763,549,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1330.MP4/frame_000195.jpg 1005,448,1071,469,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1330.MP4/frame_000200.jpg 1005,450,1072,469,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1330.MP4/frame_000290.jpg 1005,448,1072,467,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1331.MP4/frame_000005.jpg 1005,448,1072,467,1 729,541,762,549,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000320.jpg 978,564,991,601,1 1100,467,1122,526,1 758,530,795,541,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000325.jpg 985,564,999,604,1 1123,454,1150,520,1 755,529,794,541,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000330.jpg 993,571,1007,613,1 1153,442,1182,519,1 751,535,791,548,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000335.jpg 1011,564,1027,612,1 1202,407,1238,497,1 754,529,797,542,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000345.jpg 1068,537,1088,596,1 1388,271,1444,410,1 766,507,815,521,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000350.jpg 1103,502,1127,572,1 1566,117,1659,304,1 769,477,821,493,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000355.jpg 1141,483,1169,565,1 763,473,820,490,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000360.jpg 1195,446,1233,549,1 756,458,816,477,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000365.jpg 1283,391,1335,525,1 746,443,812,464,0
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000370.jpg 1438,292,1520,486,1 734,427,808,449,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000375.jpg 720,408,803,432,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000380.jpg 700,371,795,399,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000385.jpg 680,329,788,363,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000390.jpg 649,283,773,324,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000395.jpg 609,226,755,277,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000400.jpg 560,169,729,233,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN1334.MP4/frame_000405.jpg 496,83,697,166,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2156.MP4/frame_000355.jpg 415,252,515,290,2 942,451,968,459,2 748,477,768,483,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2156.MP4/frame_000370.jpg 934,437,967,447,2 700,469,725,475,2
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2156.MP4/frame_000375.jpg 928,444,964,453,2 676,479,703,486,2 1665,317,1724,345,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2156.MP4/frame_000380.jpg 920,424,960,436,2 649,468,676,475,2 1797,267,1864,300,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2156.MP4/frame_000385.jpg 916,388,962,401,1 621,445,652,453,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2156.MP4/frame_000390.jpg 929,377,984,392,1 606,448,640,457,1 389,355,408,427,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2156.MP4/frame_000395.jpg 973,347,1037,364,1 607,437,647,448,1 330,321,354,404,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2156.MP4/frame_000400.jpg 1038,298,1118,321,1 616,424,660,436,1 249,275,278,376,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2156.MP4/frame_000405.jpg 1134,217,1239,251,1 622,407,671,420,1 121,208,161,334,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2156.MP4/frame_000410.jpg 1300,77,1446,133,1 623,385,683,403,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2156.MP4/frame_000595.jpg 577,411,616,422,1 623,433,650,440,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2156.MP4/frame_000600.jpg 592,404,631,415,1 641,429,669,436,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2157.MP4/frame_000000.jpg 601,403,641,414,1 651,428,680,436,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2157.MP4/frame_000005.jpg 613,405,653,415,1 668,431,696,439,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2157.MP4/frame_000010.jpg 627,403,670,414,1 685,431,715,440,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2157.MP4/frame_000015.jpg 635,398,682,410,1 698,427,729,437,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2157.MP4/frame_000020.jpg 641,394,689,408,1 707,425,735,434,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2157.MP4/frame_000025.jpg 646,390,697,405,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2157.MP4/frame_000030.jpg 649,389,699,403,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2157.MP4/frame_000035.jpg 647,386,697,400,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2157.MP4/frame_000045.jpg 647,387,696,401,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2157.MP4/frame_000055.jpg 647,388,696,402,1
+/home/tsneg-aimm/Garmin/countdowns/images/Tom_0922_0929/GRMN2158.MP4/frame_000000.jpg 647,386,697,401,1

@@ -1,6 +1,7 @@
 from core.common import MishLayer,BatchNormalization
 from absl import app, flags, logging
 from absl.flags import FLAGS
+from core.accumulator import Accumulator
 import os
 import shutil
 import tensorflow as tf
@@ -10,13 +11,16 @@ from core.config import cfg
 import numpy as np
 from core import utils
 from core.utils import freeze_all, unfreeze_all
+from tqdm import tqdm
 import tensorflow_model_optimization as tfmot
 
 flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
 flags.DEFINE_string('weights', None, 'pretrained weights')
 flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
 flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
+flags.DEFINE_string('save_dir', 'checkpoints/test', 'save model dir')
 tf.config.optimizer.set_jit(True)
+
 def apply_quantization(layer):
     if isinstance(layer, tf.python.keras.engine.base_layer.TensorFlowOpLayer):
          return layer
@@ -39,7 +43,8 @@ def main(_argv):
 
     trainset = Dataset(FLAGS, is_training=True)
     testset = Dataset(FLAGS, is_training=False)
-    logdir = "./data/log"
+    os.makedirs(FLAGS.save_dir, exist_ok=True)
+    logdir = os.path.join(FLAGS.save_dir, 'logs')
     isfreeze = False
     steps_per_epoch = len(trainset)
     first_stage_epochs = cfg.TRAIN.FISRT_STAGE_EPOCHS
@@ -102,7 +107,7 @@ def main(_argv):
     if os.path.exists(logdir): shutil.rmtree(logdir)
     writer = tf.summary.create_file_writer(logdir)
 
-    # define training step function
+    @tf.function
     def train_step(image_data, target):
         with tf.GradientTape() as tape:
             pred_result = model(image_data, training=True)
@@ -120,20 +125,10 @@ def main(_argv):
 
             gradients = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(gradients, model.trainable_variables))
-            if global_steps%200==0 : 
-                tf.print("=> STEP %4d/%4d   lr: %.6f   giou_loss: %4.2f   conf_loss: %4.2f   "
-                     "prob_loss: %4.2f   total_loss: %4.2f" % (global_steps, total_steps, optimizer.lr.numpy(),
-                                                               giou_loss, conf_loss,
-                                                               prob_loss, total_loss))
-            # update learning rate
-            global_steps.assign_add(1)
-            if global_steps < warmup_steps:
-                lr = global_steps / warmup_steps * cfg.TRAIN.LR_INIT
-            else:
-                lr = cfg.TRAIN.LR_END + 0.5 * (cfg.TRAIN.LR_INIT - cfg.TRAIN.LR_END) * (
-                    (1 + tf.cos((global_steps - warmup_steps) / (total_steps - warmup_steps) * np.pi))
-                )
-            optimizer.lr.assign(lr.numpy())
+            
+
+            # optimizer.lr.assign(lr)
+
 
             # writing summary data
             with writer.as_default():
@@ -143,6 +138,11 @@ def main(_argv):
                 tf.summary.scalar("loss/conf_loss", conf_loss, step=global_steps)
                 tf.summary.scalar("loss/prob_loss", prob_loss, step=global_steps)
             writer.flush()
+            return {
+                'giou_loss': giou_loss, 
+                'conf_loss': conf_loss, 
+                'prob_loss': prob_loss
+            }
 
     # @tf.function
     def test_step(image_data, target):
@@ -159,10 +159,11 @@ def main(_argv):
                 prob_loss += loss_items[2]
 
             total_loss = giou_loss + conf_loss + prob_loss
-            if global_steps%200==0 : 
-                tf.print("=> TEST STEP %4d   giou_loss: %4.2f   conf_loss: %4.2f   "
-                     "prob_loss: %4.2f   total_loss: %4.2f" % (global_steps, giou_loss, conf_loss,
-                                                               prob_loss, total_loss))
+        return {
+            'giou_loss': giou_loss, 
+            'conf_loss': conf_loss, 
+            'prob_loss': prob_loss
+        }
 
     for epoch in range(first_stage_epochs + second_stage_epochs):
         if epoch < first_stage_epochs:
@@ -183,16 +184,72 @@ def main(_argv):
                     else:
                         freeze = model.get_layer(name)
                     unfreeze_all(freeze)
-        for image_data, target in trainset:
-            train_step(image_data, target)
-        for image_data, target in testset:
-            test_step(image_data, target)
+        
 
+        giou_loss_counter = Accumulator()
+        conf_loss_counter = Accumulator()
+        prob_loss_counter = Accumulator()
+        with tqdm(total=len(trainset), ncols=100) as pbar:
+            for image_data, target in trainset:
+                batch_size = image_data.shape[0]
+                loss_dict = train_step(image_data, target)
 
-        #model.summary()
-        # original 
-        model.save_weights("./checkpoints/yolo")
-        #tf.saved_model.save(model, "./checkpoints/yolov4")
+                giou_loss_counter.update(loss_dict['giou_loss'], batch_size)
+                conf_loss_counter.update(loss_dict['conf_loss'], batch_size)
+                prob_loss_counter.update(loss_dict['prob_loss'], batch_size)
+
+                # update learning rate
+                global_steps.assign_add(1)
+                if global_steps < warmup_steps:
+                    lr = global_steps / warmup_steps * cfg.TRAIN.LR_INIT
+                else:
+                    lr = cfg.TRAIN.LR_END + 0.5 * (cfg.TRAIN.LR_INIT - cfg.TRAIN.LR_END) * (
+                        (1 + tf.cos((global_steps - warmup_steps) / (total_steps - warmup_steps) * np.pi)))
+                optimizer.lr.assign(lr.numpy())
+
+                total = giou_loss_counter.get_average() \
+                    + conf_loss_counter.get_average() \
+                    + prob_loss_counter.get_average()
+
+                pbar.set_postfix({
+                    'giou_loss': f"{giou_loss_counter.get_average():6.4f}",
+                    'conf_loss_counter': f"{conf_loss_counter.get_average():6.4f}",
+                    'prob_loss_counter': f"{prob_loss_counter.get_average():6.4f}",
+                    'total': f"{total: 6.4f}"
+                })
+                current_epoch = epoch + 1
+                total_epoch = first_stage_epochs + second_stage_epochs
+                pbar.set_description(f"Epoch {current_epoch:3d}/{total_epoch:3d}")
+                pbar.update(1)
+
+        if epoch % 5 == 0:
+            giou_loss_counter.reset()
+            conf_loss_counter.reset()
+            prob_loss_counter.reset()
+            with tqdm(total=len(testset), ncols=100) as pbar:
+                batch_size = image_data.shape[0]
+                for image_data, target in testset:
+                    batch_size = image_data.shape[0]
+                    loss_dict = test_step(image_data, target)
+
+                    giou_loss_counter.update(loss_dict['giou_loss'], batch_size)
+                    conf_loss_counter.update(loss_dict['conf_loss'], batch_size)
+                    prob_loss_counter.update(loss_dict['prob_loss'], batch_size)
+                    total = giou_loss_counter.get_average() \
+                        + conf_loss_counter.get_average() \
+                        + prob_loss_counter.get_average()
+
+                    pbar.set_postfix({
+                        'giou_loss': f"{giou_loss_counter.get_average():6.4f}",
+                        'conf_loss_counter': f"{conf_loss_counter.get_average():6.4f}",
+                        'prob_loss_counter': f"{prob_loss_counter.get_average():6.4f}",
+                        'total': f"{total: 6.4f}"
+                    })
+                    pbar.set_description(f"Testing")
+                    pbar.update(1)
+
+        model.save_weights(os.path.join(FLAGS.save_dir, 'yolo'))
+        
 if __name__ == '__main__':
     try:
         app.run(main)

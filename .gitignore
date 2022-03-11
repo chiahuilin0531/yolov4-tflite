@@ -6,3 +6,4 @@ checkpoints
 data/
 datasets
 mAP/*.json
+mAP/*.txt

@@ -65,6 +65,7 @@ def main(_argv):
             image_path = annotation[0]
             image_name = image_path.split('/')[-1]
             image = cv2.imread(image_path)
+            print(image_path)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
             # Process Annotation in each line 
@@ -76,7 +77,7 @@ def main(_argv):
                 bboxes_gt, classes_gt = bbox_data_gt[:, :4], bbox_data_gt[:, 4]
             ground_truth_path = os.path.join(ground_truth_dir_path, str(num) + '.txt')
 
-            print('=> ground truth of %s:' % image_name)
+            # print('=> ground truth of %s:' % image_name)
             num_bbox_gt = len(bboxes_gt)
             # Write ground truth  Of each image and write them to another folder
             with open(ground_truth_path, 'w') as f:
@@ -85,9 +86,9 @@ def main(_argv):
                     xmin, ymin, xmax, ymax = list(map(str, bboxes_gt[i]))
                     bbox_mess = ' '.join([class_name, xmin, ymin, xmax, ymax]) + '\n'
                     f.write(bbox_mess)
-                    print('\t' + str(bbox_mess).strip())
+                    # print('\t' + str(bbox_mess).strip())
 
-            print('=> predict result of %s:' % image_name)
+            # print('=> predict result of %s:' % image_name)
             predict_result_path = os.path.join(predicted_dir_path, str(num) + '.txt')
             # Predict Process
             image_size = image.shape[:2]
@@ -107,12 +108,16 @@ def main(_argv):
             elif FLAGS.framework == 'tf_ckpt':
                 batch_data = tf.constant(image_data)
                 pred_bbox = infer(batch_data)
-                boxes = pred_bbox[0] / np.array([INPUT_SIZE,INPUT_SIZE,INPUT_SIZE,INPUT_SIZE], dtype='float32')
-                boxes = tf.concat([
-                    (boxes[..., :2] - boxes[..., 2:] / 2.0)[...,::-1],
-                    (boxes[..., :2] + boxes[..., 2:] / 2.0)[...,::-1],
-                ], axis=-1)
-                pred_conf = pred_bbox[1]
+                print(pred_bbox.shape)
+                # boxes = pred_bbox[0] / np.array([INPUT_SIZE,INPUT_SIZE,INPUT_SIZE,INPUT_SIZE], dtype='float32')
+                # boxes = tf.concat([
+                #     (boxes[..., :2] - boxes[..., 2:] / 2.0)[...,::-1],
+                #     (boxes[..., :2] + boxes[..., 2:] / 2.0)[...,::-1],
+                # ], axis=-1)
+                # pred_conf = pred_bbox[1]
+
+                boxes = pred_bbox[..., :4]
+                pred_conf = pred_bbox[..., 4:]
             elif FLAGS.framework == 'tf':
                 batch_data = tf.constant(image_data)
                 pred_bbox = infer(batch_data)
@@ -151,7 +156,7 @@ def main(_argv):
                     ymin, xmin, ymax, xmax = list(map(str, coor))
                     bbox_mess = f'{class_name:6s} {xmin:>4s} {ymin:>4s} {xmax:>4s} {ymax:>4s} {score}'
                     f.write(' '.join([class_name, score, xmin, ymin, xmax, ymax]) + '\n')
-                    print('\t' + str(bbox_mess).strip())
+                    # print('\t' + str(bbox_mess).strip())
             print(f'{num:5d}/{num_lines:5d}')
 
 if __name__ == '__main__':

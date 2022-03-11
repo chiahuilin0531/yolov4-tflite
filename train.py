@@ -16,7 +16,7 @@ flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
 flags.DEFINE_string('weights', None, 'pretrained weights')
 flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
 flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
-
+tf.config.optimizer.set_jit(True)
 def apply_quantization(layer):
     if isinstance(layer, tf.python.keras.engine.base_layer.TensorFlowOpLayer):
          return layer
@@ -103,7 +103,6 @@ def main(_argv):
     writer = tf.summary.create_file_writer(logdir)
 
     # define training step function
-    @tf.function
     def train_step(image_data, target):
         with tf.GradientTape() as tape:
             pred_result = model(image_data, training=True)
@@ -145,7 +144,7 @@ def main(_argv):
                 tf.summary.scalar("loss/prob_loss", prob_loss, step=global_steps)
             writer.flush()
 
-    @tf.function
+    # @tf.function
     def test_step(image_data, target):
         with tf.GradientTape() as tape:
             pred_result = model(image_data, training=True)
@@ -192,7 +191,7 @@ def main(_argv):
 
         #model.summary()
         # original 
-        model.save_weights("./data/yolo/yolo")
+        model.save_weights("./checkpoints/yolo")
         #tf.saved_model.save(model, "./checkpoints/yolov4")
 if __name__ == '__main__':
     try:

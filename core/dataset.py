@@ -42,8 +42,8 @@ class Dataset(object):
 
     def load_annotations(self):
         annotations=[]
-        for annotations in self.annot_paths:
-            with open(self.annot_path, "r") as f:
+        for annot_path in self.annot_paths:
+            with open(annot_path, "r") as f:
                 txt = f.readlines()
                 if self.dataset_type == "converted_coco":
                     annotations += [

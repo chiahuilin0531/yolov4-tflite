@@ -26,9 +26,18 @@ __C.YOLO.IOU_LOSS_THRESH      = 0.5
 # Train options
 __C.TRAIN                     = edict()
 
+# __C.TRAIN.ANNOT_PATHS          = [
+#     "/mnt/HDD2/WeiJie/annotation/scale_aware_data_selection/train_1cls.txt",
+#     "/mnt/HDD2/WeiJie/annotation/scale_aware_data_selection_2/train_1cls.txt",
+#     "/mnt/HDD2/WeiJie/annotation/scale_aware_data_selection_3/train_1cls.txt",
+# ]
+
 __C.TRAIN.ANNOT_PATHS          = [
-    "/mnt/HDD1/Tzuchi/annotation/scale_aware_data_selection_3/train_1cls.txt"
+    "/mnt/HDD2/WeiJie/annotation/data_selection/train_1cls.txt",
+    "/mnt/HDD2/WeiJie/annotation/data_selection_2/train_1cls.txt",
+    "/mnt/HDD2/WeiJie/annotation/data_selection_3/train_1cls.txt",
 ]
+
 __C.TRAIN.BATCH_SIZE          = 8 #2
 # __C.TRAIN.INPUT_SIZE        = [320, 352, 384, 416, 448, 480, 512, 544, 576, 608]
 __C.TRAIN.INPUT_SIZE          = 608
@@ -46,6 +55,8 @@ __C.TEST                      = edict()
 
 #__C.TEST.ANNOT_PATHS           = ["./data/dataset/gis_val_1.txt"]
 __C.TEST.ANNOT_PATHS           = [
+    "/mnt/HDD1/Tzuchi/annotation/data_selection/val_1cls.txt",
+    "/mnt/HDD1/Tzuchi/annotation/data_selection_2/val_1cls.txt",
     "/mnt/HDD1/Tzuchi/annotation/data_selection_3/val_1cls.txt"
 ]
 __C.TEST.BATCH_SIZE           = 2

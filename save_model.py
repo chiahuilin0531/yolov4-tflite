@@ -9,7 +9,7 @@ import tensorflow_model_optimization as tfmot
 
 flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
 flags.DEFINE_string('output', './checkpoints/yolov4-416', 'path to output')
-flags.DEFINE_boolean('tiny', False, 'is yolo-tiny or not')
+flags.DEFINE_boolean('tiny', True, 'is yolo-tiny or not')
 flags.DEFINE_integer('input_size', 416, 'define input size of export model')
 flags.DEFINE_float('score_thres', 0.2, 'define score threshold')
 flags.DEFINE_string('framework', 'tf', 'define what framework do you want to convert (tf, trt, tflite)')
@@ -69,14 +69,14 @@ def save_tf():
       bbox_tensors.append(output_tensors[0])
       prob_tensors.append(output_tensors[1])
   pred_bbox = tf.concat(bbox_tensors, axis=1)
-  # print('pred_bbox:',pred_bbox)
   pred_prob = tf.concat(prob_tensors, axis=1)
   if FLAGS.framework == 'tflite':
     pred = (pred_bbox, pred_prob)
-  else:
+  elif FLAGS.framework == 'tf':
     boxes, pred_conf = filter_boxes(pred_bbox, pred_prob, score_threshold=FLAGS.score_thres, input_shape=tf.constant([FLAGS.input_size, FLAGS.input_size]))
     pred = tf.concat([boxes, pred_conf], axis=-1)
-
+  else:
+    raise NotImplementedError(f'No such framework {FLAGS.framework}')
   ## ori code
   # model = tf.keras.Model(input_layer, pred)
   # utils.load_weights(model, FLAGS.weights, FLAGS.model, FLAGS.tiny)
@@ -112,8 +112,8 @@ def save_tf():
   # tflite_model = converter.convert()
   # open("./checkpoints/yolov4-tiny-gis-320-int8.tflite", 'wb').write(tflite_model)
 
-  flops = get_flops(model, batch_size=1)
-  print(f"FLOPS: {flops / 10 ** 9:.03} G")
+  # flops = get_flops(model, batch_size=1)
+  # print(f"FLOPS: {flops / 10 ** 9:.03} G")
   
 
 def main(_argv):

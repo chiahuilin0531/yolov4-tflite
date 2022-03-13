@@ -2,8 +2,7 @@ from core.common import MishLayer,BatchNormalization
 from absl import app, flags, logging
 from absl.flags import FLAGS
 from core.accumulator import Accumulator
-import os
-import shutil
+import os, shutil
 import tensorflow as tf
 from core.yolov4 import YOLO, decode, compute_loss, decode_train
 from core.dataset_tiny import Dataset
@@ -16,9 +15,9 @@ import tensorflow_model_optimization as tfmot
 
 flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
 flags.DEFINE_string('weights', None, 'pretrained weights')
-flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
+flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
 flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
-flags.DEFINE_string('save_dir', 'checkpoints/test', 'save model dir')
+flags.DEFINE_string('save_dir', 'checkpoints/yolov4_tiny', 'save model dir')
 tf.config.optimizer.set_jit(True)
 
 def apply_quantization(layer):
@@ -37,13 +36,26 @@ def qa_train(model):
 
     quant_aware_model = tfmot.quantization.keras.quantize_apply(annotated_model)
     return quant_aware_model
-    
+
+def copytree(src, dst, symlinks=False, ignore=None):
+    for item in os.listdir(src):
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        if os.path.isdir(s):
+            shutil.copytree(s, d, symlinks, ignore)
+        else:
+            shutil.copy2(s, d)
+
 def main(_argv):
     physical_devices = tf.config.experimental.list_physical_devices('GPU')
 
     trainset = Dataset(FLAGS, is_training=True)
     testset = Dataset(FLAGS, is_training=False)
-    os.makedirs(FLAGS.save_dir, exist_ok=True)
+    
+    os.makedirs(FLAGS.save_dir, exist_ok=False)
+    os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)
+    copytree('./core', os.path.join(FLAGS.save_dir, 'config'))
+
     logdir = os.path.join(FLAGS.save_dir, 'logs')
     isfreeze = False
     steps_per_epoch = len(trainset)
@@ -189,7 +201,7 @@ def main(_argv):
         giou_loss_counter = Accumulator()
         conf_loss_counter = Accumulator()
         prob_loss_counter = Accumulator()
-        with tqdm(total=len(trainset), ncols=100) as pbar:
+        with tqdm(total=len(trainset), ncols=150) as pbar:
             for image_data, target in trainset:
                 batch_size = image_data.shape[0]
                 loss_dict = train_step(image_data, target)
@@ -213,8 +225,8 @@ def main(_argv):
 
                 pbar.set_postfix({
                     'giou_loss': f"{giou_loss_counter.get_average():6.4f}",
-                    'conf_loss_counter': f"{conf_loss_counter.get_average():6.4f}",
-                    'prob_loss_counter': f"{prob_loss_counter.get_average():6.4f}",
+                    'conf_loss': f"{conf_loss_counter.get_average():6.4f}",
+                    'prob_loss': f"{prob_loss_counter.get_average():6.4f}",
                     'total': f"{total: 6.4f}"
                 })
                 current_epoch = epoch + 1
@@ -226,7 +238,7 @@ def main(_argv):
             giou_loss_counter.reset()
             conf_loss_counter.reset()
             prob_loss_counter.reset()
-            with tqdm(total=len(testset), ncols=100) as pbar:
+            with tqdm(total=len(testset), ncols=150, desc="Test: ") as pbar:
                 batch_size = image_data.shape[0]
                 for image_data, target in testset:
                     batch_size = image_data.shape[0]
@@ -241,14 +253,13 @@ def main(_argv):
 
                     pbar.set_postfix({
                         'giou_loss': f"{giou_loss_counter.get_average():6.4f}",
-                        'conf_loss_counter': f"{conf_loss_counter.get_average():6.4f}",
-                        'prob_loss_counter': f"{prob_loss_counter.get_average():6.4f}",
+                        'conf_loss': f"{conf_loss_counter.get_average():6.4f}",
+                        'prob_loss': f"{prob_loss_counter.get_average():6.4f}",
                         'total': f"{total: 6.4f}"
                     })
-                    pbar.set_description(f"Testing")
                     pbar.update(1)
 
-        model.save_weights(os.path.join(FLAGS.save_dir, 'yolo'))
+            model.save_weights(os.path.join(FLAGS.save_dir, f'{epoch:04d}.ckpt'))
         
 if __name__ == '__main__':
     try:

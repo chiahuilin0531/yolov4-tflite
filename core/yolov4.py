@@ -165,9 +165,10 @@ def decode(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE=[1,
         return decode_trt(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=i, XYSCALE=XYSCALE)
     elif FRAMEWORK == 'tflite':
         return decode_tflite(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=i, XYSCALE=XYSCALE)
-    else:
+    elif FRAMEWORK == 'tf':
         return decode_tf(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=i, XYSCALE=XYSCALE)
-
+    else:
+        raise NotImplementedError(f'No such framewrok {FRAMEWORK}')
 def decode_train(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1, 1, 1]):
     conv_output = tf.reshape(conv_output,
                              (tf.shape(conv_output)[0], output_size, output_size, 3, 5 + NUM_CLASS))
@@ -290,6 +291,12 @@ def decode_trt(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCA
 
 
 def filter_boxes(box_xywh, scores, score_threshold=0.4, input_shape = tf.constant([416,416])):
+    """
+    Parameters
+    ----------
+    box_xywh: (None, None, 4)
+    scores: (None, None, num_of_cls)
+    """
     scores_max = tf.math.reduce_max(scores, axis=-1)
 
     mask = scores_max >= score_threshold

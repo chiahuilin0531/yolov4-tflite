@@ -13,7 +13,7 @@ from core.config import cfg
 class Dataset(object):
     """implement Dataset here"""
 
-    def __init__(self, FLAGS, is_training: bool, dataset_type: str = "converted_coco"):
+    def __init__(self, FLAGS, is_training: bool, dataset_type: str = "converted_coco", filter_area=123):
         self.tiny = FLAGS.tiny
         self.strides, self.anchors, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
         self.dataset_type = dataset_type
@@ -39,6 +39,7 @@ class Dataset(object):
         self.num_samples = len(self.annotations)
         self.num_batchs = int(np.ceil(self.num_samples / self.batch_size))
         self.batch_count = 0
+        self.filter_area = filter_area
 
     def load_annotations(self):
         annotations=[]
@@ -268,7 +269,12 @@ class Dataset(object):
             )
             bboxes = bboxes * np.array([width, height, width, height, 1])
             bboxes = bboxes.astype(np.int64)
-
+        
+        # Discard too small bounding box
+        area = (bboxes[:,0] - bboxes[:,2]) * (bboxes[:,1] - bboxes[:,3])
+        mask = area > self.filter_area
+        bboxes = bboxes[mask]
+        
         if self.data_aug:
             image, bboxes = self.random_horizontal_flip(
                 np.copy(image), np.copy(bboxes)

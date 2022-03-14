@@ -49,11 +49,13 @@ def copytree(src, dst, symlinks=False, ignore=None):
 def main(_argv):
     physical_devices = tf.config.experimental.list_physical_devices('GPU')
 
-    trainset = Dataset(FLAGS, is_training=True)
-    testset = Dataset(FLAGS, is_training=False)
+    trainset = Dataset(FLAGS, is_training=True, filter_area=123)
+    testset = Dataset(FLAGS, is_training=False, filter_area=123)
     
     os.makedirs(FLAGS.save_dir, exist_ok=False)
     os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)
+    os.makedirs(os.path.join(FLAGS.save_dir, 'ckpt'), exist_ok=True)
+
     copytree('./core', os.path.join(FLAGS.save_dir, 'config'))
 
     logdir = os.path.join(FLAGS.save_dir, 'logs')
@@ -137,10 +139,6 @@ def main(_argv):
 
             gradients = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(gradients, model.trainable_variables))
-            
-
-            # optimizer.lr.assign(lr)
-
 
             # writing summary data
             with writer.as_default():
@@ -156,7 +154,7 @@ def main(_argv):
                 'prob_loss': prob_loss
             }
 
-    # @tf.function
+    @tf.function
     def test_step(image_data, target):
         with tf.GradientTape() as tape:
             pred_result = model(image_data, training=True)
@@ -169,16 +167,17 @@ def main(_argv):
                 giou_loss += loss_items[0]
                 conf_loss += loss_items[1]
                 prob_loss += loss_items[2]
+        total_loss = giou_loss + conf_loss + prob_loss
 
-            total_loss = giou_loss + conf_loss + prob_loss
         return {
             'giou_loss': giou_loss, 
             'conf_loss': conf_loss, 
-            'prob_loss': prob_loss
+            'prob_loss': prob_loss,
+            'total_loss': total_loss
         }
 
-    for epoch in range(first_stage_epochs + second_stage_epochs):
-        if epoch < first_stage_epochs:
+    for epoch in range(1, 1+first_stage_epochs + second_stage_epochs):
+        if epoch <= first_stage_epochs:
             if not isfreeze:
                 isfreeze = True
                 for name in freeze_layers:
@@ -187,7 +186,7 @@ def main(_argv):
                     else:
                         freeze = model.get_layer(name)
                     freeze_all(freeze)
-        elif epoch >= first_stage_epochs:
+        elif epoch > first_stage_epochs:
             if isfreeze:
                 isfreeze = False
                 for name in freeze_layers:
@@ -197,7 +196,6 @@ def main(_argv):
                         freeze = model.get_layer(name)
                     unfreeze_all(freeze)
         
-
         giou_loss_counter = Accumulator()
         conf_loss_counter = Accumulator()
         prob_loss_counter = Accumulator()
@@ -224,6 +222,7 @@ def main(_argv):
                     + prob_loss_counter.get_average()
 
                 pbar.set_postfix({
+                    'lr': f"{lr.numpy():6.4f}",
                     'giou_loss': f"{giou_loss_counter.get_average():6.4f}",
                     'conf_loss': f"{conf_loss_counter.get_average():6.4f}",
                     'prob_loss': f"{prob_loss_counter.get_average():6.4f}",
@@ -238,7 +237,7 @@ def main(_argv):
             giou_loss_counter.reset()
             conf_loss_counter.reset()
             prob_loss_counter.reset()
-            with tqdm(total=len(testset), ncols=150, desc="Test: ") as pbar:
+            with tqdm(total=len(testset), ncols=150, desc=f"{'Test':<13}") as pbar:
                 batch_size = image_data.shape[0]
                 for image_data, target in testset:
                     batch_size = image_data.shape[0]
@@ -258,9 +257,18 @@ def main(_argv):
                         'total': f"{total: 6.4f}"
                     })
                     pbar.update(1)
-
-            model.save_weights(os.path.join(FLAGS.save_dir, f'{epoch:04d}.ckpt'))
+            
+            # writing summary data
+            with writer.as_default():
+                tf.summary.scalar("val/total_loss", total, step=epoch)
+                tf.summary.scalar("val/giou_loss", giou_loss_counter.get_average(), step=epoch)
+                tf.summary.scalar("val/conf_loss", conf_loss_counter.get_average(), step=epoch)
+                tf.summary.scalar("val/prob_loss", prob_loss_counter.get_average(), step=epoch)
+            
+            model.save_weights(os.path.join(FLAGS.save_dir, 'ckpt', f'{epoch:04d}.ckpt'))
         
+    model.save_weights(os.path.join(FLAGS.save_dir, 'ckpt', 'final.ckpt'))
+
 if __name__ == '__main__':
     try:
         app.run(main)

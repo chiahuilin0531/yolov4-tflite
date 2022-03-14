@@ -107,6 +107,11 @@ class Dataset(object):
                         index -= self.num_samples
                     annotation = self.annotations[index]
                     image, bboxes = self.parse_annotation(annotation)
+                    if bboxes.shape[0] == 0: 
+                        del self.annotations[index]
+                        self.num_samples = len(self.annotations)
+                        self.num_batchs = int(np.ceil(self.num_samples / self.batch_size))
+                        continue
                     (
                         label_bboxes,
                         bboxes,
@@ -224,7 +229,7 @@ class Dataset(object):
         mask = area > self.filter_area
         bboxes = bboxes[mask]
 
-        if self.data_aug:
+        if self.data_aug and bboxes.shape[0] != 0:
             image, bboxes = self.random_horizontal_flip(
                 np.copy(image), np.copy(bboxes)
             )

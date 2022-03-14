@@ -51,8 +51,6 @@ def main(_argv):
     #     infer = tf.keras.models.load_model(FLAGS.weights)
     #     infer.summary()
     elif FLAGS.framework == 'tf':
-        # saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
-        # infer = saved_model_loaded.signatures['serving_default']
         infer = tf.keras.models.load_model(FLAGS.weights)
     else:
         raise NotImplementedError(f"no such frame detected: {FLAGS.framework}")

@@ -5,7 +5,7 @@ from tqdm import tqdm
 import argparse
 import json
 from pycocotools.coco import COCO
-from pycocotools.cocoeval import COCOeval
+from cocoeval import COCOeval
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--label_dir', '--gt', default='./mAP/ground-truth',type=str, help="label_dir which contains txts or label_json in coco format")
@@ -95,7 +95,9 @@ l_json, p_json = yolo2coco(label_path,pred_path)
 cocoGt=COCO(l_json)
 cocoDt=cocoGt.loadRes(p_json)
 cocoEval = COCOeval(cocoGt,cocoDt,'bbox')
-cocoEval.params.areaRng = [[0 ** 2, 1e5 ** 2], [0 ** 2, 1022], [1022, 3809], [3809, 1e5 ** 2]]
+# cocoEval.params.areaRng = [[0 ** 2, 1e5 ** 2], [0 ** 2, 1022], [1022, 3809], [3809, 1e5 ** 2]]
+cocoEval.params.areaRng = [[123, 1e5 ** 2], [123, 341], [341, 768],  [768, 1e5 ** 2]]
+cocoEval.params.areaRngLbl=['all','small', 'medium', 'large']
 cocoEval.evaluate()
 cocoEval.accumulate()
 cocoEval.summarize()

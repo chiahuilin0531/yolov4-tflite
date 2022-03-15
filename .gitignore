@@ -9,3 +9,5 @@ mAP/*.txt
 mAP/*/*.txt
 mAP/*/*.png
 mAP/*/*/*.png
+visualize_anno
+output

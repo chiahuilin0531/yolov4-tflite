@@ -5,7 +5,7 @@ from tqdm import tqdm
 import argparse
 import json
 from pycocotools.coco import COCO
-from pycocotools.cocoeval import COCOeval
+from cocoeval import COCOeval
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--label_dir', '--gt', default='./mAP/ground-truth',type=str, help="label_dir which contains txts or label_json in coco format")

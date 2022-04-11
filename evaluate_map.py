@@ -257,6 +257,7 @@ def main(_argv):
 
     sys.stdout = open(os.path.join(os.path.dirname(FLAGS.weights), 'mAP.txt'), 'w')
     print(FLAGS.annotation_path)
+    print(FLAGS.weights)
     cocoEval.summarize()
     sys.stdout.close()
 

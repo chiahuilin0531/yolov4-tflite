@@ -103,7 +103,18 @@ def get_anchors(anchors_path, tiny=False):
         return anchors.reshape(3, 3, 2)
 
 def image_preprocess(image, target_size, gt_boxes=None):
+    """
+    Parameter
+    ---------
+    image: original image with (h,w,3)\\
+    target_size: [h,w]\\
+    gt_boxes: np.int32(num_bbox, 4+1)\\
 
+    Return
+    ------
+    image_paded: np.float32(h,w,3), image
+    gt_boxes: np.int64(num_of_bbox, 4+1)
+    """
     ih, iw    = target_size
     h,  w, _  = image.shape
 
@@ -383,3 +394,49 @@ def unfreeze_all(model, frozen=False):
         for l in model.layers:
             unfreeze_all(l, frozen)
 
+######################################################
+######### Numba Version of Code for accelerate  ######
+######################################################
+import numba as nb
+
+@nb.jit
+def bbox_iou_jit(bboxes1, bboxes2):
+    """
+    @param bboxes1: (a, b, ..., 4)
+    @param bboxes2: (A, B, ..., 4)
+        x:X is 1:n or n:n or n:1
+    @return (max(a,A), max(b,B), ...)
+    ex) (4,):(3,4) -> (3,)
+        (2,1,4):(2,3,4) -> (2,3)
+    """
+    bboxes1_area = bboxes1[..., 2] * bboxes1[..., 3]
+    bboxes2_area = bboxes2[..., 2] * bboxes2[..., 3]
+
+    bboxes1_coor = np.concatenate(
+        (
+            bboxes1[..., :2] - bboxes1[..., 2:] * 0.5,
+            bboxes1[..., :2] + bboxes1[..., 2:] * 0.5,
+        ),
+        axis=-1,
+    )
+    bboxes2_coor = np.concatenate(
+        (
+            bboxes2[..., :2] - bboxes2[..., 2:] * 0.5,
+            bboxes2[..., :2] + bboxes2[..., 2:] * 0.5,
+        ),
+        axis=-1,
+    )
+
+    left_up = np.maximum(bboxes1_coor[..., :2], bboxes2_coor[..., :2])
+    right_down = np.minimum(bboxes1_coor[..., 2:], bboxes2_coor[..., 2:])
+
+    inter_section = np.maximum(right_down - left_up, 0.0)
+    inter_area = inter_section[..., 0] * inter_section[..., 1]
+
+    union_area = bboxes1_area + bboxes2_area - inter_area
+
+    iou = inter_area / union_area
+    # nan_mask = 1.0 - np.isnan(iou).astype(np.float32)
+    # iou = iou * nan_mask
+
+    return iou

@@ -1,3 +1,4 @@
+import sys
 from core.common import MishLayer,BatchNormalization
 from absl import app, flags, logging
 from absl.flags import FLAGS
@@ -5,13 +6,14 @@ from core.accumulator import Accumulator
 import os, shutil
 import tensorflow as tf
 from core.yolov4 import YOLO, decode, compute_loss, decode_train
-from core.dataset_tiny import Dataset
+from core.dataset_tiny import Dataset, tfDataset
 from core.config import cfg
 import numpy as np
 from core import utils
 from core.utils import freeze_all, unfreeze_all
 from tqdm import tqdm
 import tensorflow_model_optimization as tfmot
+import time
 
 flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
 flags.DEFINE_string('weights', None, 'pretrained weights')
@@ -51,12 +53,19 @@ def main(_argv):
 
     trainset = Dataset(FLAGS, is_training=True, filter_area=123)
     testset = Dataset(FLAGS, is_training=False, filter_area=123)
+    #########################################################
+    trainset = tfDataset(FLAGS, is_training=True, filter_area=123).dataset_gen()
     
-    os.makedirs(FLAGS.save_dir, exist_ok=False)
+    os.makedirs(FLAGS.save_dir, exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'ckpt'), exist_ok=True)
 
     copytree('./core', os.path.join(FLAGS.save_dir, 'config'))
+    shutil.copy2('./train.py', os.path.join(FLAGS.save_dir, 'config','train.py'))
+    with open(os.path.join(FLAGS.save_dir, 'command.txt'), 'w') as f:
+        f.writelines(' '.join(sys.argv))
+    f.close()
+
 
     logdir = os.path.join(FLAGS.save_dir, 'logs')
     isfreeze = False
@@ -66,7 +75,6 @@ def main(_argv):
     global_steps = tf.Variable(1, trainable=False, dtype=tf.int64)
     warmup_steps = cfg.TRAIN.WARMUP_EPOCHS * steps_per_epoch
     total_steps = (first_stage_epochs + second_stage_epochs) * steps_per_epoch
-    # train_steps = (first_stage_epochs + second_stage_epochs) * steps_per_period
 
     input_layer = tf.keras.layers.Input([cfg.TRAIN.INPUT_SIZE, cfg.TRAIN.INPUT_SIZE, 3])
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
@@ -199,10 +207,21 @@ def main(_argv):
         giou_loss_counter = Accumulator()
         conf_loss_counter = Accumulator()
         prob_loss_counter = Accumulator()
-        with tqdm(total=len(trainset), ncols=150) as pbar:
-            for image_data, target in trainset:
+        tmp=time.time()
+        with tqdm(total=len(trainset), ncols=200) as pbar:
+            for data_item in trainset:
+                if isinstance(trainset, Dataset):
+                    image_data=data_item[0]
+                    target=data_item[1]
+                else:
+                    image_data=data_item[0]
+                    target = [data_item[1:3],data_item[3:5]]
+
+                data_time=time.time()-tmp
                 batch_size = image_data.shape[0]
+                tmp=time.time()
                 loss_dict = train_step(image_data, target)
+                model_time = time.time()-tmp
 
                 giou_loss_counter.update(loss_dict['giou_loss'], batch_size)
                 conf_loss_counter.update(loss_dict['conf_loss'], batch_size)
@@ -226,12 +245,15 @@ def main(_argv):
                     'giou_loss': f"{giou_loss_counter.get_average():6.4f}",
                     'conf_loss': f"{conf_loss_counter.get_average():6.4f}",
                     'prob_loss': f"{prob_loss_counter.get_average():6.4f}",
-                    'total': f"{total: 6.4f}"
+                    'total': f"{total: 6.4f}",
+                    'data_time': f'{data_time:8.6f}',
+                    'model_time': f'{model_time:8.6f}'
                 })
-                current_epoch = epoch + 1
                 total_epoch = first_stage_epochs + second_stage_epochs
-                pbar.set_description(f"Epoch {current_epoch:3d}/{total_epoch:3d}")
+                pbar.set_description(f"Epoch {epoch:3d}/{total_epoch:3d}")
                 pbar.update(1)
+
+                tmp=time.time()
 
         if epoch % 5 == 0:
             giou_loss_counter.reset()

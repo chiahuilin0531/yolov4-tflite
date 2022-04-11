@@ -1,0 +1,17 @@
+python ./evaluate.py --weights ./checkpoints/yolov4/ --tiny --annotation_path /mnt/HDD1/Tzuchi/annotation/data_selection_3/val_1cls.txt --input_size 608
+python ./convert_tflite.py --weights ./checkpoints/yolov4/ --output ./checkpoints/yolov4/fp32-698-1cls.tflite --input_size 608 
+
+
+save_model.py chekcpoint => pb   or   checkpoint => tflite
+txt_to_cocoeval_1cls.py  => 先把evaluate.py跑完後再這個算mAP (SML)
+
+先generate_two_data.py(生CNN ground truth) 再convert_two_stage_img.py(把one-class model圖片剪下來)
+
+
+convert_trt.py原本有的
+
+
+
+
+
+python ./evaluate.py  --weights ./data/model_dataselection_3/ --tiny --input_size 608 --annotation_path ../../annotation/data_selection_3/val_1cls.txt  

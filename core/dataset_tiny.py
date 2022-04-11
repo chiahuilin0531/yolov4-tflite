@@ -373,7 +373,7 @@ class Dataset(object):
 
 
 class tfDataset(object):
-    def __init__(self, FLAGS, is_training: bool, dataset_type: str = "converted_coco", filter_area=123):
+    def __init__(self, FLAGS, is_training: bool, dataset_type: str = "converted_coco", filter_area=123, use_imgaug=True):
         self.tiny = FLAGS.tiny
         self.strides, self.anchors, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
         self.dataset_type = dataset_type
@@ -401,6 +401,7 @@ class tfDataset(object):
         self.batch_count = 0
         self.filter_area = filter_area
         self.create_augment_env()
+        self.use_imgaug=use_imgaug
 
     def load_annotations(self):
         annotations = []
@@ -439,12 +440,13 @@ class tfDataset(object):
                                 continue
                             else:
                                 annotations.append(image_path + string)
+        np.random.seed(0)
+        np.random.shuffle(annotations)
         np.random.shuffle(annotations)
         return annotations
 
     def create_augment_env(self):
         seq = iaa.Sequential([
-            iaa.Fliplr(0.5),
             # iaa.Sometimes(p, 
             #     iaa.Affine(
             #         translate_percent={"x": (-0.05, 0.05), "y": (-0.05, 0.05)},
@@ -471,14 +473,15 @@ class tfDataset(object):
         
 
         if self.data_aug:
+            dataset = dataset.map(self.random_horizontal_flip, num_parallel_calls=tf.data.experimental.AUTOTUNE)
             dataset = dataset.map(self.random_crop, num_parallel_calls=tf.data.experimental.AUTOTUNE)
             dataset = dataset.map(self.random_translate, num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
         dataset = dataset.map(self.pad_image, num_parallel_calls=tf.data.experimental.AUTOTUNE)
         dataset = dataset.map(self.pad_bbox, num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
-        dataset = dataset.batch(cfg.TRAIN.BATCH_SIZE, drop_remainder=True)
-        if self.data_aug:
+        dataset = dataset.batch(self.batch_size, drop_remainder=True)
+        if self.data_aug and self.use_imgaug:
             dataset = dataset.map(
                 lambda x,y: tf.numpy_function(self.do_augmentation, [x,y], [tf.uint8, tf.float32]),
                 num_parallel_calls=tf.data.experimental.AUTOTUNE,
@@ -510,13 +513,6 @@ class tfDataset(object):
         img = tf.io.read_file(image_path)
         img = tf.io.decode_jpeg(img, channels=3)
         
-        # h=tf.shape(img)[0]
-        # w=tf.shape(img)[1]
-        # scale = tf.cast(tf.minimum(train_input_size/w, train_input_size/h), dtype=tf.float32)
-        # nw, nh  = tf.math.floor(scale * tf.cast(w, tf.float32)), tf.math.floor(scale * tf.cast(h, tf.float32))
-        # nw = tf.cast(nw, tf.int32)
-        # nh = tf.cast(nh, tf.int32)
-
         # img = tf.cast(tf.image.resize(img, [nh, nw]), dtype=tf.uint8)
         if self.dataset_type == "converted_coco":
             bboxes = tf.map_fn(lambda x: tf.strings.split(x, ','), line[1:])
@@ -576,6 +572,7 @@ class tfDataset(object):
 
             image = image[crop_ymin:crop_ymax, crop_xmin:crop_xmax]
             bboxes = bboxes - tf.cast(tf.stack([crop_xmin,crop_ymin,crop_xmin,crop_ymin,0]), dtype=tf.float32)
+        # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), ['some of coordinate are negative!!'])
         return image, bboxes
 
     @tf.function
@@ -612,13 +609,38 @@ class tfDataset(object):
             tx = tf.random.uniform((1,),-(max_l_trans - 1), (max_r_trans - 1))[0]
             ty = tf.random.uniform((1,),-(max_u_trans - 1), (max_d_trans - 1))[0]
 
-            # M = np.array([[1, 0, tx], [0, 1, ty]])
-            # image = cv2.warpAffine(image, M, (w, h))
             image = tfa.image.translate(image, [tx,ty])
             bboxes = bboxes + tf.stack([tx, ty, tx, ty, 0])
-            # bboxes[:, [0, 2]] = bboxes[:, [0, 2]] + tx
-            # bboxes[:, [1, 3]] = bboxes[:, [1, 3]] + ty
+        # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), ['some of coordinate are negative!!'])
+        return image, bboxes
 
+    @tf.function
+    def random_horizontal_flip(self, image, bboxes):
+        """
+        Parameter
+        ---------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class
+
+        Return
+        ------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class
+        """
+        if tf.random.uniform((1,), 0, 1)[0] < 0.5:
+            img_shape = tf.shape(image)
+            w = tf.cast(img_shape[1], dtype=tf.float32)
+            image = image[:, ::-1, :]
+            bboxes = tf.concat([
+                w-bboxes[:,2:3],
+                  bboxes[:,1:2],
+                w-bboxes[:,0:1],
+                  bboxes[:,3:4],
+                  bboxes[:,4:5]
+            ], axis=-1)
+        # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), [['some of coordinate are negative!!']])
         return image, bboxes
 
     @tf.function
@@ -672,6 +694,7 @@ class tfDataset(object):
             remain_w=iw-nw-pw
             img = tf.concat([tf.ones((ih,pw,3),tf.uint8)*128, img, tf.ones((ih,remain_w,3),tf.uint8)*128], axis=1)
         # Discard too small bounding box in origin image size
+        # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), ['some of coordinate are negative!!'])
         area = (bboxes[:,0] - bboxes[:,2]) * (bboxes[:,1] - bboxes[:,3])
         mask = area > self.filter_area
         bboxes = bboxes[mask]
@@ -679,6 +702,7 @@ class tfDataset(object):
         bboxes = bboxes * scale
         bboxes = bboxes + tf.cast(tf.stack([pw,ph,pw,ph,0], axis=0), dtype=tf.float32)
         # Pad num of box to fix size
+        # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), ['some of coordinate are negative!!'])
         return img, bboxes
 
     @tf.function
@@ -817,13 +841,14 @@ class tfDataset(object):
 
 import numba as nb
 
-@nb.njit(
+@nb.njit
+# (
     # nb.types.Tuple((
     #     nb.types.List(nb.float64[:,:,:,::1]), 
     #     nb.float64[:,:,::1]
     # ))
     # (nb.float32[:,:], nb.int32, nb.int32[:], nb.int32, nb.int32, nb.int32, nb.float32[:], nb.float32[:,:])
-)
+# )
 def preprocess_true_boxes_jit(bboxes, num_fpn, train_output_sizes, anchor_per_scale, num_classes, max_bbox_per_scale, strides, anchors):
     """
     1. Generate dense anchor with ground truth

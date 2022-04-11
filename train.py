@@ -54,7 +54,7 @@ def main(_argv):
     trainset = Dataset(FLAGS, is_training=True, filter_area=123)
     testset = Dataset(FLAGS, is_training=False, filter_area=123)
     #########################################################
-    trainset = tfDataset(FLAGS, is_training=True, filter_area=123).dataset_gen()
+    trainset = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False).dataset_gen()
     
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)

@@ -38,12 +38,13 @@ def main(_argv):
     # trainset = Dataset(FLAGS, is_training=True, filter_area=123)
     # testset = Dataset(FLAGS, is_training=False, filter_area=123)
     #########################################################
-    # trainset = tfDataset(FLAGS, is_training=True, filter_area=123).dataset_gen()
-    trainset = Dataset(FLAGS, is_training=True, filter_area=123)
+    tf.random.set_seed(0)
+    trainset = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False)
+    trainset.batch_size = 4
+    trainset = trainset.dataset_gen()
 
     
-    for batch_idx, data_item in enumerate(trainset):
-        print(batch_idx)
+    for batch_idx, data_item in tqdm(enumerate(trainset), total=len(trainset)):
         if not isinstance(trainset, Dataset):
             # (b,h,w,3)
             batch_image=(data_item[0].numpy() * 255.0).astype(np.uint8)
@@ -56,18 +57,22 @@ def main(_argv):
         for i in range(4):
             img=batch_image[i]
             bboxes=batch_bboxes[i]
-            bboxes=np.concatenate([bboxes[...,:2] - bboxes[...,2:4]//2, bboxes[...,:2] + bboxes[...,2:4]//2], axis=-1)
-            illegal_bbox_mask=np.all(bboxes[...,:] == 0, axis=-1)
+            # bboxes=np.concatenate([bboxes[...,:2] - bboxes[...,2:4]//2, bboxes[...,:2] + bboxes[...,2:4]//2], axis=-1)
+
+            illegal_bbox_mask=np.all(bboxes[...,:4] == 0, axis=-1)
             valid_bbox_mask=~illegal_bbox_mask
             valid_bbox=bboxes[valid_bbox_mask]
             
             cnt=0
+            min_area=np.inf
             for bbox in valid_bbox:
-                if bbox[0] == 0 and bbox[1] == 0 and bbox[2] ==0 and bbox[3] == 0:
-                    continue
+                # if bbox[0] == 0 and bbox[1] == 0 and bbox[2] ==0 and bbox[3] == 0:
+                #     continue
                 cnt+=1
-                cv2.rectangle(img, bbox[:2], bbox[2:4], (255,0,0), 1)
-            img = cv2.putText(img, f'num of box {cnt}', (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 1, cv2.LINE_AA)
+                min_area = min(bbox[2]*bbox[3], min_area)
+                cv2.rectangle(img, bbox[:2] - bbox[2:4] // 2, bbox[:2] + bbox[2:4] // 2, (255,0,0), 1)
+            if cnt == 0: print(f'non of bboxes in {batch_idx} {i} img')
+            img = cv2.putText(img, f'num of box {cnt} min box area: {min_area}', (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 1, cv2.LINE_AA)
             processed_img.append(img)
         
         top_img=np.concatenate(processed_img[:2], axis=1)
@@ -75,7 +80,7 @@ def main(_argv):
         full_img = np.concatenate([top_img, bot_img], axis=0)
 
         cv2.imwrite(os.path.join('visualize_anno',folder, f'{batch_idx}.jpg'), full_img[...,::-1])
-        if batch_idx == 800: break
+
 
 
 if __name__ == '__main__':

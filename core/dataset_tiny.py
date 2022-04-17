@@ -453,15 +453,15 @@ class tfDataset(object):
             #         # shear={"x": (-10, 10), "y": (-5, 5)},
             #     )
             # ),
-            # iaa.Sometimes(0.3, 
-            #     iaa.CoarseDropout(p=(0.05, 0.1), size_percent=(0.5,0.25)),
-            # ),
-            iaa.Sometimes(0.3,
-                iaa.OneOf([
-                    iaa.Multiply((0.7, 1.2)),
-                    iaa.pillike.EnhanceColor(factor=(0.8, 2.0))
-                ])
-            )
+            iaa.Sometimes(0.3, 
+                iaa.CoarseDropout(p=(0.05, 0.1), size_percent=(1.0, 0.5)),
+            ),
+            # iaa.Sometimes(0.3,
+                # iaa.Multiply((0.7, 1.2)),
+                # iaa.OneOf([
+                #     iaa.pillike.EnhanceColor(factor=(0.8, 2.0))
+                # ])
+            # )
         ], random_order=True)
         self.aug_env = seq
 

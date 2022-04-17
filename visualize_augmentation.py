@@ -30,14 +30,10 @@ def copytree(src, dst, symlinks=False, ignore=None):
             shutil.copy2(s, d)
 
 def main(_argv):
-    folder='origin'
+    folder='augmentation'
     os.makedirs('visualize_anno', exist_ok=True)
     os.makedirs(f'visualize_anno/{folder}', exist_ok=True)
-    physical_devices = tf.config.experimental.list_physical_devices('GPU')
-
-    # trainset = Dataset(FLAGS, is_training=True, filter_area=123)
-    # testset = Dataset(FLAGS, is_training=False, filter_area=123)
-    #########################################################
+    
     tf.random.set_seed(0)
     trainset = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False)
     trainset.batch_size = 4
@@ -57,7 +53,6 @@ def main(_argv):
         for i in range(4):
             img=batch_image[i]
             bboxes=batch_bboxes[i]
-            # bboxes=np.concatenate([bboxes[...,:2] - bboxes[...,2:4]//2, bboxes[...,:2] + bboxes[...,2:4]//2], axis=-1)
 
             illegal_bbox_mask=np.all(bboxes[...,:4] == 0, axis=-1)
             valid_bbox_mask=~illegal_bbox_mask
@@ -66,8 +61,6 @@ def main(_argv):
             cnt=0
             min_area=np.inf
             for bbox in valid_bbox:
-                # if bbox[0] == 0 and bbox[1] == 0 and bbox[2] ==0 and bbox[3] == 0:
-                #     continue
                 cnt+=1
                 min_area = min(bbox[2]*bbox[3], min_area)
                 cv2.rectangle(img, bbox[:2] - bbox[2:4] // 2, bbox[:2] + bbox[2:4] // 2, (255,0,0), 1)

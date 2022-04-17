@@ -12,18 +12,16 @@ import cv2
 import numpy as np
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
-import os 
+import os , shutil
 
 flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
-flags.DEFINE_string('weights', './checkpoints/yolov4-416',
-                    'path to weights file')
-flags.DEFINE_integer('size', 416, 'resize images to')
-flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
+flags.DEFINE_string('weights', './checkpoints/yolov4-416', 'path to weights file')
+flags.DEFINE_integer('size', 608, 'resize images to')
+flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
-# flags.DEFINE_string('image', './data/kite.jpg', 'path to input image')
-flags.DEFINE_string('image_type', './data/visualize', 'type of img, img or file')
+flags.DEFINE_string('image_type', "image", '(image, folder or file)')
 flags.DEFINE_string('image_path', '~/data/gis/images/val', 'path to input image')
-flags.DEFINE_string('output', 'output/', 'path to output image')
+flags.DEFINE_string('image_path_prefix', '', 'the prefix path of image')
 flags.DEFINE_float('iou', 0.5, 'iou threshold')
 flags.DEFINE_float('score', 0.2, 'score threshold')
 
@@ -96,6 +94,7 @@ def yolobbox2bbox(size,box):
     return x1, y1, x2, y2
 
 def main(_argv):
+    output_path = './output'
     config = ConfigProto()
     config.gpu_options.allow_growth = True
     session = InteractiveSession(config=config)
@@ -103,7 +102,8 @@ def main(_argv):
     input_size = FLAGS.size
     image_path = FLAGS.image_path
     image_type = FLAGS.image_type
-    os.makedirs(FLAGS.output, exist_ok=True)
+    shutil.rmtree(output_path)
+    os.makedirs(output_path, exist_ok=True)
 
     
     if FLAGS.framework == 'tflite':
@@ -120,10 +120,10 @@ def main(_argv):
     if image_type == 'image':
         original_image = cv2.imread(image_path)
         image = detect_func(original_image,input_size, interpreter)
-        cv2.imwrite(FLAGS.output+'result.png', image)
-    elif image_type == 'file':
+        cv2.imwrite(output_path+'result.png', image)
+    elif image_type == 'folder':
         all_listdir=os.listdir(image_path)
-        with open(os.path.join(FLAGS.output, 'all_box.txt'),'w') as f: 
+        with open(os.path.join(output_path, 'all_box.txt'),'w') as f: 
             for s,img_name in enumerate(all_listdir):
                 original_image = cv2.imread(os.path.join(image_path,img_name))
                 H, W = original_image.shape[:2]
@@ -138,7 +138,32 @@ def main(_argv):
                             per_line+=str(k[q2])+','
                 print('per_line:',per_line)
                 f.write(per_line+'\n')
-                cv2.imwrite(os.path.join(FLAGS.output, img_name), image)
+                cv2.imwrite(os.path.join(output_path, img_name), image)
+    elif image_type == 'file':
+        outer_image_path=FLAGS.image_path_prefix
+        with open(image_path, 'r') as f:
+            lines = f.readlines()
+            inner_image_paths = [line.split()[0] for line in lines]
+
+        with open(os.path.join(output_path, 'all_box.txt'),'w') as f: 
+            for s, inner_image_path in enumerate(inner_image_paths):
+                print(os.path.join(outer_image_path, inner_image_path))
+                original_image = cv2.imread(os.path.join(outer_image_path, inner_image_path))
+                H, W = original_image.shape[:2]
+                img_name = os.path.split(inner_image_path)[-1]
+
+                image, per_img_box = detect_func(original_image, input_size, interpreter)
+                per_line=inner_image_path+' '
+                for q in per_img_box:
+                    k=list(yolobbox2bbox((H, W),q))
+                    for q2 in range(len(k)):
+                        if q2==3:
+                            per_line+=str(k[q2])+' '
+                        else:
+                            per_line+=str(k[q2])+','
+                print('per_line:',per_line)
+                f.write(per_line+'\n')
+                cv2.imwrite(os.path.join(output_path, f'{s:4d}_{img_name}'), image)
     else:
         print('type format wrong')
 

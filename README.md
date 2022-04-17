@@ -1,181 +1,229 @@
-# tensorflow-yolov4-tflite
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
-
 YOLOv4, YOLOv4-tiny Implemented in Tensorflow 2.0. 
 Convert YOLO v4, YOLOv3, YOLO tiny .weights to .pb, .tflite and trt format for tensorflow, tensorflow lite, tensorRT.
 
 Download yolov4.weights file: https://drive.google.com/open?id=1cewMfusmPjYWbrnuJRuKhPMwRe_b9PaT
-
-
-### Prerequisites
-* Tensorflow 2.3.0rc0
-
-### Performance
-<p align="center"><img src="data/performance.png" width="640"\></p>
-
-### Demo
-
-```bash
-# Convert darknet weights to tensorflow
-## yolov4
-python save_model.py --weights ./data/yolov4.weights --output ./checkpoints/yolov4-416 --input_size 416 --model yolov4 
-
-## yolov4-tiny
-python save_model.py --weights ./data/yolov4-tiny.weights --output ./checkpoints/yolov4-tiny-416 --input_size 416 --model yolov4 --tiny
-
-# Run demo tensorflow
-python detect.py --weights ./checkpoints/yolov4-416 --size 416 --model yolov4 --image ./data/kite.jpg
-
-python detect.py --weights ./checkpoints/yolov4-tiny-416 --size 416 --model yolov4 --image ./data/kite.jpg --tiny
-
+## Path of dataset
 ```
-If you want to run yolov3 or yolov3-tiny change ``--model yolov3`` in command
-
-#### Output
-
-##### Yolov4 original weight
-<p align="center"><img src="result.png" width="640"\></p>
-
-##### Yolov4 tflite int8
-<p align="center"><img src="result-int8.png" width="640"\></p>
-
-### Convert to tflite
-
-```bash
-# Save tf model for tflite converting
-python save_model.py --weights ./data/yolov4.weights --output ./checkpoints/yolov4-416 --input_size 416 --model yolov4 --framework tflite
-
-# yolov4
-python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoints/yolov4-416.tflite
-
-# yolov4 quantize float16
-python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoints/yolov4-416-fp16.tflite --quantize_mode float16
-
-# yolov4 quantize int8
-python convert_tflite.py --weights ./checkpoints/yolov4-416 --output ./checkpoints/yolov4-416-int8.tflite --quantize_mode int8 --dataset ./coco_dataset/coco/val207.txt
-
-# Run demo tflite model
-python detect.py --weights ./checkpoints/yolov4-416.tflite --size 416 --model yolov4 --image ./data/kite.jpg --framework tflite
-```
-Yolov4 and Yolov4-tiny int8 quantization have some issues. I will try to fix that. You can try Yolov3 and Yolov3-tiny int8 quantization 
-### Convert to TensorRT
-```bash# yolov3
-python save_model.py --weights ./data/yolov3.weights --output ./checkpoints/yolov3.tf --input_size 416 --model yolov3
-python convert_trt.py --weights ./checkpoints/yolov3.tf --quantize_mode float16 --output ./checkpoints/yolov3-trt-fp16-416
-
-# yolov3-tiny
-python save_model.py --weights ./data/yolov3-tiny.weights --output ./checkpoints/yolov3-tiny.tf --input_size 416 --tiny
-python convert_trt.py --weights ./checkpoints/yolov3-tiny.tf --quantize_mode float16 --output ./checkpoints/yolov3-tiny-trt-fp16-416
-
-# yolov4
-python save_model.py --weights ./data/yolov4.weights --output ./checkpoints/yolov4.tf --input_size 416 --model yolov4
-python convert_trt.py --weights ./checkpoints/yolov4.tf --quantize_mode float16 --output ./checkpoints/yolov4-trt-fp16-416
+data_selection =>   https://drive.google.com/drive/u/0/folders/12nmGKPcq1AaZ5q_5muylp8Vd5-GHMTDm
+data_selection2 =>  https://drive.google.com/drive/u/0/folders/12nmGKPcq1AaZ5q_5muylp8Vd5-GHMTDm
+data_selection3 =>  https://drive.google.com/drive/u/0/folders/12nmGKPcq1AaZ5q_5muylp8Vd5-GHMTDm
+Taiwan_trafficlight.v1.coco => https://drive.google.com/drive/u/0/folders/1pz02qAsdiK8m42ceZN1K1DUgpq97YDKB
+night_dataset =>    https://drive.google.com/drive/u/0/folders/1lj5JwtsleQu3-_WpuwgQTk1bW1B28lPX
 ```
 
-### Evaluate on COCO 2017 Dataset
-```bash
-# run script in /script/get_coco_dataset_2017.sh to download COCO 2017 Dataset
-# preprocess coco dataset
-cd data
-mkdir dataset
-cd ..
-cd scripts
-python coco_convert.py --input ./coco/annotations/instances_val2017.json --output val2017.pkl
-python coco_annotation.py --coco_path ./coco 
-cd ..
 
-# evaluate yolov4 model
-python evaluate.py --weights ./data/yolov4.weights
-cd mAP/extra
-python remove_space.py
-cd ..
-python main.py --output results_yolov4_tf
+## Dataset structure
 ```
-#### mAP50 on COCO 2017 Dataset
+android
+core
+data
+datasets
+    \data_selection
+        \anno
+            \train_1cls.txt
+            \train_3cls.txt
+            \val_1cls.txt
+            \val_1cls.txt
+        \images
+            \list of image ......
+    \data_selection_2
+        \anno   (follow previous format)
+        \images (follow previous format)
+    \data_selection_3
+        \anno   (follow previous format)
+        \images (follow previous format)
+    \data_selection_mix
+        \anno   (follow previous format)
+    \Taiwan_trafficlight.v1.coco
+        \anno   (follow previous format)
+        \images (follow previous format)
+    \night_dataset
+        \anno   (follow previous format)
+        \images (follow previous format)
+```
+## Modify core/config.py to train model on your own dataset
+```=python
+#! /usr/bin/env python
+# coding=utf-8
+from easydict import EasyDict as edict
 
-| Detection   | 512x512 | 416x416 | 320x320 |
-|-------------|---------|---------|---------|
-| YoloV3      | 55.43   | 52.32   |         |
-| YoloV4      | 61.96   | 57.33   |         |
 
-### Benchmark
+__C                           = edict()
+# Consumers can get config by: from config import cfg
+
+cfg                           = __C
+
+# YOLO options
+__C.YOLO                      = edict()
+
+__C.YOLO.CLASSES              = "./data/classes/1cls.names"
+__C.YOLO.ANCHORS              = [12,16, 19,36, 40,28, 36,75, 76,55, 72,146, 142,110, 192,243, 459,401]
+__C.YOLO.ANCHORS_V3           = [10,13, 16,30, 33,23, 30,61, 62,45, 59,119, 116,90, 156,198, 373,326]
+__C.YOLO.ANCHORS_TINY         = [23,27, 37,58, 81,82, 81,82, 135,169, 344,319]
+__C.YOLO.STRIDES              = [8, 16, 32]
+__C.YOLO.STRIDES_TINY         = [16, 32]
+__C.YOLO.XYSCALE              = [1.2, 1.1, 1.05]
+__C.YOLO.XYSCALE_TINY         = [1.05, 1.05]
+__C.YOLO.ANCHOR_PER_SCALE     = 3
+__C.YOLO.IOU_LOSS_THRESH      = 0.5
+
+
+# Train options
+__C.TRAIN                     = edict()
+
+__C.TRAIN.ANNOT_PATHS          = [
+    "datasets/data_selection/anno/train_1cls.txt",
+    "datasets/data_selection_2/anno/train_1cls.txt",
+    "datasets/data_selection_3/anno/train_1cls.txt",
+    "datasets/Taiwan_trafficlight.v1.coco/anno/train_1cls.txt"
+]
+
+__C.TRAIN.BATCH_SIZE          = 8 #2
+# __C.TRAIN.INPUT_SIZE        = [320, 352, 384, 416, 448, 480, 512, 544, 576, 608]
+__C.TRAIN.INPUT_SIZE          = 608
+__C.TRAIN.DATA_AUG            = True
+__C.TRAIN.LR_INIT             = 1e-3
+__C.TRAIN.LR_END              = 1e-6
+__C.TRAIN.WARMUP_EPOCHS       = 2
+__C.TRAIN.FISRT_STAGE_EPOCHS    = 20
+__C.TRAIN.SECOND_STAGE_EPOCHS   = 40
+
+
+
+# TEST options
+__C.TEST                      = edict()
+
+__C.TEST.ANNOT_PATHS           = [
+    "datasets/data_selection/anno/val_1cls.txt",
+    "datasets/data_selection_2/anno/val_1cls.txt",
+    "datasets/data_selection_3/anno/val_1cls.txt"
+]
+__C.TEST.BATCH_SIZE           = 2
+__C.TEST.INPUT_SIZE           = 608
+__C.TEST.DATA_AUG             = False
+__C.TEST.DECTECTED_IMAGE_PATH = "./data/detection/"
+__C.TEST.SCORE_THRESHOLD      = 0.25
+__C.TEST.IOU_THRESHOLD        = 0.5
+
+
+
+```
+
+## Train model and evaluate your own model
+```
+# train your yolov4 tiny model on custom dataset 
+# You can modify dataset you want to train  on core/config.py 
+# Use pretrained weight can get better result.
+python ./train.py --tiny --model yolov4 --save_dir ./checkpoints/test --weights ./data/yolov4-tiny.weights
+
+# convert to tensorflow save_model format
+python ./save_model.py --weights ./checkpoints/test/ckpt/final.ckpt --output ./checkpoints/test/save_model_final --tiny --input_size 608
+
+# calculate mAP
+python ./evaluate_map.py --weights ./checkpoints/test/save_model_final/ --framework tf --input_size 608 --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt
+```
+
+
+## Other Usuage of script
+### Visualize Anntation
+```
+# draw bounding box on the image so that you can checkout whether there are noise in the labels.
+python visulaize_anno.py --anno ANNOTATION_PATH
+```
+output file structure
+```
+visualize_anno\
+    image_w_box\
+        0_image_[serial_number].jpg
+        1_image_[serial_number].jpg
+        2_image_[serial_number].jpg
+        ......
+    image_wo_box\
+        0_image_[serial_number].jpg
+        1_image_[serial_number].jpg
+        2_image_[serial_number].jpg
+        ......
+```
+----
+
+### Visualize Augmentation 
+```
+# show the augmentation result on image to check whether your augmentation result are correct or wrong
+# You can modify dataset you want to show on core/config.py 
+python visualize_augmentation.py --model --yolov4
+```
+output file structure
+```
+visualize_anno\
+    augmentation\
+        1.jpg
+        2.jpg
+        3.jpg
+        ......
+```
+----
+
+### Detection on image: Use Case 1 => detect single image
+
+```
+# image_type=image => detected single image, and output detection result to result.png
+python detect_new.py --framework tf --weights PATH_TO_SAVE_MODEL \
+    --size 608\
+    --tiny --model yolov4\
+    --image_type image
+    --image_path PATH_TO_IMAGE\
+```
+output file structure
+```
+result.png
+```
+
+----
+### Detection on image: Use Case 2 => detect images in a folder
+```
+# image_type=folder => detected all the image in the folder, and output detection result to "output" folder 
+python detect_new.py --framework tf --weights PATH_TO_SAVE_MODEL \
+    --size 608\
+    --tiny --model yolov4\
+    --image_type folder
+    --image_path PATH_TO_FOLDER\
+```
+output file structure
+```
+output\
+    all_box.txt
+    0_image_[serial_number].jpg
+    1_image_[serial_number].jpg
+    2_image_[serial_number].jpg
+    3_image_[serial_number].jpg
+    ......
+```
+
+----
+### Detection on image: Use Case 3 => detect images in a file(contain list of image path)
+```
+# image_type=folder => detected all the image in the folder, and output detection result to "output" folder 
+python detect_new.py --framework tf --weights PATH_TO_SAVE_MODEL \
+    --size 608\
+    --tiny --model yolov4\
+    --image_type file \
+    --image_path PATH_TO_ANNOTATION_FILE\
+```
+output file structure
+```
+output\
+    all_box.txt
+    0_image_[serial_number].jpg
+    1_image_[serial_number].jpg
+    2_image_[serial_number].jpg
+    3_image_[serial_number].jpg
+    ......
+```
+
+----
+
+### Other usuage of script to be add
 ```bash
 python benchmarks.py --size 416 --model yolov4 --weights ./data/yolov4.weights
+python detectvideo.py
 ```
-#### TensorRT performance
- 
-| YoloV4 416 images/s |   FP32   |   FP16   |   INT8   |
-|---------------------|----------|----------|----------|
-| Batch size 1        | 55       | 116      |          |
-| Batch size 8        | 70       | 152      |          |
-
-#### Tesla P100
-
-| Detection   | 512x512 | 416x416 | 320x320 |
-|-------------|---------|---------|---------|
-| YoloV3 FPS  | 40.6    | 49.4    | 61.3    |
-| YoloV4 FPS  | 33.4    | 41.7    | 50.0    |
-
-#### Tesla K80
-
-| Detection   | 512x512 | 416x416 | 320x320 |
-|-------------|---------|---------|---------|
-| YoloV3 FPS  | 10.8    | 12.9    | 17.6    |
-| YoloV4 FPS  | 9.6     | 11.7    | 16.0    |
-
-#### Tesla T4
-
-| Detection   | 512x512 | 416x416 | 320x320 |
-|-------------|---------|---------|---------|
-| YoloV3 FPS  | 27.6    | 32.3    | 45.1    |
-| YoloV4 FPS  | 24.0    | 30.3    | 40.1    |
-
-#### Tesla P4
-
-| Detection   | 512x512 | 416x416 | 320x320 |
-|-------------|---------|---------|---------|
-| YoloV3 FPS  | 20.2    | 24.2    | 31.2    |
-| YoloV4 FPS  | 16.2    | 20.2    | 26.5    |
-
-#### Macbook Pro 15 (2.3GHz i7)
-
-| Detection   | 512x512 | 416x416 | 320x320 |
-|-------------|---------|---------|---------|
-| YoloV3 FPS  |         |         |         |
-| YoloV4 FPS  |         |         |         |
-
-### Traning your own model
-```bash
-# Prepare your dataset
-# If you want to train from scratch:
-In config.py set FISRT_STAGE_EPOCHS=0 
-# Run script:
-python train.py
-
-# Transfer learning: 
-python train.py --weights ./data/yolov4.weights
-```
-The training performance is not fully reproduced yet, so I recommended to use Alex's [Darknet](https://github.com/AlexeyAB/darknet) to train your own data, then convert the .weights to tensorflow or tflite.
-
-
-
-### TODO
-* [x] Convert YOLOv4 to TensorRT
-* [x] YOLOv4 tflite on android
-* [ ] YOLOv4 tflite on ios
-* [x] Training code
-* [x] Update scale xy
-* [ ] ciou
-* [ ] Mosaic data augmentation
-* [x] Mish activation
-* [x] yolov4 tflite version
-* [x] yolov4 in8 tflite version for mobile
-
-### References
-
-  * YOLOv4: Optimal Speed and Accuracy of Object Detection [YOLOv4](https://arxiv.org/abs/2004.10934).
-  * [darknet](https://github.com/AlexeyAB/darknet)
-  
-   My project is inspired by these previous fantastic YOLOv3 implementations:
-  * [Yolov3 tensorflow](https://github.com/YunYang1994/tensorflow-yolov3)
-  * [Yolov3 tf2](https://github.com/zzh8829/yolov3-tf2)

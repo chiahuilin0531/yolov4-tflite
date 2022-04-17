@@ -17,10 +17,8 @@ from mAP.cocoeval import COCOeval
 import sys
 
 
-flags.DEFINE_string('weights', './data/yolov4.weights',
-                    'path to weights file')
-flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite, tf_ckpt, trt)'
-                    'path to weights file')
+flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
+flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite, tf_ckpt, trt)path to weights file')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_boolean('tiny', True, 'yolov3 or yolov3-tiny')
 flags.DEFINE_integer('input_size', 416, 'resize images to')

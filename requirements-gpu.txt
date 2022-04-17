@@ -6,3 +6,4 @@ absl-py
 matplotlib
 easydict
 pillow
+imgaug==0.4.0

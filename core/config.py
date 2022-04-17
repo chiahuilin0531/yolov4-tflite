@@ -26,12 +26,6 @@ __C.YOLO.IOU_LOSS_THRESH      = 0.5
 # Train options
 __C.TRAIN                     = edict()
 
-# __C.TRAIN.ANNOT_PATHS          = [
-#     "/mnt/HDD2/WeiJie/annotation/scale_aware_data_selection/train_1cls.txt",
-#     "/mnt/HDD2/WeiJie/annotation/scale_aware_data_selection_2/train_1cls.txt",
-#     "/mnt/HDD2/WeiJie/annotation/scale_aware_data_selection_3/train_1cls.txt",
-# ]
-
 __C.TRAIN.ANNOT_PATHS          = [
     "datasets/data_selection/anno/train_1cls.txt",
     "datasets/data_selection_2/anno/train_1cls.txt",
@@ -54,7 +48,6 @@ __C.TRAIN.SECOND_STAGE_EPOCHS   = 40
 # TEST options
 __C.TEST                      = edict()
 
-#__C.TEST.ANNOT_PATHS           = ["./data/dataset/gis_val_1.txt"]
 __C.TEST.ANNOT_PATHS           = [
     "datasets/data_selection/anno/val_1cls.txt",
     "datasets/data_selection_2/anno/val_1cls.txt",

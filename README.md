@@ -1,47 +1,11 @@
-YOLOv4, YOLOv4-tiny Implemented in Tensorflow 2.0. 
-Convert YOLO v4, YOLOv3, YOLO tiny .weights to .pb, .tflite and trt format for tensorflow, tensorflow lite, tensorRT.
-
+## 1. Download Pretrained Model
 Download yolov4.weights file: https://drive.google.com/open?id=1cewMfusmPjYWbrnuJRuKhPMwRe_b9PaT
-## Path of dataset
-```
-data_selection =>   https://drive.google.com/drive/u/0/folders/12nmGKPcq1AaZ5q_5muylp8Vd5-GHMTDm
-data_selection2 =>  https://drive.google.com/drive/u/0/folders/12nmGKPcq1AaZ5q_5muylp8Vd5-GHMTDm
-data_selection3 =>  https://drive.google.com/drive/u/0/folders/12nmGKPcq1AaZ5q_5muylp8Vd5-GHMTDm
-Taiwan_trafficlight.v1.coco => https://drive.google.com/drive/u/0/folders/1pz02qAsdiK8m42ceZN1K1DUgpq97YDKB
-night_dataset =>    https://drive.google.com/drive/u/0/folders/1lj5JwtsleQu3-_WpuwgQTk1bW1B28lPX
-```
 
+----
+## 2. Download Dataset Follow the DATASET_INSTALLATION.md
 
-## Dataset structure
-```
-android
-core
-data
-datasets
-    \data_selection
-        \anno
-            \train_1cls.txt
-            \train_3cls.txt
-            \val_1cls.txt
-            \val_1cls.txt
-        \images
-            \list of image ......
-    \data_selection_2
-        \anno   (follow previous format)
-        \images (follow previous format)
-    \data_selection_3
-        \anno   (follow previous format)
-        \images (follow previous format)
-    \data_selection_mix
-        \anno   (follow previous format)
-    \Taiwan_trafficlight.v1.coco
-        \anno   (follow previous format)
-        \images (follow previous format)
-    \night_dataset
-        \anno   (follow previous format)
-        \images (follow previous format)
-```
-## Modify core/config.py to train model on your own dataset
+----
+## 3. Modify core/config.py to train model on your own dataset
 ```=python
 #! /usr/bin/env python
 # coding=utf-8
@@ -109,7 +73,7 @@ __C.TEST.IOU_THRESHOLD        = 0.5
 
 ```
 
-## Train model and evaluate your own model
+## 4. Train model and evaluate your own model
 ```
 # train your yolov4 tiny model on custom dataset 
 # You can modify dataset you want to train  on core/config.py 
@@ -124,101 +88,105 @@ python ./evaluate_map.py --weights ./checkpoints/test/save_model_final/ --framew
 ```
 
 
-## Other Usuage of script
+## 5. Other Usuage of script
 ### Visualize Anntation
-```
-# draw bounding box on the image so that you can checkout whether there are noise in the labels.
-python visulaize_anno.py --anno ANNOTATION_PATH
-```
-output file structure
-```
-visualize_anno\
-    image_w_box\
-        0_image_[serial_number].jpg
-        1_image_[serial_number].jpg
-        2_image_[serial_number].jpg
-        ......
-    image_wo_box\
-        0_image_[serial_number].jpg
-        1_image_[serial_number].jpg
-        2_image_[serial_number].jpg
-        ......
-```
+-   Usuage
+    ```
+    # draw bounding box on the image so that you can checkout whether there are noise in the labels.
+    python visulaize_anno.py --anno ANNOTATION_PATH
+    ```
+-   Output file structure
+    ```
+    visualize_anno\
+        image_w_box\
+            0_image_[serial_number].jpg
+            1_image_[serial_number].jpg
+            2_image_[serial_number].jpg
+            ......
+        image_wo_box\
+            0_image_[serial_number].jpg
+            1_image_[serial_number].jpg
+            2_image_[serial_number].jpg
+            ......
+    ```
 ----
 
 ### Visualize Augmentation 
-```
-# show the augmentation result on image to check whether your augmentation result are correct or wrong
-# You can modify dataset you want to show on core/config.py 
-python visualize_augmentation.py --model --yolov4
-```
-output file structure
-```
-visualize_anno\
-    augmentation\
-        1.jpg
-        2.jpg
-        3.jpg
-        ......
-```
+-   Usuage
+    ```
+    # show the augmentation result on image to check whether your augmentation result are correct or wrong
+    # You can modify dataset you want to show on core/config.py 
+    python visualize_augmentation.py --model --yolov4
+    ```
+-   Output file structure
+    ```
+    visualize_anno\
+        augmentation\
+            1.jpg
+            2.jpg
+            3.jpg
+            ......
+    ```
 ----
 
 ### Detection on image: Use Case 1 => detect single image
-
-```
-# image_type=image => detected single image, and output detection result to result.png
-python detect_new.py --framework tf --weights PATH_TO_SAVE_MODEL \
-    --size 608\
-    --tiny --model yolov4\
-    --image_type image
-    --image_path PATH_TO_IMAGE\
-```
-output file structure
-```
-result.png
-```
+-   Usuage
+    ```
+    # image_type=image => detected single image, and output detection result to result.png
+    python detect_new.py --framework tf --weights PATH_TO_SAVE_MODEL \
+        --size 608\
+        --tiny --model yolov4\
+        --image_type image
+        --image_path PATH_TO_IMAGE\
+    ```
+-   Output file structure
+    ```
+    result.png
+    ```
 
 ----
 ### Detection on image: Use Case 2 => detect images in a folder
-```
-# image_type=folder => detected all the image in the folder, and output detection result to "output" folder 
-python detect_new.py --framework tf --weights PATH_TO_SAVE_MODEL \
-    --size 608\
-    --tiny --model yolov4\
-    --image_type folder
-    --image_path PATH_TO_FOLDER\
-```
-output file structure
-```
-output\
-    all_box.txt
-    0_image_[serial_number].jpg
-    1_image_[serial_number].jpg
-    2_image_[serial_number].jpg
-    3_image_[serial_number].jpg
-    ......
-```
+-   Usuage
+    ```
+    # image_type=folder => detected all the image in the folder, and output detection result to "output" folder 
+    python detect_new.py --framework tf --weights PATH_TO_SAVE_MODEL \
+        --size 608\
+        --tiny --model yolov4\
+        --image_type folder
+        --image_path PATH_TO_FOLDER\
+    ```
+-   Output file structure
+    ```
+    output\
+        all_box.txt
+        0_image_[serial_number].jpg
+        1_image_[serial_number].jpg
+        2_image_[serial_number].jpg
+        3_image_[serial_number].jpg
+        ......
+    ```
 
 ----
-### Detection on image: Use Case 3 => detect images in a file(contain list of image path)
-```
-# image_type=folder => detected all the image in the folder, and output detection result to "output" folder 
-python detect_new.py --framework tf --weights PATH_TO_SAVE_MODEL \
-    --size 608\
-    --tiny --model yolov4\
-    --image_type file \
-    --image_path PATH_TO_ANNOTATION_FILE\
-```
-output file structure
-```
-output\
-    all_box.txt
-    0_image_[serial_number].jpg
-    1_image_[serial_number].jpg
-    2_image_[serial_number].jpg
-    3_image_[serial_number].jpg
-    ......
-```
+### Detection on image: Use Case 3 => detect images in a annotation file(contain list of image path)
+-   Usuage
+    ```
+    # image_type=folder => detected all the image in the folder, and output detection result to "output" folder 
+    python detect_new.py --framework tf --weights PATH_TO_SAVE_MODEL \
+        --size 608\
+        --tiny --model yolov4\
+        --image_type file \
+        --image_path PATH_TO_ANNOTATION_FILE\
+    ```
+-   Output file structure
+    ```
+    output\
+        all_box.txt
+        0_image_[serial_number].jpg
+        1_image_[serial_number].jpg
+        2_image_[serial_number].jpg
+        3_image_[serial_number].jpg
+        ......
+    ```
 
 ----
 

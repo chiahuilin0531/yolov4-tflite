@@ -14,19 +14,19 @@ from core.config import cfg
 # XYSCALE = cfg.YOLO.XYSCALE
 # ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS)
 
-def YOLO(input_layer, NUM_CLASS, model='yolov4', is_tiny=False):
+def YOLO(input_layer, NUM_CLASS, model='yolov4', is_tiny=False, use_dc_head=False):
     if is_tiny:
         if model == 'yolov4':
-            return YOLOv4_tiny(input_layer, NUM_CLASS)
+            return YOLOv4_tiny(input_layer, NUM_CLASS, use_dc_head)
         elif model == 'yolov3':
-            return YOLOv3_tiny(input_layer, NUM_CLASS)
+            return YOLOv3_tiny(input_layer, NUM_CLASS, use_dc_head)
     else:
         if model == 'yolov4':
-            return YOLOv4(input_layer, NUM_CLASS)
+            return YOLOv4(input_layer, NUM_CLASS, use_dc_head)
         elif model == 'yolov3':
-            return YOLOv3(input_layer, NUM_CLASS)
+            return YOLOv3(input_layer, NUM_CLASS, use_dc_head)
 
-def YOLOv3(input_layer, NUM_CLASS):
+def YOLOv3(input_layer, NUM_CLASS, use_dc_head):
     route_1, route_2, conv = backbone.darknet53(input_layer)
 
     conv = common.convolutional(conv, (1, 1, 1024, 512))
@@ -68,7 +68,7 @@ def YOLOv3(input_layer, NUM_CLASS):
 
     return [conv_sbbox, conv_mbbox, conv_lbbox]
 
-def YOLOv4(input_layer, NUM_CLASS):
+def YOLOv4(input_layer, NUM_CLASS, use_dc_head):
     route_1, route_2, conv = backbone.cspdarknet53(input_layer)
 
     route = conv
@@ -126,7 +126,7 @@ def YOLOv4(input_layer, NUM_CLASS):
 
     return [conv_sbbox, conv_mbbox, conv_lbbox]
 
-def YOLOv4_tiny(input_layer, NUM_CLASS):
+def YOLOv4_tiny(input_layer, NUM_CLASS, use_dc_head):
     route_1, conv = backbone.cspdarknet53_tiny(input_layer)
 
     conv = common.convolutional(conv, (1, 1, 512, 256))
@@ -141,9 +141,13 @@ def YOLOv4_tiny(input_layer, NUM_CLASS):
     conv_mobj_branch = common.convolutional(conv, (3, 3, 128, 256))
     conv_mbbox = common.convolutional(conv_mobj_branch, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
 
-    return [conv_mbbox, conv_lbbox]
+    if not use_dc_head:
+        return [conv_mbbox, conv_lbbox]
+    else:
+        conv_mdc, conv_ldc = DomainClassifier([route_1, conv])
+        return [conv_mbbox, conv_lbbox, conv_mdc, conv_ldc]
 
-def YOLOv3_tiny(input_layer, NUM_CLASS):
+def YOLOv3_tiny(input_layer, NUM_CLASS, use_dc_head):
     route_1, conv = backbone.darknet53_tiny(input_layer)
 
     conv = common.convolutional(conv, (1, 1, 1024, 256))
@@ -169,6 +173,7 @@ def decode(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE=[1,
         return decode_tf(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=i, XYSCALE=XYSCALE)
     else:
         raise NotImplementedError(f'No such framewrok {FRAMEWORK}')
+
 def decode_train(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1, 1, 1]):
     conv_output = tf.reshape(conv_output,
                              (tf.shape(conv_output)[0], output_size, output_size, 3, 5 + NUM_CLASS))
@@ -324,7 +329,7 @@ def filter_boxes(box_xywh, scores, score_threshold=0.4, input_shape = tf.constan
     return (boxes, pred_conf)
 
 
-def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH, i=0):
+def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH, i=0, IOU_LOSS=utils.bbox_giou):
     conv_shape  = tf.shape(conv)
     batch_size  = conv_shape[0]
     output_size = conv_shape[1]
@@ -341,10 +346,11 @@ def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH,
     respond_bbox  = label[:, :, :, :, 4:5]
     label_prob    = label[:, :, :, :, 5:]
 
-    giou = tf.expand_dims(utils.bbox_giou(pred_xywh, label_xywh), axis=-1)
     input_size = tf.cast(input_size, tf.float32)
-
+    
     bbox_loss_scale = 2.0 - 1.0 * label_xywh[:, :, :, :, 2:3] * label_xywh[:, :, :, :, 3:4] / (input_size ** 2)
+
+    giou = tf.expand_dims(IOU_LOSS(pred_xywh, label_xywh), axis=-1)
     giou_loss = respond_bbox * bbox_loss_scale * (1- giou)
 
     iou = utils.bbox_iou(pred_xywh[:, :, :, :, np.newaxis, :], bboxes[:, np.newaxis, np.newaxis, np.newaxis, :, :])
@@ -353,7 +359,7 @@ def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH,
     respond_bgd = (1.0 - respond_bbox) * tf.cast( max_iou < IOU_LOSS_THRESH, tf.float32 )
 
     conf_focal = tf.pow(respond_bbox - pred_conf, 2)
-
+    alpha = 0.5
     conf_loss = conf_focal * (
             respond_bbox * tf.nn.sigmoid_cross_entropy_with_logits(labels=respond_bbox, logits=conv_raw_conf)
             +
@@ -368,7 +374,12 @@ def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH,
 
     return giou_loss, conf_loss, prob_loss
 
-
-
-
-
+def DomainClassifier(input_tensors):
+    reuslt_tensor=[]
+    for input_tensor in input_tensors:
+        channel = tf.shape(input_tensor)[-1]
+        x = common.grad_reverse(input_tensor)
+        x = common.convolutional(x, (3, 3, channel, channel))
+        x = common.convolutional(x, (1, 1, 128, 1)) 
+        reuslt_tensor.append(x)
+    return reuslt_tensor

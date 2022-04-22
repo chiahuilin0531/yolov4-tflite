@@ -55,7 +55,7 @@ def main(_argv):
     testset = Dataset(FLAGS, is_training=False, filter_area=123)
     #########################################################
     trainset = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=True).dataset_gen()
-
+    
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'ckpt'), exist_ok=True)
@@ -82,7 +82,10 @@ def main(_argv):
 
     freeze_layers = utils.load_freeze_layer(FLAGS.model, FLAGS.tiny)
 
-    feature_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny)
+    # [conv_mbox(38,38), conv_lbbox(19,19)]
+    output_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny, use_dc_head=True)
+    feature_maps = output_maps[:2]
+    da_maps = output_maps[2:]
 
     # Decoding YOLOv4 Output
     if FLAGS.tiny:
@@ -109,10 +112,11 @@ def main(_argv):
     model = tf.keras.Model(input_layer, {
         'raw_bbox_m': bbox_tensors[0],          # tensor size of feature map
         'bbox_m': bbox_tensors[1],
+        'da_m': da_maps[0],
         'raw_bbox_l': bbox_tensors[2],
         'bbox_l': bbox_tensors[3],
+        'da_l': da_maps[1],
     })
-
     if FLAGS.weights == None:
         print("Training from scratch ......................")
     else:
@@ -231,13 +235,8 @@ def main(_argv):
                     image_data=data_item[0]
                     target=data_item[1]
                 else:
-                    image_data=data_item['images']
-                    target=[
-                        [data_item['label_bboxes_m'], data_item['bboxes_m']], 
-                        [data_item['label_bboxes_l'], data_item['bboxes_l']], 
-                    ]
-                    # image_data=data_item[0]
-                    # target = [data_item[1:3],data_item[3:5]]
+                    image_data=data_item[0]
+                    target = [data_item[1:3],data_item[3:5]]
 
                 data_time=time.time()-tmp
                 batch_size = image_data.shape[0]

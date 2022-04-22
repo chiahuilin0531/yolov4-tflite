@@ -1,7 +1,7 @@
 import tensorflow as tf
 from absl import app, flags, logging
 from absl.flags import FLAGS
-from core.yolov4 import YOLO, decode, filter_boxes
+from core.yolov4 import YOLO, decode, decode_train, filter_boxes
 import core.utils as utils
 from core.config import cfg
 from keras_flops import get_flops
@@ -78,14 +78,36 @@ def save_tf():
   else:
     raise NotImplementedError(f'No such framework {FLAGS.framework}')
   ## ori code
-  # model = tf.keras.Model(input_layer, pred)
-  # utils.load_weights(model, FLAGS.weights, FLAGS.model, FLAGS.tiny)
-  # model.save(FLAGS.output)
-
-
-
   print('========================================== Load model ========================================')
   model = tf.keras.Model(input_layer, pred)
+
+  # Decoding YOLOv4 Output
+  if FLAGS.tiny:
+        bbox_tensors = []
+        for i, fm in enumerate(feature_maps):
+            if i == 0:
+                bbox_tensor = decode_train(fm, cfg.TRAIN.INPUT_SIZE // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
+            else:
+                bbox_tensor = decode_train(fm, cfg.TRAIN.INPUT_SIZE // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
+            bbox_tensors.append(fm)
+            bbox_tensors.append(bbox_tensor)
+  else:
+        bbox_tensors = []
+        for i, fm in enumerate(feature_maps):
+            if i == 0:
+                bbox_tensor = decode_train(fm, cfg.TRAIN.INPUT_SIZE // 8, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
+            elif i == 1:
+                bbox_tensor = decode_train(fm, cfg.TRAIN.INPUT_SIZE // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
+            else:
+                bbox_tensor = decode_train(fm, cfg.TRAIN.INPUT_SIZE // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
+            bbox_tensors.append(fm)
+            bbox_tensors.append(bbox_tensor)
+  weight_model = tf.keras.Model(input_layer, {
+        'raw_bbox_m': bbox_tensors[0],          # tensor size of feature map
+        'bbox_m': bbox_tensors[1],
+        'raw_bbox_l': bbox_tensors[2],
+        'bbox_l': bbox_tensors[3],
+    })
   # model.summary()
   #####################################################################################################
   ############################################ Quantize structure #####################################
@@ -96,7 +118,7 @@ def save_tf():
   #####################################################################################################
 
   print('========================================== Load weight ========================================')
-  model.load_weights(FLAGS.weights)
+  weight_model.load_weights(FLAGS.weights)
   print('========================================== model summary ========================================')
   model.summary()
   print('========================================== save model ========================================')

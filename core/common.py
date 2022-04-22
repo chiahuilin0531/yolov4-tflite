@@ -72,3 +72,9 @@ def route_group(input_layer, groups, group_id):
 def upsample(input_layer):
     return tf.image.resize(input_layer, (input_layer.shape[1] * 2, input_layer.shape[2] * 2), method='bilinear')
 
+@tf.custom_gradient
+def grad_reverse(x):
+    y = tf.identity(x)
+    def custom_grad(dy):
+        return -dy
+    return y, custom_grad

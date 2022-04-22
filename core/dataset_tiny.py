@@ -490,6 +490,7 @@ class tfDataset(object):
             lambda x,y: tf.numpy_function(self.generate_gth, [x,y], [tf.float32,tf.float32,tf.float32,tf.float32,tf.float32]),
             num_parallel_calls=tf.data.experimental.AUTOTUNE,
         )
+        dataset = dataset.map(self.to_dict)
         dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
         return dataset
 
@@ -792,10 +793,11 @@ class tfDataset(object):
         batch_image = tf.cast(batch_image, dtype=tf.float32) / 255.
         
         self.train_input_size = cfg.TRAIN.INPUT_SIZE
+        # strides=[16,32] if tiny else [8,16,32]
         self.train_output_sizes = self.train_input_size // self.strides     # [input_size//stride1, input_size//stride2......]
 
-        batch_label_bboxes = []         # [(batch, size, size, num_of_anchor, 5+num_of_class)......num_of_fpn]
-        batch_bboxes = []               # [(batch, max_box_scale, 4)......num_of_fpn]
+        batch_label_bboxes = []         # [(batch, size, size, num_of_anchor, 5+num_of_class)......num_of_fpn]. ex: [(batch, 38, 38, 3, 6), (batch, 19, 19, 3, 6)......]
+        batch_bboxes = []               # [(batch, max_box_scale, 4)......num_of_fpn]. 
         for size in self.train_output_sizes:
             label_bbox = np.zeros((self.batch_size, size, size, self.anchor_per_scale, 5 + self.num_classes), dtype=np.float32)
             batch_label_bboxes.append(label_bbox)
@@ -828,11 +830,27 @@ class tfDataset(object):
             for batch_label_bbox, label_bbox in zip(batch_label_bboxes, label_bboxes):
                 batch_label_bbox[num, :, :, :] = label_bbox
 
+        # return {
+        #     'image': batch_image,
+        #     'label_bboxes_m': batch_label_bboxes[0],
+        #     'bboxes_m': batch_bboxes[0],
+        #     'label_bboxes_l': batch_label_bboxes[1],
+        #     'bboxes_l': batch_bboxes[1],
+        # }
         return (
             batch_image,
             batch_label_bboxes[0], batch_bboxes[0],
             batch_label_bboxes[1], batch_bboxes[1]
         )        
+
+    def to_dict(self, *list_tensor):
+        return {
+            'images': list_tensor[0],
+            'label_bboxes_m': list_tensor[1],
+            'bboxes_m': list_tensor[2],
+            'label_bboxes_l': list_tensor[3],
+            'bboxes_l': list_tensor[4]
+        }
 
     def __len__(self):
         return self.num_batchs

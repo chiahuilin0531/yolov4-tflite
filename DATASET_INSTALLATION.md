@@ -119,9 +119,12 @@ run json_to_one_txt.py to generate train_1cls.txt and val_1cls.txt
 
 ## Overall Dataset structure
 ```
-android
-core
-data
+yolov4-tflite
+    \android
+    \core
+    \data
+    \mAP
+    \scripts
 datasets
     \data_selection
         \anno

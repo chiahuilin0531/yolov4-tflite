@@ -5,8 +5,8 @@ from absl.flags import FLAGS
 from core.accumulator import Accumulator
 import os, shutil
 import tensorflow as tf
-from core.yolov4 import YOLO, decode, compute_loss, decode_train
-from core.dataset_tiny import Dataset, tfDataset
+from core.yolov4 import YOLO, compute_loss, compute_da_loss, decode_train
+from core.dataset_tiny import Dataset, tfDataset, tfAdversailDataset
 from core.config import cfg
 import numpy as np
 from core import utils
@@ -50,15 +50,17 @@ def copytree(src, dst, symlinks=False, ignore=None):
 
 def main(_argv):
     physical_devices = tf.config.experimental.list_physical_devices('GPU')
-
-    trainset = Dataset(FLAGS, is_training=True, filter_area=123)
-    testset = Dataset(FLAGS, is_training=False, filter_area=123)
-    #########################################################
-    trainset = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=True).dataset_gen()
-    
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'ckpt'), exist_ok=True)
+
+    testset_source = tfDataset(FLAGS, is_training=False, filter_area=123, use_imgaug=False).dataset_gen()
+    testset_target = tfAdversailDataset(FLAGS, is_training=False, filter_area=123, use_imgaug=False).dataset_gen()
+    testset = tf.data.Dataset.zip((testset_source, testset_target))
+
+    trainset_source = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False).dataset_gen()
+    trainset_target = tfAdversailDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False).dataset_gen()
+    trainset = tf.data.Dataset.zip((trainset_source, trainset_target))
 
     copytree('./core', os.path.join(FLAGS.save_dir, 'config'))
     shutil.copy2('./train.py', os.path.join(FLAGS.save_dir, 'config','train.py'))
@@ -117,6 +119,7 @@ def main(_argv):
         'bbox_l': bbox_tensors[3],
         'da_l': da_maps[1],
     })
+    model.summary()
     if FLAGS.weights == None:
         print("Training from scratch ......................")
     else:
@@ -126,11 +129,9 @@ def main(_argv):
             model.load_weights(FLAGS.weights)
         print('Restoring weights from: %s ... ' % FLAGS.weights)
     
-    #####################################################################################################
     if (FLAGS.qat):
         model = qa_train(model)
         print("Training in Quatization Aware ................. ")
-    #####################################################################################################
     
     model.summary()
 
@@ -139,71 +140,103 @@ def main(_argv):
     writer = tf.summary.create_file_writer(logdir)
 
     @tf.function
-    def train_step(image_data, target):
+    def train_step(source_image_data, source_train_target, target_image_data):
         with tf.GradientTape() as tape:
-            dict_result = model(image_data, training=True)
-            pred_result = [
-                dict_result['raw_bbox_m'], 
-                dict_result['bbox_m'], 
-                dict_result['raw_bbox_l'],
-                dict_result['bbox_l'],
-            ]
-            giou_loss = conf_loss = prob_loss = 0
+            source_dict_result = model(source_image_data, training=True)
+            target_dict_result = model(target_image_data, training=True)
 
+            pred_result = [
+                source_dict_result['raw_bbox_m'], 
+                source_dict_result['bbox_m'], 
+                source_dict_result['raw_bbox_l'],
+                source_dict_result['bbox_l'],
+            ]
+            source_da_reuslt = [
+                source_dict_result['da_m'],
+                source_dict_result['da_l'],
+            ]
+            target_da_result = [
+                target_dict_result['da_m'],
+                target_dict_result['da_l']
+            ]
+
+            giou_loss = conf_loss = prob_loss = da_loss = 0
             # optimizing process
             for i in range(len(freeze_layers)):
                 conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
-                loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
+                loss_items = compute_loss(pred, conv, source_train_target[i][0], source_train_target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
                 giou_loss += loss_items[0]
                 conf_loss += loss_items[1]
                 prob_loss += loss_items[2]
 
-            total_loss = giou_loss + conf_loss + prob_loss
+            da_loss_items = compute_da_loss(source_da_reuslt, target_da_result)
+            da_loss   +=  da_loss_items['da_source_loss'] + da_loss_items['da_target_loss']
+
+
+            total_loss = giou_loss + conf_loss + prob_loss + da_loss
 
             gradients = tape.gradient(total_loss, model.trainable_variables)
             optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
-            # writing summary data
-            with writer.as_default():
-                tf.summary.scalar("lr", optimizer.lr, step=global_steps)
-                tf.summary.scalar("loss/total_loss", total_loss, step=global_steps)
-                tf.summary.scalar("loss/giou_loss", giou_loss, step=global_steps)
-                tf.summary.scalar("loss/conf_loss", conf_loss, step=global_steps)
-                tf.summary.scalar("loss/prob_loss", prob_loss, step=global_steps)
-            writer.flush()
-            return {
-                'giou_loss': giou_loss, 
-                'conf_loss': conf_loss, 
-                'prob_loss': prob_loss
-            }
+        # writing summary data
+        with writer.as_default():
+            tf.summary.scalar("lr", optimizer.lr, step=global_steps)
+            tf.summary.scalar("loss/total_loss", total_loss, step=global_steps)
+            tf.summary.scalar("loss/giou_loss", giou_loss, step=global_steps)
+            tf.summary.scalar("loss/conf_loss", conf_loss, step=global_steps)
+            tf.summary.scalar("loss/prob_loss", prob_loss, step=global_steps)
+            tf.summary.scalar("loss/da_loss", da_loss, step=global_steps)
+            tf.summary.scalar("loss/da_source_loss", da_loss_items['da_source_loss'], step=global_steps)
+            tf.summary.scalar("loss/da_target_loss", da_loss_items['da_target_loss'], step=global_steps)
 
-    @tf.function
-    def test_step(image_data, target):
-        with tf.GradientTape() as tape:
-            dict_result = model(image_data, training=True)
-            pred_result = [
-                dict_result['raw_bbox_m'], 
-                dict_result['bbox_m'], 
-                dict_result['raw_bbox_l'],
-                dict_result['bbox_l'],
-            ]
-            giou_loss = conf_loss = prob_loss = 0
-
-            # optimizing process
-            for i in range(len(freeze_layers)):
-                conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
-                loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
-                giou_loss += loss_items[0]
-                conf_loss += loss_items[1]
-                prob_loss += loss_items[2]
-        total_loss = giou_loss + conf_loss + prob_loss
-
+        writer.flush()
         return {
             'giou_loss': giou_loss, 
             'conf_loss': conf_loss, 
             'prob_loss': prob_loss,
+            'da_loss':   da_loss,
+        }
+
+    @tf.function
+    def test_step(source_image_data, source_train_target, target_image_data):
+        source_dict_result = model(source_image_data, training=False)
+        target_dict_result = model(target_image_data, training=False)
+
+        pred_result = [
+            source_dict_result['raw_bbox_m'], 
+            source_dict_result['bbox_m'], 
+            source_dict_result['raw_bbox_l'],
+            source_dict_result['bbox_l'],
+        ]
+        source_da_reuslt = [
+            source_dict_result['da_m'],
+            source_dict_result['da_l'],
+        ]
+        target_da_result = [
+            target_dict_result['da_m'],
+            target_dict_result['da_l']
+        ]
+        giou_loss = conf_loss = prob_loss = da_loss = 0
+        # optimizing process
+        for i in range(len(freeze_layers)):
+            conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
+            loss_items = compute_loss(pred, conv, source_train_target[i][0], source_train_target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
+            giou_loss += loss_items[0]
+            conf_loss += loss_items[1]
+            prob_loss += loss_items[2]
+
+        da_loss_items = compute_da_loss(source_da_reuslt, target_da_result)
+        da_loss   +=  da_loss_items['da_source_loss'] + da_loss_items['da_target_loss']
+
+        total_loss = giou_loss + conf_loss + prob_loss + da_loss
+        return {
+            'giou_loss': giou_loss, 
+            'conf_loss': conf_loss, 
+            'prob_loss': prob_loss,
+            'da_loss': da_loss,
             'total_loss': total_loss
         }
+
 
     for epoch in range(1, 1+first_stage_epochs + second_stage_epochs):
         if epoch <= first_stage_epochs:
@@ -228,25 +261,31 @@ def main(_argv):
         giou_loss_counter = Accumulator()
         conf_loss_counter = Accumulator()
         prob_loss_counter = Accumulator()
+        da_loss_counter = Accumulator()
+
         tmp=time.time()
         with tqdm(total=len(trainset), ncols=200) as pbar:
             for data_item in trainset:
-                if isinstance(trainset, Dataset):
-                    image_data=data_item[0]
-                    target=data_item[1]
-                else:
-                    image_data=data_item[0]
-                    target = [data_item[1:3],data_item[3:5]]
+                source_data_dict=data_item[0]
+                target_data_dict=data_item[1]
+
+                source_images=source_data_dict['images']
+                source_train_targets=[
+                    [source_data_dict['label_bboxes_m'], source_data_dict['bboxes_m']], 
+                    [source_data_dict['label_bboxes_l'], source_data_dict['bboxes_l']], 
+                ]
+                target_images=target_data_dict['images']
 
                 data_time=time.time()-tmp
-                batch_size = image_data.shape[0]
+                batch_size = source_images.shape[0]
                 tmp=time.time()
-                loss_dict = train_step(image_data, target)
+                loss_dict = train_step(source_images, source_train_targets, target_images)
                 model_time = time.time()-tmp
 
                 giou_loss_counter.update(loss_dict['giou_loss'], batch_size)
                 conf_loss_counter.update(loss_dict['conf_loss'], batch_size)
                 prob_loss_counter.update(loss_dict['prob_loss'], batch_size)
+                da_loss_counter.update(loss_dict['da_loss'], batch_size)
 
                 # update learning rate
                 global_steps.assign_add(1)
@@ -259,16 +298,18 @@ def main(_argv):
 
                 total = giou_loss_counter.get_average() \
                     + conf_loss_counter.get_average() \
-                    + prob_loss_counter.get_average()
+                    + prob_loss_counter.get_average() \
+                    + da_loss_counter.get_average()
 
                 pbar.set_postfix({
                     'lr': f"{lr.numpy():6.4f}",
                     'giou_loss': f"{giou_loss_counter.get_average():6.4f}",
                     'conf_loss': f"{conf_loss_counter.get_average():6.4f}",
                     'prob_loss': f"{prob_loss_counter.get_average():6.4f}",
+                    'da_loss': f"{da_loss_counter.get_average():6.4f}",
                     'total': f"{total: 6.4f}",
-                    'data_time': f'{data_time:8.6f}',
-                    'model_time': f'{model_time:8.6f}'
+                    'data_time': f'{data_time:6.4f}',
+                    'model_time': f'{model_time:6.4f}'
                 })
                 total_epoch = first_stage_epochs + second_stage_epochs
                 pbar.set_description(f"Epoch {epoch:3d}/{total_epoch:3d}")
@@ -280,23 +321,37 @@ def main(_argv):
             giou_loss_counter.reset()
             conf_loss_counter.reset()
             prob_loss_counter.reset()
+            da_loss_counter.reset()
             with tqdm(total=len(testset), ncols=150, desc=f"{'Test':<13}") as pbar:
-                batch_size = image_data.shape[0]
-                for image_data, target in testset:
-                    batch_size = image_data.shape[0]
-                    loss_dict = test_step(image_data, target)
+                batch_size = source_images.shape[0]
+                for data_item in testset:
+                    source_data_dict=data_item[0]
+                    target_data_dict=data_item[1]
+
+                    source_images=source_data_dict['images']
+                    source_train_targets=[
+                        [source_data_dict['label_bboxes_m'], source_data_dict['bboxes_m']], 
+                        [source_data_dict['label_bboxes_l'], source_data_dict['bboxes_l']], 
+                    ]
+                    target_images=target_data_dict['images']
+
+                    batch_size = source_images.shape[0]
+                    loss_dict = test_step(source_images, source_train_targets, target_images)
 
                     giou_loss_counter.update(loss_dict['giou_loss'], batch_size)
                     conf_loss_counter.update(loss_dict['conf_loss'], batch_size)
                     prob_loss_counter.update(loss_dict['prob_loss'], batch_size)
+                    da_loss_counter.update(loss_dict['da_loss'], batch_size)
                     total = giou_loss_counter.get_average() \
                         + conf_loss_counter.get_average() \
-                        + prob_loss_counter.get_average()
+                        + prob_loss_counter.get_average() \
+                        + da_loss_counter.get_average()
 
                     pbar.set_postfix({
                         'giou_loss': f"{giou_loss_counter.get_average():6.4f}",
                         'conf_loss': f"{conf_loss_counter.get_average():6.4f}",
                         'prob_loss': f"{prob_loss_counter.get_average():6.4f}",
+                        'da_loss': f"{da_loss_counter.get_average():6.4f}",
                         'total': f"{total: 6.4f}"
                     })
                     pbar.update(1)
@@ -307,6 +362,7 @@ def main(_argv):
                 tf.summary.scalar("val/giou_loss", giou_loss_counter.get_average(), step=epoch)
                 tf.summary.scalar("val/conf_loss", conf_loss_counter.get_average(), step=epoch)
                 tf.summary.scalar("val/prob_loss", prob_loss_counter.get_average(), step=epoch)
+                tf.summary.scalar("val/da_loss", da_loss_counter.get_average(), step=epoch)
             
             model.save_weights(os.path.join(FLAGS.save_dir, 'ckpt', f'{epoch:04d}.ckpt'))
         

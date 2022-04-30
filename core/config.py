@@ -32,9 +32,11 @@ __C.TRAIN.ANNOT_PATHS          = [
     "datasets/data_selection_3/anno/train_1cls.txt",
     "datasets/Taiwan_trafficlight.v1.coco/anno/train_1cls.txt"
 ]
+__C.TRAIN.ADVERSARIAL_PATHS    = [
+    "datasets/night_dataset/anno/train.txt"
+]
 
 __C.TRAIN.BATCH_SIZE          = 8 #2
-# __C.TRAIN.INPUT_SIZE        = [320, 352, 384, 416, 448, 480, 512, 544, 576, 608]
 __C.TRAIN.INPUT_SIZE          = 608
 __C.TRAIN.DATA_AUG            = True
 __C.TRAIN.LR_INIT             = 1e-3
@@ -53,7 +55,10 @@ __C.TEST.ANNOT_PATHS           = [
     "datasets/data_selection_2/anno/val_1cls.txt",
     "datasets/data_selection_3/anno/val_1cls.txt"
 ]
-__C.TEST.BATCH_SIZE           = 2
+__C.TEST.ADVERSARIAL_PATHS    = [
+    "datasets/night_dataset/anno/val.txt"
+]
+__C.TEST.BATCH_SIZE           = 4
 __C.TEST.INPUT_SIZE           = 608
 __C.TEST.DATA_AUG             = False
 __C.TEST.DECTECTED_IMAGE_PATH = "./data/detection/"

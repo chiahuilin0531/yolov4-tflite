@@ -128,6 +128,8 @@ def YOLOv4(input_layer, NUM_CLASS, use_dc_head):
 
 def YOLOv4_tiny(input_layer, NUM_CLASS, use_dc_head):
     route_1, conv = backbone.cspdarknet53_tiny(input_layer)
+    if use_dc_head:
+        conv_mdc, conv_ldc = DomainClassifier([route_1, conv])
 
     conv = common.convolutional(conv, (1, 1, 512, 256))
 
@@ -144,7 +146,6 @@ def YOLOv4_tiny(input_layer, NUM_CLASS, use_dc_head):
     if not use_dc_head:
         return [conv_mbbox, conv_lbbox]
     else:
-        conv_mdc, conv_ldc = DomainClassifier([route_1, conv])
         return [conv_mbbox, conv_lbbox, conv_mdc, conv_ldc]
 
 def YOLOv3_tiny(input_layer, NUM_CLASS, use_dc_head):
@@ -374,12 +375,34 @@ def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH,
 
     return giou_loss, conf_loss, prob_loss
 
+def compute_da_loss(source_da_result, target_da_result):
+    da_source_loss=0
+    for source_da_res in source_da_result:
+        source_label=tf.zeros((tf.shape(source_da_res)))
+        tmp=tf.nn.sigmoid_cross_entropy_with_logits(labels=source_label, logits=source_da_res)
+        da_source_loss += tf.reduce_mean(tmp, axis=[1,2,3])
+    
+    da_target_loss=0
+    for target_da_res in target_da_result:
+        target_label=tf.ones((tf.shape(target_da_res)))
+        tmp=tf.nn.sigmoid_cross_entropy_with_logits(labels=target_label, logits=target_da_res)
+        da_target_loss += tf.reduce_mean(tmp, axis=[1,2,3])
+
+    da_source_loss = tf.reduce_mean(da_source_loss, axis=0)
+    da_target_loss = tf.reduce_mean(da_target_loss, axis=0)
+
+    return {
+        'da_source_loss': da_source_loss,
+        'da_target_loss': da_target_loss
+    }
+
 def DomainClassifier(input_tensors):
+    # return list of processing symbolic tensor
     reuslt_tensor=[]
-    for input_tensor in input_tensors:
-        channel = tf.shape(input_tensor)[-1]
-        x = common.grad_reverse(input_tensor)
-        x = common.convolutional(x, (3, 3, channel, channel))
-        x = common.convolutional(x, (1, 1, 128, 1)) 
+    for i,input_tensor in enumerate(input_tensors):
+        channel = input_tensor.shape[-1]
+        x = common.GradientReversal(0.1)(input_tensor)
+        x = common.convolutional(x, (3, 3, channel, channel // 2), prefix=f'domain_adverserial_{i}_0')
+        x = common.convolutional(x, (1, 1, channel // 2, 1), activate=False, bn=False, prefix=f'domain_adverserial_{i}_1')
         reuslt_tensor.append(x)
     return reuslt_tensor

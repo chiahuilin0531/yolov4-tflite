@@ -144,6 +144,8 @@ def cspdarknet53_tiny(input_data):
 
     input_data = common.convolutional(input_data, (3, 3, 512, 512))
 
+    # route_1       channel = 256
+    # input_data    channel = 512
     return route_1, input_data
 
 def darknet53_tiny(input_data):

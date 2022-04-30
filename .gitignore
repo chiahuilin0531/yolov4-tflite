@@ -3,6 +3,7 @@ __pycache__
 GRMN*
 *.weights
 checkpoints
+checkpoints_da
 datasets
 mAP/*.json
 mAP/*.txt

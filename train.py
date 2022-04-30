@@ -54,7 +54,9 @@ def main(_argv):
     trainset = Dataset(FLAGS, is_training=True, filter_area=123)
     testset = Dataset(FLAGS, is_training=False, filter_area=123)
     #########################################################
-    trainset = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=True).dataset_gen()
+    # use_imgaug augmentation would lead to unknown performance drop
+    # this issue should be resolved in the future.
+    trainset = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False).dataset_gen()
 
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)
@@ -149,7 +151,8 @@ def main(_argv):
             # optimizing process
             for i in range(len(freeze_layers)):
                 conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
-                loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
+                loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, 
+                NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i, IOU_LOSS=utils.bbox_diou)
                 giou_loss += loss_items[0]
                 conf_loss += loss_items[1]
                 prob_loss += loss_items[2]
@@ -188,7 +191,8 @@ def main(_argv):
             # optimizing process
             for i in range(len(freeze_layers)):
                 conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
-                loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
+                loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, 
+                NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
                 giou_loss += loss_items[0]
                 conf_loss += loss_items[1]
                 prob_loss += loss_items[2]

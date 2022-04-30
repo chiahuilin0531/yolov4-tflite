@@ -43,9 +43,9 @@ def main(_argv):
     for batch_idx, data_item in tqdm(enumerate(trainset), total=len(trainset)):
         if not isinstance(trainset, Dataset):
             # (b,h,w,3)
-            batch_image=(data_item[0].numpy() * 255.0).astype(np.uint8)
+            batch_image=(data_item['images'].numpy() * 255.0).astype(np.uint8)
             # (b,max_bboxes*2,5)
-            batch_bboxes=np.concatenate([data_item[2], data_item[4]], axis=1).astype(np.int32)
+            batch_bboxes=np.concatenate([data_item['bboxes_m'], data_item['bboxes_l']], axis=1).astype(np.int32)
         else:
             batch_image=(data_item[0] * 255.0).astype(np.uint8)
             batch_bboxes=np.concatenate([data_item[1][0][1], data_item[1][1][1]], axis=1).astype(np.int32)

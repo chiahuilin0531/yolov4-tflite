@@ -398,11 +398,8 @@ def compute_da_loss(source_da_result, target_da_result):
 
 def DomainClassifier(input_tensors):
     # return list of processing symbolic tensor
-    reuslt_tensor=[]
-    for i,input_tensor in enumerate(input_tensors):
-        channel = input_tensor.shape[-1]
-        x = common.GradientReversal(0.1)(input_tensor)
-        x = common.convolutional(x, (3, 3, channel, channel // 2), prefix=f'domain_adverserial_{i}_0')
-        x = common.convolutional(x, (1, 1, channel // 2, 1), activate=False, bn=False, prefix=f'domain_adverserial_{i}_1')
-        reuslt_tensor.append(x)
-    return reuslt_tensor
+
+    ############################################
+    # HW3 Implement Domain Classifier in MS-DAYOLO
+    ############################################
+    pass

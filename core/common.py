@@ -83,10 +83,10 @@ def upsample(input_layer):
 @tf.custom_gradient
 def grad_reverse(x):
     # write your gradient reversal operation
-    y = tf.identity(x)
-    def custom_grad(dy):
-        return -dy * 0.1
-    return y, custom_grad
+    #############################################
+    # HW3 Implement Custom Operation
+    #############################################
+    pass
 
 class GradientReversal(tf.keras.layers.Layer):
     '''Flip the sign of gradient during training.'''

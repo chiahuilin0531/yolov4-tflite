@@ -899,41 +899,12 @@ class tfAdversailDataset(object):
     def load_annotations(self):
         annotations = []
         for annot_path in self.annot_paths:
-            with open(annot_path, "r") as f:
-                # read every line in the file and append it to the annotations list
-                txt = f.readlines()
-                if self.dataset_type == "converted_coco":
-                    annotations += [
-                        line.strip()
-                        for line in txt
-                        if len(line.strip().split()[1:]) != 0
-                    ]
-                elif self.dataset_type == "yolo":
-                    for line in txt:
-                        image_path = line.strip()
-                        root, _ = os.path.splitext(image_path)
-                        with open(root + ".txt") as fd:
-                            boxes = fd.readlines()
-                            string = ""
-                            for box in boxes:
-                                box = box.strip()
-                                box = box.split()
-                                class_num = int(box[0])
-                                center_x = float(box[1])
-                                center_y = float(box[2])
-                                half_width = float(box[3]) / 2
-                                half_height = float(box[4]) / 2
-                                string += " {},{},{},{},{}".format(
-                                    center_x - half_width,
-                                    center_y - half_height,
-                                    center_x + half_width,
-                                    center_y + half_height,
-                                    class_num,
-                                )
-                            if string=="":
-                                continue
-                            else:
-                                annotations.append(image_path + string)
+            pass
+            ##################################################################
+            # HW2 Custom Dataset
+            #       1. open each annotation file
+            #       2. read each line in annotation file and append to annotations
+            ##################################################################
         np.random.seed(0)
         np.random.shuffle(annotations)
         np.random.shuffle(annotations)
@@ -970,14 +941,12 @@ class tfAdversailDataset(object):
         image: uint8(h, w, 3)\\
             a image
         """
-        pass
-
-        line = tf.strings.split(annotation)
-        image_path = line[0]
-        img = tf.io.read_file(image_path)
-        img = tf.io.decode_jpeg(img, channels=3)
-        
-        return img
+        ##################################################################
+        # HW2 Custom Dataset
+        #       1. parse annotation to get image path
+        #       2. using tf.io.read_file, tf.io.decode_jpeg function to read image
+        #       3. return image
+        ##################################################################
 
     @tf.function
     def random_translate(self, image):
@@ -994,18 +963,14 @@ class tfAdversailDataset(object):
         """
         pass 
 
-        if tf.random.uniform((1,), 0, 1)[0] < 0.5:
-            h = tf.shape(image)[0]
-            w = tf.shape(image)[1]
-
-            max_w_trans = tf.round(tf.cast(w, dtype=tf.float32) * 0.05)#, dtype=tf.int32)
-            max_h_trans = tf.round(tf.cast(h, dtype=tf.float32) * 0.05)#, dtype=tf.int32)
-
-            tx = tf.random.uniform((1,),-max_w_trans, max_w_trans)[0]
-            ty = tf.random.uniform((1,),-max_h_trans, max_h_trans)[0]
-
-            image = tfa.image.translate(image, [tx,ty], fill_value=FILL_VALUE)
-        return image
+        ##################################################################
+        # HW2 Custom Dataset
+        #       0. use tf.random.uniform to determine whether to translate image 
+        #       1. get width and height of input image
+        #       2. calculate the pixel to translate image
+        #       4. use tfa.image.translate to translate image
+        #       3. return image
+        ##################################################################
 
     @tf.function
     def random_horizontal_flip(self, image):
@@ -1019,10 +984,13 @@ class tfAdversailDataset(object):
         image: uint8(h,w,3)\\
         """
         pass
+        ##################################################################
+        # HW2 Custom Dataset
+        #       0. use tf.random.uniform to determine whether to flip image 
+        #       1. use slicing indexing method to flip image      
+        #       2. return image
+        ##################################################################
 
-        if tf.random.uniform((1,), 0, 1)[0] < 0.5:
-            image = image[:, ::-1, :]
-        return image
 
     @tf.function
     def pad_image(self, img):

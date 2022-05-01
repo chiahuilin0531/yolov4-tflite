@@ -140,43 +140,18 @@ def main(_argv):
     writer = tf.summary.create_file_writer(logdir)
 
     @tf.function
-    def train_step(source_image_data, source_train_target, target_image_data):
-        with tf.GradientTape() as tape:
-            source_dict_result = model(source_image_data, training=True)
-            target_dict_result = model(target_image_data, training=True)
+    def train_step(ANY_ARGUMENT_YOU_NEED):
+        giou_loss = conf_loss = prob_loss = da_loss = 0
 
-            pred_result = [
-                source_dict_result['raw_bbox_m'], 
-                source_dict_result['bbox_m'], 
-                source_dict_result['raw_bbox_l'],
-                source_dict_result['bbox_l'],
-            ]
-            source_da_reuslt = [
-                source_dict_result['da_m'],
-                source_dict_result['da_l'],
-            ]
-            target_da_result = [
-                target_dict_result['da_m'],
-                target_dict_result['da_l']
-            ]
-
-            giou_loss = conf_loss = prob_loss = da_loss = 0
-            # optimizing process
-            for i in range(len(freeze_layers)):
-                conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
-                loss_items = compute_loss(pred, conv, source_train_target[i][0], source_train_target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
-                giou_loss += loss_items[0]
-                conf_loss += loss_items[1]
-                prob_loss += loss_items[2]
-
-            da_loss_items = compute_da_loss(source_da_reuslt, target_da_result)
-            da_loss   +=  da_loss_items['da_source_loss'] + da_loss_items['da_target_loss']
+        # #####################################################################
+        # HW4 Implement gradient descent below                                #
+        # #####################################################################
 
 
-            total_loss = giou_loss + conf_loss + prob_loss + da_loss
+        total_loss = giou_loss + conf_loss + prob_loss + da_loss
 
-            gradients = tape.gradient(total_loss, model.trainable_variables)
-            optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+
+
 
         # writing summary data
         with writer.as_default():
@@ -186,8 +161,6 @@ def main(_argv):
             tf.summary.scalar("loss/conf_loss", conf_loss, step=global_steps)
             tf.summary.scalar("loss/prob_loss", prob_loss, step=global_steps)
             tf.summary.scalar("loss/da_loss", da_loss, step=global_steps)
-            tf.summary.scalar("loss/da_source_loss", da_loss_items['da_source_loss'], step=global_steps)
-            tf.summary.scalar("loss/da_target_loss", da_loss_items['da_target_loss'], step=global_steps)
 
         writer.flush()
         return {
@@ -198,35 +171,12 @@ def main(_argv):
         }
 
     @tf.function
-    def test_step(source_image_data, source_train_target, target_image_data):
-        source_dict_result = model(source_image_data, training=False)
-        target_dict_result = model(target_image_data, training=False)
-
-        pred_result = [
-            source_dict_result['raw_bbox_m'], 
-            source_dict_result['bbox_m'], 
-            source_dict_result['raw_bbox_l'],
-            source_dict_result['bbox_l'],
-        ]
-        source_da_reuslt = [
-            source_dict_result['da_m'],
-            source_dict_result['da_l'],
-        ]
-        target_da_result = [
-            target_dict_result['da_m'],
-            target_dict_result['da_l']
-        ]
+    def test_step(ANY_ARGUMENT_YOU_NEED):
         giou_loss = conf_loss = prob_loss = da_loss = 0
-        # optimizing process
-        for i in range(len(freeze_layers)):
-            conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
-            loss_items = compute_loss(pred, conv, source_train_target[i][0], source_train_target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
-            giou_loss += loss_items[0]
-            conf_loss += loss_items[1]
-            prob_loss += loss_items[2]
 
-        da_loss_items = compute_da_loss(source_da_reuslt, target_da_result)
-        da_loss   +=  da_loss_items['da_source_loss'] + da_loss_items['da_target_loss']
+        # #####################################################################
+        # HW4 Implement test_step function                                    #
+        # #####################################################################
 
         total_loss = giou_loss + conf_loss + prob_loss + da_loss
         return {
@@ -279,7 +229,12 @@ def main(_argv):
                 data_time=time.time()-tmp
                 batch_size = source_images.shape[0]
                 tmp=time.time()
-                loss_dict = train_step(source_images, source_train_targets, target_images)
+
+                # #####################################################################
+                # HW4 Passing whatever you want to train_step function to update      #
+                #  model weights                                                      #
+                # #####################################################################
+                loss_dict = train_step(ANY_ARGUMENT_YOU_NEED)
                 model_time = time.time()-tmp
 
                 giou_loss_counter.update(loss_dict['giou_loss'], batch_size)
@@ -336,7 +291,11 @@ def main(_argv):
                     target_images=target_data_dict['images']
 
                     batch_size = source_images.shape[0]
-                    loss_dict = test_step(source_images, source_train_targets, target_images)
+                    # #####################################################################
+                    # HW4 Passing whatever you want to test_step function to calculate    #
+                    #  model loss                                                         #
+                    # #####################################################################
+                    loss_dict = test_step(ANY_ARGUMENT_YOU_NEED)
 
                     giou_loss_counter.update(loss_dict['giou_loss'], batch_size)
                     conf_loss_counter.update(loss_dict['conf_loss'], batch_size)

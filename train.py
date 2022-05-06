@@ -152,7 +152,7 @@ def main(_argv):
             for i in range(len(freeze_layers)):
                 conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
                 loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, 
-                NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i, IOU_LOSS=utils.bbox_diou)
+                NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i, IOU_LOSS=utils.bbox_giou)
                 giou_loss += loss_items[0]
                 conf_loss += loss_items[1]
                 prob_loss += loss_items[2]
@@ -243,6 +243,7 @@ def main(_argv):
                     # image_data=data_item[0]
                     # target = [data_item[1:3],data_item[3:5]]
 
+                # print(target)
                 data_time=time.time()-tmp
                 batch_size = image_data.shape[0]
                 tmp=time.time()

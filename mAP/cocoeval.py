@@ -463,11 +463,11 @@ class COCOeval:
                 mean_s = np.mean(s[s>-1])
             print(iStr.format(titleStr, typeStr, iouStr, areaRng, maxDets, mean_s))
             #cacluate AP(average precision) for each category
-            num_classes = 1
+            num_classes = len(self.params.catIds)
             avg_ap = 0.0
             if ap == 1:
                 for i in range(0, num_classes):
-                    print('category : {0} : {1}'.format(i,np.mean(s[:,:,i,:])))
+                    print('category : {0} : {1:5.3f}'.format(i,np.mean(s[:,:,i,:])))
                     avg_ap +=np.mean(s[:,:,i,:])
                 print('(all categories) mAP : {}'.format(avg_ap / num_classes))
             return mean_s

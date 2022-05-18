@@ -11,7 +11,7 @@ cfg                           = __C
 # YOLO options
 __C.YOLO                      = edict()
 
-__C.YOLO.CLASSES              = "./data/classes/1cls.names"
+__C.YOLO.CLASSES              = "./data/classes/2cls.names"
 __C.YOLO.ANCHORS              = [12,16, 19,36, 40,28, 36,75, 76,55, 72,146, 142,110, 192,243, 459,401]
 __C.YOLO.ANCHORS_V3           = [10,13, 16,30, 33,23, 30,61, 62,45, 59,119, 116,90, 156,198, 373,326]
 __C.YOLO.ANCHORS_TINY         = [23,27, 37,58, 81,82, 81,82, 135,169, 344,319]
@@ -27,13 +27,14 @@ __C.YOLO.IOU_LOSS_THRESH      = 0.5
 __C.TRAIN                     = edict()
 
 __C.TRAIN.ANNOT_PATHS          = [
+    "datasets/night_dataset/anno/train_well_split_1cls.txt",
     "datasets/data_selection/anno/train_1cls.txt",
     "datasets/data_selection_2/anno/train_1cls.txt",
     "datasets/data_selection_3/anno/train_1cls.txt",
     "datasets/Taiwan_trafficlight.v1.coco/anno/train_1cls.txt"
 ]
 __C.TRAIN.ADVERSARIAL_PATHS    = [
-    "datasets/night_dataset/anno/train.txt"
+    "datasets/night_dataset/anno/train_well_split_1cls.txt",
 ]
 
 __C.TRAIN.BATCH_SIZE          = 8 #2
@@ -51,12 +52,13 @@ __C.TRAIN.SECOND_STAGE_EPOCHS   = 40
 __C.TEST                      = edict()
 
 __C.TEST.ANNOT_PATHS           = [
+    "datasets/night_dataset/anno/val_well_split_1cls.txt",
     "datasets/data_selection/anno/val_1cls.txt",
     "datasets/data_selection_2/anno/val_1cls.txt",
     "datasets/data_selection_3/anno/val_1cls.txt"
 ]
 __C.TEST.ADVERSARIAL_PATHS    = [
-    "datasets/night_dataset/anno/val.txt"
+    "datasets/night_dataset/anno/val_well_split_1cls.txt",
 ]
 __C.TEST.BATCH_SIZE           = 4
 __C.TEST.INPUT_SIZE           = 608

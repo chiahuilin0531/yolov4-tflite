@@ -706,7 +706,7 @@ class tfDataset(object):
         mask = area > self.filter_area
         bboxes = bboxes[mask]
         # Turn integer coordinate into padded image integer coordinate 
-        bboxes = bboxes * scale
+        bboxes = bboxes * tf.expand_dims(tf.stack([scale,scale,scale,scale,1]), axis=0)
         bboxes = bboxes + tf.cast(tf.stack([pw,ph,pw,ph,0], axis=0), dtype=tf.float32)
         # Pad num of box to fix size
         # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), ['some of coordinate are negative!!'])

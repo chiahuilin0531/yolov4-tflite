@@ -1,5 +1,5 @@
 import sys
-from core.common import MishLayer,BatchNormalization
+import cv2
 from absl import app, flags, logging
 from absl.flags import FLAGS
 from core.accumulator import Accumulator
@@ -10,7 +10,7 @@ from core.dataset_tiny import Dataset, tfDataset
 from core.config import cfg
 import numpy as np
 from core import utils
-from core.utils import freeze_all, unfreeze_all
+from core.utils import draw_bbox, freeze_all, unfreeze_all
 from tqdm import tqdm
 import tensorflow_model_optimization as tfmot
 import time
@@ -61,9 +61,11 @@ def main(_argv):
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'ckpt'), exist_ok=True)
+    os.makedirs(os.path.join(FLAGS.save_dir, 'pic'), exist_ok=True)
 
-    copytree('./core', os.path.join(FLAGS.save_dir, 'config'))
-    shutil.copy2('./train.py', os.path.join(FLAGS.save_dir, 'config','train.py'))
+
+    # copytree('./core', os.path.join(FLAGS.save_dir, 'config'))
+    # shutil.copy2('./train.py', os.path.join(FLAGS.save_dir, 'config','train.py'))
     with open(os.path.join(FLAGS.save_dir, 'command.txt'), 'w') as f:
         f.writelines(' '.join(sys.argv))
     f.close()
@@ -230,7 +232,7 @@ def main(_argv):
         prob_loss_counter = Accumulator()
         tmp=time.time()
         with tqdm(total=len(trainset), ncols=200) as pbar:
-            for data_item in trainset:
+            for iter_idx, data_item in enumerate(trainset):
                 if isinstance(trainset, Dataset):
                     image_data=data_item[0]
                     target=data_item[1]
@@ -261,6 +263,27 @@ def main(_argv):
                     lr = cfg.TRAIN.LR_END + 0.5 * (cfg.TRAIN.LR_INIT - cfg.TRAIN.LR_END) * (
                         (1 + tf.cos((global_steps - warmup_steps) / (total_steps - warmup_steps) * np.pi)))
                 optimizer.lr.assign(lr.numpy())
+
+                if (iter_idx + 1) % 200 == 0:
+                    dict_result = model(image_data, training=False)
+                    processed_bboxes = utils.raw_output_to_bbox([
+                        dict_result['bbox_m'],
+                        dict_result['bbox_l'],
+                    ], tf.shape(image_data).numpy()[1:3])
+                    display_images = (image_data*255.0).numpy().astype(np.uint8)
+                    display_list = []
+
+                    for i in range(4):
+                        image = draw_bbox(display_images[i], [
+                            item[i:i+1] for item in processed_bboxes
+                        ])
+                        display_list.append(image)
+                    top_img = np.concatenate(display_list[:2], axis=1)
+                    bot_img = np.concatenate(display_list[2:], axis=1)
+                    full_img = np.concatenate([top_img, bot_img], axis=0)
+
+                    cv2.imwrite(os.path.join(FLAGS.save_dir, 'pic', f'{epoch}_{iter_idx+1}.jpg'), full_img[..., ::-1])
+
 
                 total = giou_loss_counter.get_average() \
                     + conf_loss_counter.get_average() \

@@ -152,24 +152,17 @@ def draw_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES), show_la
         if int(out_classes[0][i]) < 0 or int(out_classes[0][i]) > num_classes: continue
         coor = out_boxes[0][i]
 
-        #print(coor[0],coor[1],coor[2],coor[3])
-
         coor[0] = int(coor[0] * image_h)
         coor[2] = int(coor[2] * image_h)
         coor[1] = int(coor[1] * image_w)
         coor[3] = int(coor[3] * image_w)
         
-        #print(coor[0],coor[1],coor[2],coor[3])
-        #print(image_h,image_w)
-
         fontScale = 0.5
         score = out_scores[0][i]
         class_ind = int(out_classes[0][i])
         bbox_color = colors[class_ind]
         bbox_thick = int(0.6 * (image_h + image_w) / 600)
         c1, c2 = (int(coor[1]), int(coor[0])), (int(coor[3]), int(coor[2]))
-        #print(c1)
-        #print(c2)
         cv2.rectangle(image, c1, c2, bbox_color, bbox_thick)
 
         if show_label:
@@ -447,6 +440,63 @@ def unfreeze_all(model, frozen=False):
     if isinstance(model, tf.keras.Model):
         for l in model.layers:
             unfreeze_all(l, frozen)
+
+
+def raw_output_to_bbox(bboxes, image_shape, iou_threshold=0.5, score_threshold=0.15):
+    """
+    Turn FPN raw output to bbox.
+    Parameters
+    ----------
+    raw_output
+        bbox_m      : (b, num_bbox, 5+num_cls)
+        bbox_l      : (b, num_bbox, 5+num_cls)
+    image_shape: (h, w)
+
+
+    Returns
+    -------
+    bboxes: (b, num_of_max_bbox, 6)
+        [0:4] => yxyx, in [0,1]
+        [4:5] => class
+        [5:6] => prob
+    """
+    img_wh = tf.expand_dims(tf.expand_dims(image_shape[::-1], axis=0), axis=0)
+    img_whwh = tf.cast(tf.repeat(img_wh, 2, axis=-1), dtype=tf.float32)
+    flatten_bboxes_list=[]
+    for fpn_box in bboxes:
+        fpn_box = tf.reshape(fpn_box, (
+            tf.shape(fpn_box)[0],
+            -1,
+            tf.shape(fpn_box)[-1]
+        ))
+        flatten_bboxes_list.append(fpn_box)
+
+    bboxes = tf.concat(flatten_bboxes_list, axis=1)
+
+    batch_size = tf.shape(bboxes)[0]
+    num_classes = tf.shape(bboxes)[-1] - 5
+
+    boxes = bboxes[..., :4] / img_whwh
+
+    # value in range [0,1]
+    # coordinate = yxyx where two coordinate corresponding to left-top and right-bot
+    boxes = tf.concat([
+        (boxes[..., :2] - boxes[..., 2:] / 2.0)[..., ::-1],
+        (boxes[..., :2] + boxes[..., 2:] / 2.0)[..., ::-1],
+    ], axis=-1)
+    pred_conf = bboxes[..., 4:5]
+    cls_prob = bboxes[..., 5:]
+    cls_final_prob = pred_conf * cls_prob
+
+    boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
+        boxes=tf.reshape(boxes, (batch_size, -1, 1, 4)),
+        scores=tf.reshape(cls_final_prob, (batch_size, -1, num_classes)),
+        max_output_size_per_class=10,
+        max_total_size=10,
+        iou_threshold=iou_threshold,
+        score_threshold=score_threshold
+    )
+    return [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
 
 ######################################################
 ######### Numba Version of Code for accelerate  ######

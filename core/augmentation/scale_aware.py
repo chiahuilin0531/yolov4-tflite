@@ -10,8 +10,6 @@ from tqdm import tqdm
 
 flags.DEFINE_string('annotation', "/mnt/data0/Garmin/datasets/aug_data/anno/03_scale_aware.txt",
                     'path to annotation file')
-flags.DEFINE_string('image', "/mnt/data0/Garmin/datasets/aug_data/images_3",
-                    'path to image file')
 flags.DEFINE_string('output', "/mnt/data0/Garmin/datasets/aug_data/03_images_sw/",
                     'path to output file')
 

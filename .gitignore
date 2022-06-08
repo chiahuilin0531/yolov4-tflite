@@ -10,5 +10,8 @@ mAP/*.txt
 mAP/*/*.txt
 mAP/*/*.png
 mAP/*/*/*.png
+mAP/error
+mAP/correct
 visualize_anno
 output
+scripts/*.png

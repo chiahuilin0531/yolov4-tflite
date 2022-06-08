@@ -374,14 +374,22 @@ class Dataset(object):
 
 
 class tfDataset(object):
-    def __init__(self, FLAGS, is_training: bool, dataset_type: str = "converted_coco", filter_area: int = 123, use_imgaug: bool = True):
+    FILL_VALUE = 0
+    def __init__(self, FLAGS, is_training: bool, dataset_type: str = "converted_coco", filter_area: int = 123, use_imgaug: bool = True, adverserial: bool=False):
         self.tiny = FLAGS.tiny
         self.strides, self.anchors, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
         self.dataset_type = dataset_type
 
-        self.annot_paths = (
-            cfg.TRAIN.ANNOT_PATHS if is_training else cfg.TEST.ANNOT_PATHS
-        )
+        if is_training:
+            if adverserial:
+                self.annot_paths = cfg.TRAIN.ADVERSARIAL_PATHS
+            else:
+                self.annot_paths = cfg.TRAIN.ANNOT_PATHS
+        else:
+            if adverserial:
+                self.annot_paths = cfg.TEST.ADVERSARIAL_PATHS
+            else:
+                self.annot_paths = cfg.TEST.ANNOT_PATHS
         self.input_sizes = (
             cfg.TRAIN.INPUT_SIZE if is_training else cfg.TEST.INPUT_SIZE
         )
@@ -467,6 +475,10 @@ class tfDataset(object):
         ], random_order=True)
         self.aug_env = seq
 
+    @classmethod
+    def get_padding_val(cls):
+        return cls.FILL_VALUE
+
     def dataset_gen(self, yolo_data=True):
         dataset = tf.data.Dataset.from_tensor_slices(self.annotations)
         if self.data_aug:
@@ -551,6 +563,9 @@ class tfDataset(object):
         if tf.random.uniform((1,), 0, 1)[0] < 0.5:
             h =tf.shape(image)[0]
             w = tf.shape(image)[1]
+            h_fp32 = tf.cast(h, tf.float32)
+            w_fp32 = tf.cast(w, tf.float32)
+
             max_bbox = tf.concat(
                 [
                     tf.reduce_min(bboxes[:, 0:2], axis=0),
@@ -559,10 +574,11 @@ class tfDataset(object):
                 axis=-1,
             )
 
-            max_l_trans = max_bbox[0]
-            max_u_trans = max_bbox[1]
-            max_r_trans =  tf.cast(w, dtype=tf.float32) - max_bbox[2]
-            max_d_trans =  tf.cast(h, dtype=tf.float32) - max_bbox[3]
+            max_l_trans = tf.minimum(max_bbox[0], 0.2 * w_fp32)
+            max_u_trans = tf.minimum(max_bbox[1], 0.2 * h_fp32)
+            max_r_trans = tf.maximum(w_fp32 - max_bbox[2], w_fp32 * 0.8)
+            max_d_trans = tf.maximum(h_fp32 - max_bbox[3], h_fp32 * 0.8)
+
 
             crop_xmin = tf.maximum(
                 0, tf.cast(max_bbox[0] - tf.random.uniform((1,), 0, max_l_trans)[0], tf.int32)
@@ -571,10 +587,16 @@ class tfDataset(object):
                 0, tf.cast((max_bbox[1] - tf.random.uniform((1,), 0, max_u_trans))[0], tf.int32)
             )
             crop_xmax = tf.maximum(
-                w, tf.cast((max_bbox[2] + tf.random.uniform((1,), 0, max_r_trans))[0], tf.int32)
+                w, tf.cast((
+                                               tf.maximum(max_bbox[2], w_fp32 * 0.8) + 
+                    tf.random.uniform((1,), 0, tf.minimum(max_r_trans, w_fp32 * 0.2))
+                )[0], tf.int32)
             )
             crop_ymax = tf.maximum(
-                h, tf.cast((max_bbox[3] + tf.random.uniform((1,), 0, max_d_trans))[0], tf.int32)
+                h, tf.cast((
+                                               tf.maximum(max_bbox[3], h_fp32 * 0.8) + 
+                    tf.random.uniform((1,), 0, tf.minimum(max_d_trans, h_fp32 * 0.2))
+                )[0], tf.int32)
             )
 
             image = image[crop_ymin:crop_ymax, crop_xmin:crop_xmax]
@@ -616,7 +638,7 @@ class tfDataset(object):
             tx = tf.random.uniform((1,),-(max_l_trans - 1), (max_r_trans - 1))[0]
             ty = tf.random.uniform((1,),-(max_u_trans - 1), (max_d_trans - 1))[0]
 
-            image = tfa.image.translate(image, [tx,ty], fill_value=FILL_VALUE)
+            image = tfa.image.translate(image, [tx,ty], fill_value=self.FILL_VALUE)
             bboxes = bboxes + tf.stack([tx, ty, tx, ty, 0])
         # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), ['some of coordinate are negative!!'])
         return image, bboxes
@@ -695,11 +717,11 @@ class tfDataset(object):
         if train_input_size - nh != 0:
             # padding top and bottom
             remain_h=ih-nh-ph
-            img = tf.concat([tf.ones((ph,iw,3),tf.uint8)*FILL_VALUE, img, tf.ones((remain_h,iw,3),tf.uint8)*FILL_VALUE], axis=0)
+            img = tf.concat([tf.ones((ph,iw,3),tf.uint8)*self.FILL_VALUE, img, tf.ones((remain_h,iw,3),tf.uint8)*self.FILL_VALUE], axis=0)
         elif train_input_size - nw != 0:
             # padding left and right
             remain_w=iw-nw-pw
-            img = tf.concat([tf.ones((ih,pw,3),tf.uint8)*FILL_VALUE, img, tf.ones((ih,remain_w,3),tf.uint8)*FILL_VALUE], axis=1)
+            img = tf.concat([tf.ones((ih,pw,3),tf.uint8)*self.FILL_VALUE, img, tf.ones((ih,remain_w,3),tf.uint8)*self.FILL_VALUE], axis=1)
         # Discard too small bounding box in origin image size
         # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), ['some of coordinate are negative!!'])
         area = (bboxes[:,0] - bboxes[:,2]) * (bboxes[:,1] - bboxes[:,3])
@@ -1181,7 +1203,7 @@ def preprocess_true_boxes_jit(bboxes, num_fpn, train_output_sizes, anchor_per_sc
             anchors_xywh[:, 0:2] = (
                 np.floor(bbox_xywh_scaled[i, 0:2]).astype(np.int32) + 0.5
             )
-            anchors_xywh[:, 2:4] = anchors[i]
+            anchors_xywh[:, 2:4] = anchors[i] # / strides[i] # Pull Request From: https://github.com/hunglc007/tensorflow-yolov4-tflite/pull/384/commits/e080e66b7cc39c5c735337a17dfaeb0bf07d846d
             # iou_scale=(3,)
             iou_scale = utils.bbox_iou_jit(
                 np.expand_dims(bbox_xywh_scaled[i], axis=0), anchors_xywh

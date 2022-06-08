@@ -30,6 +30,7 @@ flags.DEFINE_float('iou', 0.5, 'iou threshold')
 flags.DEFINE_float('score', 0.25, 'score threshold')
 
 def yolo2coco(label_path, pred_path, class_list):
+    # id_dict = {}
     if label_path[-1] == '/':
         label_path = label_path[:-1]
     if pred_path[-1] == '/':
@@ -156,6 +157,9 @@ def main(_argv):
         output_details = interpreter.get_output_details()
         print(input_details)
         print(output_details)
+    # elif FLAGS.framework == 'tf_ckpt':
+    #     infer = tf.keras.models.load_model(FLAGS.weights)
+    #     infer.summary()
     elif FLAGS.framework == 'tf':
         infer = tf.keras.models.load_model(FLAGS.weights)
     else:
@@ -208,6 +212,15 @@ def main(_argv):
                             boxes, pred_conf = filter_boxes(pred[1], pred[0], score_threshold=0.25, input_shape = tf.constant([INPUT_SIZE,INPUT_SIZE]))
                         else:
                             boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25, input_shape = tf.constant([INPUT_SIZE,INPUT_SIZE]))
+                    # elif FLAGS.framework == 'tf_ckpt':
+                    #     batch_data = tf.constant(image_data)
+                    #     pred_bbox = infer(batch_data)
+                    #     boxes = pred_bbox[0] / np.array([INPUT_SIZE,INPUT_SIZE,INPUT_SIZE,INPUT_SIZE], dtype='float32')
+                    #     boxes = tf.concat([
+                    #         (boxes[..., :2] - boxes[..., 2:] / 2.0)[...,::-1],
+                    #         (boxes[..., :2] + boxes[..., 2:] / 2.0)[...,::-1],
+                    #     ], axis=-1)
+                    #     pred_conf = pred_bbox[1]
                     elif FLAGS.framework == 'tf':
                         batch_data = tf.constant(image_data)
                         pred_bbox = infer(batch_data)
@@ -261,7 +274,8 @@ def main(_argv):
     cocoDt=cocoGt.loadRes(p_json)
     cocoEval = COCOeval(cocoGt,cocoDt,'bbox')
     # cocoEval.params.areaRng = [[0 ** 2, 1e5 ** 2], [0 ** 2, 1022], [1022, 3809], [3809, 1e5 ** 2]]
-    cocoEval.params.areaRng = [[123, 1e5 ** 2], [123, 341], [341, 768],  [768, 1e5 ** 2]]
+    cocoEval.params.areaRng = [[123, 1e5 ** 2], [123, 341], [341, 1e5 ** 2],  [1e5 ** 2, 1e5 ** 2+1]]
+    # cocoEval.params.areaRng = [[41, 1e5 ** 2], [41, 133], [133, 256],  [256, 1e5 ** 2]]
     cocoEval.params.areaRngLbl=['all','small', 'medium', 'large']
     cocoEval.evaluate()
     cocoEval.accumulate()
@@ -270,6 +284,7 @@ def main(_argv):
     sys.stdout = open(os.path.join(os.path.dirname(FLAGS.weights), 'mAP.txt'), 'w')
     print(FLAGS.annotation_path)
     print(FLAGS.weights)
+    print(cocoEval.params.areaRng)
     cocoEval.summarize()
     sys.stdout.close()
 

@@ -29,7 +29,26 @@ flags.DEFINE_boolean('draw_image', False, 'write image path')
 flags.DEFINE_float('iou', 0.5, 'iou threshold')
 flags.DEFINE_float('score', 0.25, 'score threshold')
 
+def iou(bboxes1, bboxes2):
+    """
+    bboxes1=(n1,4)
+    bboxes2=(n2,4)
+    """
+    left_up =    np.maximum(bboxes1[..., np.newaxis, :2], bboxes2[..., :2])             # (n1, n2, 2)
+    right_down = np.minimum(bboxes1[..., np.newaxis, 2:], bboxes2[..., 2:])             # (n1, n2, 2)
+
+    bboxes_area1 = np.prod(bboxes1[..., 2:] - bboxes1[..., :2], axis=-1)                # (n1,)
+    bboxes_area2 = np.prod(bboxes2[..., 2:] - bboxes2[..., :2], axis=-1)                # (n2,)
+
+    inter_section = np.maximum(right_down - left_up, 0.0)                               # (n1, n2, 2)
+    inter_area = inter_section[..., 0] * inter_section[..., 1]                          # (n1, n2)
+    union_area = bboxes_area1.reshape((-1,1)) + bboxes_area2.reshape((1,-1)) - inter_area   # (n1,1)+(1,n2)-(n1,n2)=(n1,n2)
+    iou = inter_area /  union_area
+    iou = np.nan_to_num(iou)
+    return iou
+
 def yolo2coco(label_path, pred_path, class_list):
+    # id_dict = {}
     if label_path[-1] == '/':
         label_path = label_path[:-1]
     if pred_path[-1] == '/':
@@ -138,6 +157,13 @@ def main(_argv):
 
     predicted_dir_path = './mAP/predicted'
     ground_truth_dir_path = './mAP/ground-truth'
+    error_image_dir = './mAP/error'
+    correct_image_dir = './mAP/correct'
+    shutil.rmtree(error_image_dir, ignore_errors=True)
+    shutil.rmtree(correct_image_dir, ignore_errors=True)
+    os.makedirs(error_image_dir, exist_ok=True)
+    os.makedirs(correct_image_dir, exist_ok=True)
+
     should_pass = False
     if not should_pass:
         if os.path.exists(predicted_dir_path): shutil.rmtree(predicted_dir_path)
@@ -165,12 +191,20 @@ def main(_argv):
         with open(FLAGS.annotation_path, 'r') as annotation_file:
             lines = annotation_file.readlines()
             print(FLAGS.annotation_path, '  #########################################')
-            with tqdm(total=len(lines), ncols=150, desc="Evaluating: ") as pbar:
+            total_img = 0
+            wrong_img = 0
+
+            total_gt_instance = 0
+            total_dt_instance = 0
+            correct_detected_instance = 0
+            mis_detected_instance = 0
+
+            with tqdm(total=len(lines), ncols=200, desc="Evaluating: ") as pbar:
                 for num, line in enumerate(lines):
                     # Load Image From Annotation File
                     annotation = line.strip().split()
                     image_path = annotation[0]
-                    image_name = image_path.split('/')[-1]
+                    image_name = '_'.join(image_path.split('/')[-2:])
                     image = cv2.imread(image_path)
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
@@ -211,7 +245,7 @@ def main(_argv):
                     elif FLAGS.framework == 'tf':
                         batch_data = tf.constant(image_data)
                         pred_bbox = infer(batch_data)
-                        boxes = pred_bbox[..., 0:4]
+                        boxes = pred_bbox[..., 0:4]             # ymin,xmin,ymax,xmax
                         pred_conf = pred_bbox[..., 4:]
                     else:
                         raise NotImplementedError()
@@ -226,10 +260,9 @@ def main(_argv):
                     )
 
                     boxes, scores, classes, valid_detections = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()] 
-
-                    if cfg.TEST.DECTECTED_IMAGE_PATH is not None and FLAGS.draw_image:
-                        image_result = utils.draw_bbox(np.copy(image), [boxes, scores, classes, valid_detections])
-                        cv2.imwrite(cfg.TEST.DECTECTED_IMAGE_PATH + image_name, image_result)
+                    boxes = boxes[:,:valid_detections[0]]
+                    scores = scores[:,:valid_detections[0]]
+                    classes = classes[:,:valid_detections[0]]
 
                     with open(predict_result_path, 'w') as f:
                         image_h, image_w, _ = image.shape
@@ -248,10 +281,77 @@ def main(_argv):
                             ymin, xmin, ymax, xmax = list(map(str, coor))
                             bbox_mess = f'{class_name:6s} {xmin:>4s} {ymin:>4s} {xmax:>4s} {ymax:>4s} {score}'
                             f.write(' '.join([class_name, score, xmin, ymin, xmax, ymax]) + '\n')
+
+                    any_error = False
+                    
+                    boxes_x1y1x2y2 = np.stack([boxes[...,1],boxes[...,0],boxes[...,3],boxes[...,2]], axis=-1)
+                    if len(classes_gt) > 0:
+                        for cls_id in range(NUM_CLASS):
+                            gt_class_bbox = bboxes_gt[classes_gt==cls_id]
+                            dt_class_bbox = boxes_x1y1x2y2[0][classes[0]==cls_id]
+
+                            if cls_id not in classes_gt: continue
+                            if cls_id not in classes:
+                                total_gt_instance += len(gt_class_bbox)
+                                total_dt_instance += 0
+                                correct_detected_instance += 0
+                                mis_detected_instance += 0
+                                continue
+
+                            iou_matrix = iou(gt_class_bbox, dt_class_bbox)
+
+                            sub_match = 0
+                            matched_gt_instance = []
+                            matched_dt_instance = []
+
+                            # check the recall rate
+                            for gt_idx in range(len(gt_class_bbox)):
+                                dt_idx = np.argmax(iou_matrix[gt_idx])
+                                if iou_matrix[gt_idx][dt_idx] < 0.3 or gt_idx in matched_gt_instance:
+                                    any_error = True
+                                else:
+                                    sub_match += 1
+                                    matched_gt_instance.append(gt_idx)
+                                    matched_dt_instance.append(dt_idx)
+                            if len(np.unique(matched_dt_instance)) != len(matched_dt_instance):
+                                print(f'[Error] {image_path} have smae dt result match different gt')
+                                print(f'\t class: {cls_id}')
+                                print(f'\t matched_gt_instance: {matched_gt_instance}')
+                                print(f'\t matched_dt_instance: {matched_dt_instance}')
+
                             
+                            # check the accuracy 
+                            if len(gt_class_bbox) != len(dt_class_bbox):
+                                any_error = True
+                            # counting instance
+                            total_gt_instance += len(gt_class_bbox)
+                            total_dt_instance += len(dt_class_bbox)
+                            correct_detected_instance += sub_match
+                            mis_detected_instance += (len(gt_class_bbox) - sub_match)                    
+                    else:
+                        if len(boxes) > 0:
+                            any_error = True
+                    total_img += 1
+                    if any_error: wrong_img += 1
+
+                    if FLAGS.draw_image:
+                        h,w = image_size
+                        img_size_ratio = np.array([[h,w,h,w]])
+                        bboxes_gt_y1x1y2x2 = np.stack([bboxes_gt[...,1],bboxes_gt[...,0],bboxes_gt[...,3],bboxes_gt[...,2]], axis=-1)
+                        image_result = utils.draw_bbox(np.copy(image), \
+                            [boxes/img_size_ratio,                 scores,     classes,        valid_detections])
+                        image_result = utils.draw_bbox(np.copy(image_result), \
+                            [[bboxes_gt_y1x1y2x2/img_size_ratio],  None,       [classes_gt],   [len(bboxes_gt)]], is_gt=True)
+                        if any_error:
+                            cv2.imwrite(os.path.join(error_image_dir, image_name), image_result[...,::-1])
+                        else:
+                            cv2.imwrite(os.path.join(correct_image_dir, image_name), image_result[...,::-1])
+
                     pbar.set_postfix({
-                        'detected_obj': f'{valid_detections[0]:2d}',
-                        'image_path': f"{image_path}",
+                        'image_path': f"{image_name}",
+                        "correct_img":  f'{(total_img-wrong_img)/total_img:5.2f}({total_img-wrong_img}/{total_img})',
+                        "recall_instance": f'{correct_detected_instance/total_gt_instance:5.2f}({correct_detected_instance}/{total_gt_instance})',
+                        "accuracy_instance":   f'{correct_detected_instance/total_dt_instance:5.2f}({correct_detected_instance}/{total_dt_instance})',
                     })
                     pbar.update(1)
 
@@ -261,7 +361,8 @@ def main(_argv):
     cocoDt=cocoGt.loadRes(p_json)
     cocoEval = COCOeval(cocoGt,cocoDt,'bbox')
     # cocoEval.params.areaRng = [[0 ** 2, 1e5 ** 2], [0 ** 2, 1022], [1022, 3809], [3809, 1e5 ** 2]]
-    cocoEval.params.areaRng = [[123, 1e5 ** 2], [123, 341], [341, 768],  [768, 1e5 ** 2]]
+    cocoEval.params.areaRng = [[123, 1e5 ** 2], [123, 341], [341, 1e5 ** 2],  [1e5 ** 2, 1e5 ** 2+1]]
+    # cocoEval.params.areaRng = [[41, 1e5 ** 2], [41, 133], [133, 256],  [256, 1e5 ** 2]]
     cocoEval.params.areaRngLbl=['all','small', 'medium', 'large']
     cocoEval.evaluate()
     cocoEval.accumulate()
@@ -270,6 +371,7 @@ def main(_argv):
     sys.stdout = open(os.path.join(os.path.dirname(FLAGS.weights), 'mAP.txt'), 'w')
     print(FLAGS.annotation_path)
     print(FLAGS.weights)
+    print(cocoEval.params.areaRng)
     cocoEval.summarize()
     sys.stdout.close()
 

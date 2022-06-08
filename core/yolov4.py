@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 # coding=utf-8
 
+import enum
 import numpy as np
 import tensorflow as tf
 import core.utils as utils
@@ -14,17 +15,17 @@ from core.config import cfg
 # XYSCALE = cfg.YOLO.XYSCALE
 # ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS)
 
-def YOLO(input_layer, NUM_CLASS, model='yolov4', is_tiny=False, use_dc_head=False):
+def YOLO(input_layer, NUM_CLASS, model='yolov4', is_tiny=False, dc_head_type=0):
     if is_tiny:
         if model == 'yolov4':
-            return YOLOv4_tiny(input_layer, NUM_CLASS, use_dc_head)
+            return YOLOv4_tiny(input_layer, NUM_CLASS, dc_head_type)
         elif model == 'yolov3':
-            return YOLOv3_tiny(input_layer, NUM_CLASS, use_dc_head)
+            return YOLOv3_tiny(input_layer, NUM_CLASS)
     else:
         if model == 'yolov4':
-            return YOLOv4(input_layer, NUM_CLASS, use_dc_head)
+            return YOLOv4(input_layer, NUM_CLASS)
         elif model == 'yolov3':
-            return YOLOv3(input_layer, NUM_CLASS, use_dc_head)
+            return YOLOv3(input_layer, NUM_CLASS)
 
 def YOLOv3(input_layer, NUM_CLASS, use_dc_head):
     route_1, route_2, conv = backbone.darknet53(input_layer)
@@ -126,10 +127,12 @@ def YOLOv4(input_layer, NUM_CLASS, use_dc_head):
 
     return [conv_sbbox, conv_mbbox, conv_lbbox]
 
-def YOLOv4_tiny(input_layer, NUM_CLASS, use_dc_head):
+def YOLOv4_tiny(input_layer, NUM_CLASS, dc_head_type):
     route_1, conv = backbone.cspdarknet53_tiny(input_layer)
-    if use_dc_head:
+    if dc_head_type == 1:
         conv_mdc, conv_ldc = DomainClassifier([route_1, conv])
+    elif dc_head_type == 2:
+        conv_mdc, conv_ldc = [route_1, conv]
 
     conv = common.convolutional(conv, (1, 1, 512, 256))
 
@@ -143,7 +146,7 @@ def YOLOv4_tiny(input_layer, NUM_CLASS, use_dc_head):
     conv_mobj_branch = common.convolutional(conv, (3, 3, 128, 256))
     conv_mbbox = common.convolutional(conv_mobj_branch, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
 
-    if not use_dc_head:
+    if dc_head_type == 0:
         return [conv_mbbox, conv_lbbox]
     else:
         return [conv_mbbox, conv_lbbox, conv_mdc, conv_ldc]
@@ -375,21 +378,66 @@ def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH,
 
     return giou_loss, conf_loss, prob_loss
 
-def compute_da_loss(source_da_result, target_da_result):
+def compute_da_loss(source_da_result, target_da_result, source_mask=None, target_mask=None):
     da_source_loss=0
-    for source_da_res in source_da_result:
+    for i, source_da_res in enumerate(source_da_result):
         source_label=tf.zeros((tf.shape(source_da_res)))
         tmp=tf.nn.sigmoid_cross_entropy_with_logits(labels=source_label, logits=source_da_res)
-        da_source_loss += tf.reduce_mean(tmp, axis=[1,2,3])
+
+        if isinstance(source_mask, list):
+            tmp = tmp * source_mask[i]
+            da_source_loss += (tf.reduce_sum(tmp, axis=[1,2,3]) / (tf.reduce_sum(source_mask[i], axis=[1,2,3]) + 1))
+        elif source_mask is not None:
+            resize_mask = tf.image.resize(source_mask, tf.shape(source_label)[1:3])
+            tmp = tmp * resize_mask
+            da_source_loss += (tf.reduce_sum(tmp, axis=[1,2,3]) / (tf.reduce_sum(resize_mask, axis=[1,2,3])))
+        else:
+            da_source_loss += tf.reduce_mean(tmp, axis=[1,2,3])
     
     da_target_loss=0
-    for target_da_res in target_da_result:
+    for j, target_da_res in enumerate(target_da_result):
         target_label=tf.ones((tf.shape(target_da_res)))
         tmp=tf.nn.sigmoid_cross_entropy_with_logits(labels=target_label, logits=target_da_res)
-        da_target_loss += tf.reduce_mean(tmp, axis=[1,2,3])
+
+        if isinstance(target_mask, list):
+            tmp = tmp * target_mask[j]
+            da_target_loss += (tf.reduce_sum(tmp, axis=[1,2,3]) / (tf.reduce_sum(target_mask[j], axis=[1,2,3]) + 1))
+        elif target_mask is not None: 
+            resize_mask = tf.image.resize(target_mask, tf.shape(target_label)[1:3])
+            tmp = tmp * resize_mask
+            da_target_loss += (tf.reduce_sum(tmp, axis=[1,2,3]) / (tf.reduce_sum(resize_mask, axis=[1,2,3])))
+        else:
+            da_target_loss += tf.reduce_mean(tmp, axis=[1,2,3]) 
 
     da_source_loss = tf.reduce_mean(da_source_loss, axis=0)
     da_target_loss = tf.reduce_mean(da_target_loss, axis=0)
+
+    return {
+        'da_source_loss': da_source_loss,
+        'da_target_loss': da_target_loss
+    }
+
+def compute_da_loss_instance(source_da_result, target_da_result, source_mask=None, target_mask=None):
+    da_source_loss=0
+    for i, source_da_res in enumerate(source_da_result):
+        source_label=tf.zeros((tf.shape(source_da_res)))
+        tmp=tf.nn.sigmoid_cross_entropy_with_logits(labels=source_label, logits=source_da_res)
+
+        if isinstance(source_mask, list):
+            tmp = tmp * source_mask[i]
+            da_source_loss += tf.math.divide_no_nan(tf.reduce_sum(tmp), tf.reduce_sum(source_mask[i]))
+    
+    da_target_loss=0
+    for j, target_da_res in enumerate(target_da_result):
+        target_label=tf.ones((tf.shape(target_da_res)))
+        tmp=tf.nn.sigmoid_cross_entropy_with_logits(labels=target_label, logits=target_da_res)
+
+        if isinstance(target_mask, list):
+            tmp = tmp * target_mask[j]
+            da_target_loss += tf.math.divide_no_nan(tf.reduce_sum(tmp), tf.reduce_sum(target_mask[j]))
+
+    # da_source_loss = tf.reduce_mean(da_source_loss, axis=0)
+    # da_target_loss = tf.reduce_mean(da_target_loss, axis=0)
 
     return {
         'da_source_loss': da_source_loss,

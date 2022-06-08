@@ -1,5 +1,6 @@
 import sys
 import cv2
+import os
 from absl import app, flags, logging
 from absl.flags import FLAGS
 from core.accumulator import Accumulator
@@ -51,12 +52,13 @@ def copytree(src, dst, symlinks=False, ignore=None):
 def main(_argv):
     physical_devices = tf.config.experimental.list_physical_devices('GPU')
 
-    trainset = Dataset(FLAGS, is_training=True, filter_area=123)
-    testset = Dataset(FLAGS, is_training=False, filter_area=123)
+    # trainset = Dataset(FLAGS, is_training=True, filter_area=123)
+    # testset = Dataset(FLAGS, is_training=False, filter_area=123)
     #########################################################
     # use_imgaug augmentation would lead to unknown performance drop
     # this issue should be resolved in the future.
-    trainset = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False).dataset_gen()
+    trainset = tfDataset(FLAGS, is_training=True, filter_area=41, use_imgaug=False).dataset_gen()
+    testset = tfDataset(FLAGS, is_training=False, filter_area=41, use_imgaug=False).dataset_gen()
 
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)
@@ -64,8 +66,8 @@ def main(_argv):
     os.makedirs(os.path.join(FLAGS.save_dir, 'pic'), exist_ok=True)
 
 
-    # copytree('./core', os.path.join(FLAGS.save_dir, 'config'))
-    # shutil.copy2('./train.py', os.path.join(FLAGS.save_dir, 'config','train.py'))
+    copytree('./core', os.path.join(FLAGS.save_dir, 'config'))
+    shutil.copy2(sys.argv[0], os.path.join(FLAGS.save_dir, 'config', os.path.basename(sys.argv[0])))
     with open(os.path.join(FLAGS.save_dir, 'command.txt'), 'w') as f:
         f.writelines(' '.join(sys.argv))
     f.close()
@@ -180,24 +182,22 @@ def main(_argv):
 
     @tf.function
     def test_step(image_data, target):
-        with tf.GradientTape() as tape:
-            dict_result = model(image_data, training=True)
-            pred_result = [
-                dict_result['raw_bbox_m'], 
-                dict_result['bbox_m'], 
-                dict_result['raw_bbox_l'],
-                dict_result['bbox_l'],
-            ]
-            giou_loss = conf_loss = prob_loss = 0
-
-            # optimizing process
-            for i in range(len(freeze_layers)):
-                conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
-                loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, 
-                NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
-                giou_loss += loss_items[0]
-                conf_loss += loss_items[1]
-                prob_loss += loss_items[2]
+        dict_result = model(image_data, training=False)
+        pred_result = [
+            dict_result['raw_bbox_m'], 
+            dict_result['bbox_m'], 
+            dict_result['raw_bbox_l'],
+            dict_result['bbox_l'],
+        ]
+        giou_loss = conf_loss = prob_loss = 0
+        # optimizing process
+        for i in range(len(freeze_layers)):
+            conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
+            loss_items = compute_loss(pred, conv, target[i][0], target[i][1], STRIDES=STRIDES, 
+            NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
+            giou_loss += loss_items[0]
+            conf_loss += loss_items[1]
+            prob_loss += loss_items[2]
         total_loss = giou_loss + conf_loss + prob_loss
 
         return {
@@ -304,13 +304,19 @@ def main(_argv):
 
                 tmp=time.time()
 
-        if epoch % 5 == 0:
+        if epoch % 5 == 0 or (1+first_stage_epochs + second_stage_epochs- epoch < 10):
             giou_loss_counter.reset()
             conf_loss_counter.reset()
             prob_loss_counter.reset()
             with tqdm(total=len(testset), ncols=150, desc=f"{'Test':<13}") as pbar:
                 batch_size = image_data.shape[0]
-                for image_data, target in testset:
+                for data_item in testset:
+                    image_data=data_item['images']
+                    target=[
+                        [data_item['label_bboxes_m'], data_item['bboxes_m']], 
+                        [data_item['label_bboxes_l'], data_item['bboxes_l']], 
+                    ]
+
                     batch_size = image_data.shape[0]
                     loss_dict = test_step(image_data, target)
 

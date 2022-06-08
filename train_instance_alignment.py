@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, cv2
 from core.common import MishLayer,BatchNormalization
 from absl import app, flags, logging
 from absl.flags import FLAGS
@@ -10,7 +10,7 @@ from core.dataset_tiny import Dataset, tfDataset, tfAdversailDataset
 from core.config import cfg
 import numpy as np
 from core import utils
-from core.utils import freeze_all, unfreeze_all
+from core.utils import freeze_all, unfreeze_all, draw_bbox
 from tqdm import tqdm
 import tensorflow_model_optimization as tfmot
 import time
@@ -53,13 +53,14 @@ def main(_argv):
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'ckpt'), exist_ok=True)
+    os.makedirs(os.path.join(FLAGS.save_dir, 'pic'), exist_ok=True)
 
-    testset_source = tfDataset(FLAGS, is_training=False, filter_area=123, use_imgaug=False).dataset_gen()
-    testset_target = tfAdversailDataset(FLAGS, is_training=False, filter_area=123, use_imgaug=False).dataset_gen()
+    testset_source = tfDataset(FLAGS, is_training=False, filter_area=123, use_imgaug=False, adverserial=False).dataset_gen()
+    testset_target = tfDataset(FLAGS, is_training=False, filter_area=123, use_imgaug=False, adverserial=True).dataset_gen()
     testset = tf.data.Dataset.zip((testset_source, testset_target))
 
-    trainset_source = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False).dataset_gen()
-    trainset_target = tfAdversailDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False).dataset_gen()
+    trainset_source = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False, adverserial=False).dataset_gen()
+    trainset_target = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False, adverserial=True).dataset_gen()
     trainset = tf.data.Dataset.zip((trainset_source, trainset_target))
 
     copytree('./core', os.path.join(FLAGS.save_dir, 'config'))
@@ -85,7 +86,7 @@ def main(_argv):
     freeze_layers = utils.load_freeze_layer(FLAGS.model, FLAGS.tiny)
 
     # [conv_mbox(38,38), conv_lbbox(19,19)]
-    output_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny, use_dc_head=True)
+    output_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny, dc_head_type=1)
     feature_maps = output_maps[:2]
     da_maps = output_maps[2:]
 
@@ -133,19 +134,17 @@ def main(_argv):
         model = qa_train(model)
         print("Training in Quatization Aware ................. ")
     
-    model.summary()
-
     optimizer = tf.keras.optimizers.Adam()
     if os.path.exists(logdir): shutil.rmtree(logdir)
     writer = tf.summary.create_file_writer(logdir)
 
     @tf.function
-    def train_step(source_image_data, source_train_target, target_image_data):
+    def train_step(source_image_data, source_train_target, target_image_data, target_train_target):
         with tf.GradientTape() as tape:
             source_dict_result = model(source_image_data, training=True)
             target_dict_result = model(target_image_data, training=True)
 
-            pred_result = [
+            source_pred_result = [
                 source_dict_result['raw_bbox_m'], 
                 source_dict_result['bbox_m'], 
                 source_dict_result['raw_bbox_l'],
@@ -155,22 +154,51 @@ def main(_argv):
                 source_dict_result['da_m'],
                 source_dict_result['da_l'],
             ]
+            source_mask_da_m = tf.reduce_any(source_train_target[0][0][...,5:] > 0, axis=(3,4)) 
+            source_mask_da_l = tf.reduce_any(source_train_target[1][0][...,5:] > 0, axis=(3,4))
+            source_mask=[
+                tf.cast(tf.expand_dims(source_mask_da_m, axis=-1), dtype=tf.float32), 
+                tf.cast(tf.expand_dims(source_mask_da_l, axis=-1), dtype=tf.float32)
+            ]
+            
+            
+            target_pred_result = [
+                target_dict_result['raw_bbox_m'], 
+                target_dict_result['bbox_m'], 
+                target_dict_result['raw_bbox_l'],
+                target_dict_result['bbox_l'],
+            ]
             target_da_result = [
                 target_dict_result['da_m'],
                 target_dict_result['da_l']
             ]
+            target_mask_da_m = tf.reduce_any(target_train_target[0][0][...,5:] > 0, axis=(3,4)) 
+            target_mask_da_l = tf.reduce_any(target_train_target[1][0][...,5:] > 0, axis=(3,4))
+            target_mask=[
+                tf.cast(tf.expand_dims(target_mask_da_m, axis=-1), dtype=tf.float32), 
+                tf.cast(tf.expand_dims(target_mask_da_l, axis=-1), dtype=tf.float32), 
+            ]
 
             giou_loss = conf_loss = prob_loss = da_loss = 0
             # optimizing process
+            # For source image label
             for i in range(len(freeze_layers)):
-                conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
+                conv, pred = source_pred_result[i * 2], source_pred_result[i * 2 + 1]
                 loss_items = compute_loss(pred, conv, source_train_target[i][0], source_train_target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
                 giou_loss += loss_items[0]
                 conf_loss += loss_items[1]
                 prob_loss += loss_items[2]
+            # For target image label
+            for i in range(len(freeze_layers)):
+                conv, pred = target_pred_result[i * 2], target_pred_result[i * 2 + 1]
+                loss_items = compute_loss(pred, conv, target_train_target[i][0], target_train_target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
+                giou_loss += loss_items[0]
+                conf_loss += loss_items[1]
+                prob_loss += loss_items[2]
 
-            da_loss_items = compute_da_loss(source_da_reuslt, target_da_result)
-            da_loss   +=  da_loss_items['da_source_loss'] + da_loss_items['da_target_loss']
+            da_loss_items = compute_da_loss(source_da_reuslt, target_da_result, \
+                source_mask=source_mask, target_mask=target_mask)
+            da_loss   +=  (da_loss_items['da_source_loss'] + da_loss_items['da_target_loss']) * cfg.TRAIN.ADVERSERIAL_CONST
 
 
             total_loss = giou_loss + conf_loss + prob_loss + da_loss
@@ -198,11 +226,11 @@ def main(_argv):
         }
 
     @tf.function
-    def test_step(source_image_data, source_train_target, target_image_data):
-        source_dict_result = model(source_image_data, training=False)
-        target_dict_result = model(target_image_data, training=False)
+    def test_step(source_image_data, source_train_target, target_image_data, target_train_target):
+        source_dict_result = model(source_image_data, training=True)
+        target_dict_result = model(target_image_data, training=True)
 
-        pred_result = [
+        source_pred_result = [
             source_dict_result['raw_bbox_m'], 
             source_dict_result['bbox_m'], 
             source_dict_result['raw_bbox_l'],
@@ -212,21 +240,51 @@ def main(_argv):
             source_dict_result['da_m'],
             source_dict_result['da_l'],
         ]
+        source_mask_da_m = tf.reduce_any(source_train_target[0][0][...,5:] > 0, axis=(3,4)) 
+        source_mask_da_l = tf.reduce_any(source_train_target[1][0][...,5:] > 0, axis=(3,4))
+        source_mask=[
+            tf.cast(tf.expand_dims(source_mask_da_m, axis=-1), dtype=tf.float32), 
+            tf.cast(tf.expand_dims(source_mask_da_l, axis=-1), dtype=tf.float32)
+        ]
+            
+            
+        target_pred_result = [
+            target_dict_result['raw_bbox_m'], 
+            target_dict_result['bbox_m'], 
+            target_dict_result['raw_bbox_l'],
+            target_dict_result['bbox_l'],
+        ]
         target_da_result = [
             target_dict_result['da_m'],
             target_dict_result['da_l']
         ]
+        target_mask_da_m = tf.reduce_any(target_train_target[0][0][...,5:] > 0, axis=(3,4)) 
+        target_mask_da_l = tf.reduce_any(target_train_target[1][0][...,5:] > 0, axis=(3,4))
+        target_mask=[
+            tf.cast(tf.expand_dims(target_mask_da_m, axis=-1), dtype=tf.float32), 
+            tf.cast(tf.expand_dims(target_mask_da_l, axis=-1), dtype=tf.float32), 
+        ]
+
         giou_loss = conf_loss = prob_loss = da_loss = 0
         # optimizing process
+        # For source image label
         for i in range(len(freeze_layers)):
-            conv, pred = pred_result[i * 2], pred_result[i * 2 + 1]
+            conv, pred = source_pred_result[i * 2], source_pred_result[i * 2 + 1]
             loss_items = compute_loss(pred, conv, source_train_target[i][0], source_train_target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
             giou_loss += loss_items[0]
             conf_loss += loss_items[1]
             prob_loss += loss_items[2]
+        # For target image label
+        for i in range(len(freeze_layers)):
+            conv, pred = target_pred_result[i * 2], target_pred_result[i * 2 + 1]
+            loss_items = compute_loss(pred, conv, target_train_target[i][0], target_train_target[i][1], STRIDES=STRIDES, NUM_CLASS=NUM_CLASS, IOU_LOSS_THRESH=IOU_LOSS_THRESH, i=i)
+            giou_loss += loss_items[0]
+            conf_loss += loss_items[1]
+            prob_loss += loss_items[2]
 
-        da_loss_items = compute_da_loss(source_da_reuslt, target_da_result)
-        da_loss   +=  da_loss_items['da_source_loss'] + da_loss_items['da_target_loss']
+        da_loss_items = compute_da_loss(source_da_reuslt, target_da_result, \
+            source_mask=source_mask, target_mask=target_mask)
+        da_loss   +=  (da_loss_items['da_source_loss'] + da_loss_items['da_target_loss'])  * cfg.TRAIN.ADVERSERIAL_CONST
 
         total_loss = giou_loss + conf_loss + prob_loss + da_loss
         return {
@@ -239,6 +297,11 @@ def main(_argv):
 
 
     for epoch in range(1, 1+first_stage_epochs + second_stage_epochs):
+        any_sc_gt_on_fpn_l=0
+        any_tg_gt_on_fpn_l=0
+        any_sc_gt_on_fpn_m=0
+        any_tg_gt_on_fpn_m=0
+
         if epoch <= first_stage_epochs:
             if not isfreeze:
                 isfreeze = True
@@ -265,7 +328,7 @@ def main(_argv):
 
         tmp=time.time()
         with tqdm(total=len(trainset), ncols=200) as pbar:
-            for data_item in trainset:
+            for iter_idx, data_item in enumerate(trainset):
                 source_data_dict=data_item[0]
                 target_data_dict=data_item[1]
 
@@ -275,17 +338,31 @@ def main(_argv):
                     [source_data_dict['label_bboxes_l'], source_data_dict['bboxes_l']], 
                 ]
                 target_images=target_data_dict['images']
+                target_train_targets=[
+                    [target_data_dict['label_bboxes_m'], target_data_dict['bboxes_m']], 
+                    [target_data_dict['label_bboxes_l'], target_data_dict['bboxes_l']], 
+                ]
 
                 data_time=time.time()-tmp
                 batch_size = source_images.shape[0]
                 tmp=time.time()
-                loss_dict = train_step(source_images, source_train_targets, target_images)
+                
+                loss_dict = train_step(source_images, source_train_targets, target_images, target_train_targets)
                 model_time = time.time()-tmp
 
                 giou_loss_counter.update(loss_dict['giou_loss'], batch_size)
                 conf_loss_counter.update(loss_dict['conf_loss'], batch_size)
                 prob_loss_counter.update(loss_dict['prob_loss'], batch_size)
                 da_loss_counter.update(loss_dict['da_loss'], batch_size)
+                # debug statistics
+                sc_l = tf.reduce_any(source_data_dict['label_bboxes_l'][..., 5:] > 0, axis=(1,2,3,4)).numpy()
+                tg_l = tf.reduce_any(target_data_dict['label_bboxes_l'][..., 5:] > 0, axis=(1,2,3,4)).numpy()
+                sc_m = tf.reduce_any(source_data_dict['label_bboxes_m'][..., 5:] > 0, axis=(1,2,3,4)).numpy()
+                tg_m = tf.reduce_any(target_data_dict['label_bboxes_m'][..., 5:] > 0, axis=(1,2,3,4)).numpy()
+                any_sc_gt_on_fpn_l +=  sc_l.astype(np.int32).sum()
+                any_tg_gt_on_fpn_l +=  tg_l.astype(np.int32).sum()
+                any_sc_gt_on_fpn_m +=  sc_m.astype(np.int32).sum()
+                any_tg_gt_on_fpn_m +=  tg_m.astype(np.int32).sum()
 
                 # update learning rate
                 global_steps.assign_add(1)
@@ -295,6 +372,47 @@ def main(_argv):
                     lr = cfg.TRAIN.LR_END + 0.5 * (cfg.TRAIN.LR_INIT - cfg.TRAIN.LR_END) * (
                         (1 + tf.cos((global_steps - warmup_steps) / (total_steps - warmup_steps) * np.pi)))
                 optimizer.lr.assign(lr.numpy())
+
+                if (iter_idx + 1) % 200 == 0:
+                    image_data = tf.concat([source_images[:2], target_images[:2]], axis=0)
+                    label_data_m = tf.concat([source_train_targets[0][0][:2], target_train_targets[0][0][:2]], axis=0)
+                    label_data_l = tf.concat([source_train_targets[1][0][:2], target_train_targets[1][0][:2]], axis=0)
+
+                    # Model Inference
+                    dict_result = model(image_data, training=False)
+                    # Model Drawy bbox
+                    processed_bboxes = utils.raw_output_to_bbox([
+                        dict_result['bbox_m'],
+                        dict_result['bbox_l'],
+                    ], tf.shape(image_data).numpy()[1:3])
+                    display_images = (image_data*255.0).numpy().astype(np.uint8)
+                    # Create Display Image
+                    display_list = []
+                    for i in range(4):
+                        image = draw_bbox(display_images[i], [
+                            item[i:i+1] for item in processed_bboxes
+                        ])
+                        display_list.append(image)
+                    top_img = np.concatenate(display_list[:2], axis=1)
+                    bot_img = np.concatenate(display_list[2:], axis=1)
+                    full_img = np.concatenate([top_img, bot_img], axis=0)
+                    # Create Display Mask m
+                    mask_m_bool = tf.cast(tf.reduce_any(label_data_m[..., 5:] > 0, axis=(3,4)), tf.uint8).numpy() * 255
+                    top_mask_m = np.concatenate(mask_m_bool[:2], axis=1) 
+                    bot_mask_m = np.concatenate(mask_m_bool[2:], axis=1) 
+                    full_mask_m = np.concatenate([top_mask_m, bot_mask_m], axis=0).repeat(3, axis=-1)
+                    # Create Display Mask l
+                    mask_l_bool = tf.cast(tf.reduce_any(label_data_l[..., 5:] > 0, axis=(3,4)), tf.uint8).numpy() * 255
+                    top_mask_l = np.concatenate(mask_l_bool[:2], axis=1) 
+                    bot_mask_l = np.concatenate(mask_l_bool[2:], axis=1) 
+                    full_mask_l = np.concatenate([top_mask_l, bot_mask_l], axis=0).repeat(3, axis=-1)
+
+
+                    cv2.imwrite(os.path.join(FLAGS.save_dir, 'pic', f'{epoch}_{iter_idx+1}_img.jpg'), full_img[..., ::-1])
+                    cv2.imwrite(os.path.join(FLAGS.save_dir, 'pic', f'{epoch}_{iter_idx+1}_msk_m.jpg'), full_mask_m)
+                    cv2.imwrite(os.path.join(FLAGS.save_dir, 'pic', f'{epoch}_{iter_idx+1}_msk_l.jpg'), full_mask_l)
+
+
 
                 total = giou_loss_counter.get_average() \
                     + conf_loss_counter.get_average() \
@@ -306,10 +424,10 @@ def main(_argv):
                     'giou_loss': f"{giou_loss_counter.get_average():6.4f}",
                     'conf_loss': f"{conf_loss_counter.get_average():6.4f}",
                     'prob_loss': f"{prob_loss_counter.get_average():6.4f}",
-                    'da_loss': f"{da_loss_counter.get_average():6.4f}",
+                    'da_loss': f"{da_loss_counter.get_average():8.6f}",
                     'total': f"{total: 6.4f}",
-                    'data_time': f'{data_time:6.4f}',
-                    'model_time': f'{model_time:6.4f}'
+                    'data_time': f'{data_time:4.2f}',
+                    'model_time': f'{model_time:4.2f}'
                 })
                 total_epoch = first_stage_epochs + second_stage_epochs
                 pbar.set_description(f"Epoch {epoch:3d}/{total_epoch:3d}")
@@ -334,9 +452,13 @@ def main(_argv):
                         [source_data_dict['label_bboxes_l'], source_data_dict['bboxes_l']], 
                     ]
                     target_images=target_data_dict['images']
+                    target_train_targets=[
+                        [target_data_dict['label_bboxes_m'], target_data_dict['bboxes_m']], 
+                        [target_data_dict['label_bboxes_l'], target_data_dict['bboxes_l']], 
+                    ]
 
                     batch_size = source_images.shape[0]
-                    loss_dict = test_step(source_images, source_train_targets, target_images)
+                    loss_dict = test_step(source_images, source_train_targets, target_images, target_train_targets)
 
                     giou_loss_counter.update(loss_dict['giou_loss'], batch_size)
                     conf_loss_counter.update(loss_dict['conf_loss'], batch_size)
@@ -365,7 +487,10 @@ def main(_argv):
                 tf.summary.scalar("val/da_loss", da_loss_counter.get_average(), step=epoch)
             
             model.save_weights(os.path.join(FLAGS.save_dir, 'ckpt', f'{epoch:04d}.ckpt'))
-        
+
+        print(f'any_sc_gt_on_fpn_l: {any_sc_gt_on_fpn_l:05d}   any_sc_gt_on_fpn_m: {any_sc_gt_on_fpn_m:05d}', )
+        print(f'any_tg_gt_on_fpn_l: {any_tg_gt_on_fpn_l:05d}   any_tg_gt_on_fpn_m: {any_tg_gt_on_fpn_m:05d}', )        
+
     model.save_weights(os.path.join(FLAGS.save_dir, 'ckpt', 'final.ckpt'))
 
 if __name__ == '__main__':

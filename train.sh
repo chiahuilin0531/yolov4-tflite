@@ -6,4 +6,5 @@ python ./evaluate_map.py --weights ./checkpoints/test/save_model_final/ --framew
 
 
 
-python ./evaluate_map.py --weights ./checkpoints/test/save_model_final/ --framework tf --input_size 608 --annotation_path ./datasets/night_dataset/anno/val_well_split_3cls.txt --class_path ./data/classes/3cls.names
+python ./evaluate_map_v3.py --weights ./checkpoints/test/save_model_final/ --framework tf --input_size 608 --annotation_path ./datasets/night_dataset/anno/val_3cls.txt --class_path ./data/classes/3cls.names
+python ./convert_tflite.py --weights ./checkpoints_da/instance_level_alignment/save_model_final/ --output ./checkpoints_da/instance_level_alignment/tflite_final/ --input_size 608 --quantize_mode int8 --dataset ./datasets/day_night_mix/anno/train.txt

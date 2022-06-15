@@ -5,14 +5,14 @@ from absl.flags import FLAGS
 from core.accumulator import Accumulator
 import os, shutil
 import tensorflow as tf
-from core.yolov4 import YOLO, compute_loss, compute_da_loss, decode_train
-from core.dataset_tiny import Dataset, tfDataset, tfAdversailDataset
-from core.config import cfg
+from core.yolov4 import YOLO, compute_loss, compute_da_loss_instance, decode_train
+from core.dataset_tiny import tfDataset, tfAdversailDataset
+from core.config_adverserial import cfg
 import numpy as np
 from core import utils
-from core.utils import freeze_all, unfreeze_all, draw_bbox
+from core.utils import freeze_all, unfreeze_all, draw_bbox, read_class_names
 from tqdm import tqdm
-import tensorflow_model_optimization as tfmot
+# import tensorflow_model_optimization as tfmot
 import time
 
 flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
@@ -20,6 +20,8 @@ flags.DEFINE_string('weights', None, 'pretrained weights')
 flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
 flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
 flags.DEFINE_string('save_dir', 'checkpoints/yolov4_tiny', 'save model dir')
+flags.DEFINE_boolean('instance_level', True, 'is instance-level mask')
+
 tf.config.optimizer.set_jit(True)
 
 def apply_quantization(layer):
@@ -65,12 +67,12 @@ def main(_argv):
     os.makedirs(os.path.join(FLAGS.save_dir, 'ckpt'), exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'pic'), exist_ok=True)
 
-    testset_source = tfDataset(FLAGS, is_training=False, filter_area=123, use_imgaug=False, adverserial=False).dataset_gen()
-    testset_target = tfDataset(FLAGS, is_training=False, filter_area=64, use_imgaug=False, adverserial=True).dataset_gen()
+    testset_source = tfDataset(FLAGS, cfg, is_training=False, filter_area=123, use_imgaug=False, adverserial=False).dataset_gen()
+    testset_target = tfDataset(FLAGS, cfg, is_training=False, filter_area=64, use_imgaug=False, adverserial=True).dataset_gen()
     testset = tf.data.Dataset.zip((testset_source, testset_target))
 
-    trainset_source = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False, adverserial=False).dataset_gen()
-    trainset_target = tfDataset(FLAGS, is_training=True, filter_area=64, use_imgaug=False, adverserial=True).dataset_gen()
+    trainset_source = tfDataset(FLAGS, cfg, is_training=True, filter_area=123, use_imgaug=False, adverserial=False).dataset_gen()
+    trainset_target = tfDataset(FLAGS, cfg, is_training=True, filter_area=64, use_imgaug=False, adverserial=True).dataset_gen()
     trainset = tf.data.Dataset.zip((trainset_source, trainset_target))
 
     copytree('./core', os.path.join(FLAGS.save_dir, 'config'))
@@ -90,8 +92,9 @@ def main(_argv):
     total_steps = (first_stage_epochs + second_stage_epochs) * steps_per_epoch
 
     input_layer = tf.keras.layers.Input([cfg.TRAIN.INPUT_SIZE, cfg.TRAIN.INPUT_SIZE, 3])
-    STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
+    STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS, cfg)
     IOU_LOSS_THRESH = cfg.YOLO.IOU_LOSS_THRESH
+    classes_name = read_class_names(cfg.YOLO.CLASSES )
 
     freeze_layers = utils.load_freeze_layer(FLAGS.model, FLAGS.tiny)
 
@@ -164,23 +167,32 @@ def main(_argv):
                 dict_result['da_m'][:batch_size//2],
                 dict_result['da_l'][:batch_size//2],
             ]
-            source_mask_da_m = tf.reduce_any(train_target[0][0][:batch_size//2, ...,5:] > 0, axis=(3,4)) 
-            source_mask_da_l = tf.reduce_any(train_target[1][0][:batch_size//2, ...,5:] > 0, axis=(3,4))
+            if FLAGS.instance_level:
+                source_mask_da_m = tf.reduce_any(train_target[0][0][:batch_size//2, ...,5:] > 0, axis=(3,4)) 
+                source_mask_da_l = tf.reduce_any(train_target[1][0][:batch_size//2, ...,5:] > 0, axis=(3,4))
+            else:
+                mask = tf.cast(image_data[:batch_size//2] != tfDataset.get_padding_val(), dtype=tf.float32)
+                source_mask_da_m = tf.image.resize(mask, tf.shape(train_target[0][0])[1:3])
+                source_mask_da_l = tf.image.resize(mask, tf.shape(train_target[1][0])[1:3])
             source_mask=[
                 tf.cast(tf.expand_dims(source_mask_da_m, axis=-1), dtype=tf.float32), 
                 tf.cast(tf.expand_dims(source_mask_da_l, axis=-1), dtype=tf.float32)
             ]
             
-            
-            target_mask_da_m = tf.reduce_any(train_target[0][0][batch_size//2:, ...,5:] > 0, axis=(3,4)) 
-            target_mask_da_l = tf.reduce_any(train_target[1][0][batch_size//2:, ...,5:] > 0, axis=(3,4))
-            target_mask=[
-                tf.cast(tf.expand_dims(target_mask_da_m, axis=-1), dtype=tf.float32), 
-                tf.cast(tf.expand_dims(target_mask_da_l, axis=-1), dtype=tf.float32), 
-            ]
             target_da_result = [
                 dict_result['da_m'][batch_size//2:],
                 dict_result['da_l'][batch_size//2:]
+            ]
+            if FLAGS.instance_level:
+                target_mask_da_m = tf.reduce_any(train_target[0][0][batch_size//2:, ...,5:] > 0, axis=(3,4)) 
+                target_mask_da_l = tf.reduce_any(train_target[1][0][batch_size//2:, ...,5:] > 0, axis=(3,4))
+            else:
+                mask = tf.cast(image_data[batch_size//2:] != tfDataset.get_padding_val(), dtype=tf.float32)
+                target_mask_da_m = tf.image.resize(mask, tf.shape(train_target[0][0])[1:3])
+                target_mask_da_l = tf.image.resize(mask, tf.shape(train_target[1][0])[1:3])
+            target_mask=[
+                tf.cast(tf.expand_dims(target_mask_da_m, axis=-1), dtype=tf.float32), 
+                tf.cast(tf.expand_dims(target_mask_da_l, axis=-1), dtype=tf.float32), 
             ]
 
             giou_loss = conf_loss = prob_loss = da_loss = 0
@@ -193,7 +205,7 @@ def main(_argv):
                 conf_loss += loss_items[1]
                 prob_loss += loss_items[2]
 
-            da_loss_items = compute_da_loss(source_da_reuslt, target_da_result, \
+            da_loss_items = compute_da_loss_instance(source_da_reuslt, target_da_result, \
                 source_mask=source_mask, target_mask=target_mask)
             da_loss =  (da_loss_items['da_source_loss'] + da_loss_items['da_target_loss']) * 2 * cfg.TRAIN.ADVERSERIAL_CONST
 
@@ -237,24 +249,34 @@ def main(_argv):
             dict_result['da_m'][:batch_size//2],
             dict_result['da_l'][:batch_size//2],
         ]
-        source_mask_da_m = tf.reduce_any(train_target[0][0][:batch_size//2, ...,5:] > 0, axis=(3,4)) 
-        source_mask_da_l = tf.reduce_any(train_target[1][0][:batch_size//2, ...,5:] > 0, axis=(3,4))
+        if FLAGS.instance_level:
+            source_mask_da_m = tf.reduce_any(train_target[0][0][:batch_size//2, ...,5:] > 0, axis=(3,4)) 
+            source_mask_da_l = tf.reduce_any(train_target[1][0][:batch_size//2, ...,5:] > 0, axis=(3,4))
+        else:
+            mask = tf.cast(image_data[:batch_size//2] != tfDataset.get_padding_val(), dtype=tf.float32)
+            source_mask_da_m = tf.image.resize(mask, tf.shape(train_target[0][0])[1:3])
+            source_mask_da_l = tf.image.resize(mask, tf.shape(train_target[1][0])[1:3])
         source_mask=[
             tf.cast(tf.expand_dims(source_mask_da_m, axis=-1), dtype=tf.float32), 
             tf.cast(tf.expand_dims(source_mask_da_l, axis=-1), dtype=tf.float32)
         ]
             
-            
-        target_mask_da_m = tf.reduce_any(train_target[0][0][batch_size//2:, ...,5:] > 0, axis=(3,4)) 
-        target_mask_da_l = tf.reduce_any(train_target[1][0][batch_size//2:, ...,5:] > 0, axis=(3,4))
-        target_mask=[
-            tf.cast(tf.expand_dims(target_mask_da_m, axis=-1), dtype=tf.float32), 
-            tf.cast(tf.expand_dims(target_mask_da_l, axis=-1), dtype=tf.float32), 
-        ]
         target_da_result = [
             dict_result['da_m'][batch_size//2:],
             dict_result['da_l'][batch_size//2:]
         ]
+        if FLAGS.instance_level:
+            target_mask_da_m = tf.reduce_any(train_target[0][0][batch_size//2:, ...,5:] > 0, axis=(3,4)) 
+            target_mask_da_l = tf.reduce_any(train_target[1][0][batch_size//2:, ...,5:] > 0, axis=(3,4))
+        else:
+            mask = tf.cast(image_data[batch_size//2:] != tfDataset.get_padding_val(), dtype=tf.float32)
+            target_mask_da_m = tf.image.resize(mask, tf.shape(train_target[0][0])[1:3])
+            target_mask_da_l = tf.image.resize(mask, tf.shape(train_target[1][0])[1:3])
+        target_mask=[
+            tf.cast(tf.expand_dims(target_mask_da_m, axis=-1), dtype=tf.float32), 
+            tf.cast(tf.expand_dims(target_mask_da_l, axis=-1), dtype=tf.float32), 
+        ]
+
 
         giou_loss = conf_loss = prob_loss = da_loss = 0
             # optimizing process
@@ -266,7 +288,7 @@ def main(_argv):
             conf_loss += loss_items[1]
             prob_loss += loss_items[2]
 
-        da_loss_items = compute_da_loss(source_da_reuslt, target_da_result, \
+        da_loss_items = compute_da_loss_instance(source_da_reuslt, target_da_result, \
             source_mask=source_mask, target_mask=target_mask)
         da_loss = (da_loss_items['da_source_loss'] + da_loss_items['da_target_loss']) * 2 * cfg.TRAIN.ADVERSERIAL_CONST
 
@@ -388,7 +410,7 @@ def main(_argv):
                     for i in range(4):
                         image = draw_bbox(display_images[i], [
                             item[i:i+1] for item in processed_bboxes
-                        ])
+                        ], classes_name)
                         display_list.append(image)
                     top_img = np.concatenate(display_list[:2], axis=1)
                     bot_img = np.concatenate(display_list[2:], axis=1)

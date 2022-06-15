@@ -10,7 +10,6 @@ from core.yolov4 import filter_boxes,decode
 from tensorflow.python.saved_model import tag_constants
 import core.utils as utils
 from tqdm import tqdm
-from core.config import cfg
 import json
 from pycocotools.coco import COCO
 from mAP.cocoeval import COCOeval
@@ -142,11 +141,9 @@ def main(_argv):
     if not should_pass:
         if os.path.exists(predicted_dir_path): shutil.rmtree(predicted_dir_path)
         if os.path.exists(ground_truth_dir_path): shutil.rmtree(ground_truth_dir_path)
-        if os.path.exists(cfg.TEST.DECTECTED_IMAGE_PATH): shutil.rmtree(cfg.TEST.DECTECTED_IMAGE_PATH)
 
         os.mkdir(predicted_dir_path)
         os.mkdir(ground_truth_dir_path)
-        os.mkdir(cfg.TEST.DECTECTED_IMAGE_PATH)
 
     # Build Model According to different model weight format
     if FLAGS.framework == 'tflite':
@@ -226,10 +223,6 @@ def main(_argv):
                     )
 
                     boxes, scores, classes, valid_detections = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()] 
-
-                    if cfg.TEST.DECTECTED_IMAGE_PATH is not None and FLAGS.draw_image:
-                        image_result = utils.draw_bbox(np.copy(image), [boxes, scores, classes, valid_detections])
-                        cv2.imwrite(cfg.TEST.DECTECTED_IMAGE_PATH + image_name, image_result)
 
                     with open(predict_result_path, 'w') as f:
                         image_h, image_w, _ = image.shape

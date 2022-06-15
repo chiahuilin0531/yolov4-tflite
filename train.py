@@ -11,7 +11,7 @@ from core.dataset_tiny import Dataset, tfDataset
 from core.config import cfg
 import numpy as np
 from core import utils
-from core.utils import draw_bbox, freeze_all, unfreeze_all
+from core.utils import draw_bbox, freeze_all, unfreeze_all, read_class_names
 from tqdm import tqdm
 import tensorflow_model_optimization as tfmot
 import time
@@ -21,10 +21,11 @@ flags.DEFINE_string('weights', None, 'pretrained weights')
 flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
 flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
 flags.DEFINE_string('save_dir', 'checkpoints/yolov4_tiny', 'save model dir')
-tf.config.optimizer.set_jit(True)
+# tf.config.optimizer.set_jit(True)
 
 def apply_quantization(layer):
     if isinstance(layer, tf.python.keras.engine.base_layer.TensorFlowOpLayer):
+    # if isinstance(layer, keras.engine.base_layer.TensorFlowOpLayer):
          return layer
     return tfmot.quantization.keras.quantize_annotate_layer(layer)
 
@@ -57,8 +58,8 @@ def main(_argv):
     #########################################################
     # use_imgaug augmentation would lead to unknown performance drop
     # this issue should be resolved in the future.
-    trainset = tfDataset(FLAGS, is_training=True, filter_area=41, use_imgaug=False).dataset_gen()
-    testset = tfDataset(FLAGS, is_training=False, filter_area=41, use_imgaug=False).dataset_gen()
+    trainset = tfDataset(FLAGS, cfg, is_training=True, filter_area=64, use_imgaug=False).dataset_gen()
+    testset = tfDataset(FLAGS, cfg, is_training=False, filter_area=64, use_imgaug=False).dataset_gen()
 
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)
@@ -83,8 +84,9 @@ def main(_argv):
     total_steps = (first_stage_epochs + second_stage_epochs) * steps_per_epoch
 
     input_layer = tf.keras.layers.Input([cfg.TRAIN.INPUT_SIZE, cfg.TRAIN.INPUT_SIZE, 3])
-    STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
+    STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS, cfg)
     IOU_LOSS_THRESH = cfg.YOLO.IOU_LOSS_THRESH
+    classes_name = read_class_names(cfg.YOLO.CLASSES )
 
     freeze_layers = utils.load_freeze_layer(FLAGS.model, FLAGS.tiny)
 
@@ -276,7 +278,7 @@ def main(_argv):
                     for i in range(4):
                         image = draw_bbox(display_images[i], [
                             item[i:i+1] for item in processed_bboxes
-                        ])
+                        ], classes_name)
                         display_list.append(image)
                     top_img = np.concatenate(display_list[:2], axis=1)
                     bot_img = np.concatenate(display_list[2:], axis=1)
@@ -303,8 +305,8 @@ def main(_argv):
                 pbar.update(1)
 
                 tmp=time.time()
-
-        if epoch % 5 == 0 or (1+first_stage_epochs + second_stage_epochs- epoch < 10):
+        if True:
+        # if epoch % 5 == 0 or (1+first_stage_epochs + second_stage_epochs- epoch < 10):
             giou_loss_counter.reset()
             conf_loss_counter.reset()
             prob_loss_counter.reset()

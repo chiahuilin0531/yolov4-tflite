@@ -3,7 +3,6 @@ from absl import app, flags, logging
 from absl.flags import FLAGS
 from core.yolov4 import YOLO, decode, decode_train, filter_boxes
 import core.utils as utils
-from core.config import cfg
 from keras_flops import get_flops
 import tensorflow_model_optimization as tfmot
 
@@ -16,6 +15,8 @@ flags.DEFINE_string('framework', 'tf', 'define what framework do you want to con
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_string('dataset', 'data/dataset/gis_val_1.txt', 'yolov3 or yolov4')
 flags.DEFINE_boolean('qat', False, 'For Qauntize Aware Training')
+flags.DEFINE_string('config_name', 'core.config', 'configuration ')
+
 
 def apply_quantization(layer):
     
@@ -44,7 +45,10 @@ def qa_train(model):
     return quant_aware_model
 
 def save_tf():
-  STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
+  import importlib
+  cfg = importlib.import_module(FLAGS.config_name).cfg
+
+  STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS, cfg)
 
   input_layer = tf.keras.layers.Input([FLAGS.input_size, FLAGS.input_size, 3])
   feature_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny)

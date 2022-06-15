@@ -10,7 +10,6 @@ from core.yolov4 import filter_boxes,decode
 from tensorflow.python.saved_model import tag_constants
 import core.utils as utils
 from tqdm import tqdm
-from core.config import cfg
 import json
 from pycocotools.coco import COCO
 from mAP.cocoeval import COCOeval
@@ -28,6 +27,8 @@ flags.DEFINE_integer('input_size', 608, 'resize images to')
 flags.DEFINE_boolean('draw_image', False, 'write image path')
 flags.DEFINE_float('iou', 0.5, 'iou threshold')
 flags.DEFINE_float('score', 0.25, 'score threshold')
+flags.DEFINE_string('config_name', 'core.config', 'configuration ')
+
 
 def iou(bboxes1, bboxes2):
     """
@@ -150,8 +151,10 @@ def yolo2coco(label_path, pred_path, class_list):
 
 
 def main(_argv):
+    import importlib
+    cfg = importlib.import_module(FLAGS.config_name).cfg
     INPUT_SIZE = FLAGS.input_size
-    STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
+    STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS, cfg)
     CLASSES = utils.read_class_names(FLAGS.class_path)
     print(f'CLASSES: {CLASSES}')
 
@@ -168,15 +171,13 @@ def main(_argv):
     if not should_pass:
         if os.path.exists(predicted_dir_path): shutil.rmtree(predicted_dir_path)
         if os.path.exists(ground_truth_dir_path): shutil.rmtree(ground_truth_dir_path)
-        if os.path.exists(cfg.TEST.DECTECTED_IMAGE_PATH): shutil.rmtree(cfg.TEST.DECTECTED_IMAGE_PATH)
 
         os.mkdir(predicted_dir_path)
         os.mkdir(ground_truth_dir_path)
-        os.mkdir(cfg.TEST.DECTECTED_IMAGE_PATH)
 
     # Build Model According to different model weight format
     if FLAGS.framework == 'tflite':
-        interpreter = tf.lite.Interpreter(model_path=FLAGS.weights)
+        interpreter = tf.lite.Interpreter(model_path=FLAGS.weights, num_threads=4)
         interpreter.allocate_tensors()
         input_details = interpreter.get_input_details()
         output_details = interpreter.get_output_details()
@@ -239,7 +240,10 @@ def main(_argv):
                         interpreter.invoke()
                         pred = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
                         if FLAGS.model == 'yolov4' and FLAGS.tiny == True:
-                            boxes, pred_conf = filter_boxes(pred[1], pred[0], score_threshold=0.25, input_shape = tf.constant([INPUT_SIZE,INPUT_SIZE]))
+                            # boxes, pred_conf = filter_boxes(pred[1], pred[0], score_threshold=0.25, input_shape = tf.constant([INPUT_SIZE,INPUT_SIZE]))
+                            # print(pred[0].shape)
+                            boxes = pred[0][..., 0:4]
+                            pred_conf = pred[0][..., 4:]
                         else:
                             boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25, input_shape = tf.constant([INPUT_SIZE,INPUT_SIZE]))
                     elif FLAGS.framework == 'tf':
@@ -250,6 +254,8 @@ def main(_argv):
                     else:
                         raise NotImplementedError()
 
+                    # print('tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4))', tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)).shape)
+                    # print('tf.reshape(pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1]))', tf.reshape(pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])).shape)
                     boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
                         boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
                         scores=tf.reshape(pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
@@ -339,9 +345,12 @@ def main(_argv):
                         img_size_ratio = np.array([[h,w,h,w]])
                         bboxes_gt_y1x1y2x2 = np.stack([bboxes_gt[...,1],bboxes_gt[...,0],bboxes_gt[...,3],bboxes_gt[...,2]], axis=-1)
                         image_result = utils.draw_bbox(np.copy(image), \
-                            [boxes/img_size_ratio,                 scores,     classes,        valid_detections])
+                            [boxes/img_size_ratio,                 scores,     classes,        valid_detections], \
+                            CLASSES)
                         image_result = utils.draw_bbox(np.copy(image_result), \
-                            [[bboxes_gt_y1x1y2x2/img_size_ratio],  None,       [classes_gt],   [len(bboxes_gt)]], is_gt=True)
+                            [[bboxes_gt_y1x1y2x2/img_size_ratio],  None,       [classes_gt],   [len(bboxes_gt)]], \
+                            CLASSES, \
+                            is_gt=True)
                         if any_error:
                             cv2.imwrite(os.path.join(error_image_dir, image_name), image_result[...,::-1])
                         else:
@@ -361,8 +370,9 @@ def main(_argv):
     cocoDt=cocoGt.loadRes(p_json)
     cocoEval = COCOeval(cocoGt,cocoDt,'bbox')
     # cocoEval.params.areaRng = [[0 ** 2, 1e5 ** 2], [0 ** 2, 1022], [1022, 3809], [3809, 1e5 ** 2]]
-    cocoEval.params.areaRng = [[123, 1e5 ** 2], [123, 341], [341, 1e5 ** 2],  [1e5 ** 2, 1e5 ** 2+1]]
+    # cocoEval.params.areaRng = [[123, 1e5 ** 2], [123, 341], [341, 1e5 ** 2],  [1e5 ** 2, 1e5 ** 2+1]]
     # cocoEval.params.areaRng = [[41, 1e5 ** 2], [41, 133], [133, 256],  [256, 1e5 ** 2]]
+    cocoEval.params.areaRng = [[123, 1e5 ** 2], [123, 341], [341, 768],  [768, 1e5 ** 2]]
     cocoEval.params.areaRngLbl=['all','small', 'medium', 'large']
     cocoEval.evaluate()
     cocoEval.accumulate()

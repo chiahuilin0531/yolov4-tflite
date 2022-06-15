@@ -3,7 +3,6 @@ import random
 import colorsys
 import numpy as np
 import tensorflow as tf
-from core.config import cfg
 
 def load_freeze_layer(model='yolov4', tiny=False):
     if tiny:
@@ -79,7 +78,7 @@ def read_class_names(class_file_name):
             names[ID] = name.strip('\n')
     return names
 
-def load_config(FLAGS):
+def load_config(FLAGS, cfg):
     if FLAGS.tiny:
         STRIDES = np.array(cfg.YOLO.STRIDES_TINY)
         ANCHORS = get_anchors(cfg.YOLO.ANCHORS_TINY, FLAGS.tiny)
@@ -135,7 +134,7 @@ def image_preprocess(image, target_size, gt_boxes=None):
         gt_boxes[:, [1, 3]] = gt_boxes[:, [1, 3]] * scale + dh
         return image_paded, gt_boxes
 
-def draw_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES), show_label=True, is_gt=False):
+def draw_bbox(image, bboxes, classes, show_label=True, is_gt=False):
     """
     bboxes: (n,4), y1x1 y2x2
     """
@@ -144,11 +143,11 @@ def draw_bbox(image, bboxes, classes=read_class_names(cfg.YOLO.CLASSES), show_la
     hsv_tuples = [(1.0 * x / num_classes, 1., 1.) for x in range(num_classes)]
     #colors = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv_tuples))
     #colors = list(map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)), colors))
-    gt_color = [(0,255,0),(255,255,0),(255,0,0)]
-    colors = [(0,200,0),(200,200,0),(200,0,0)]
-    random.seed(0)
-    random.shuffle(colors)
-    random.seed(None)
+    colors = [(0,255,0),(255,0,0),(255,255,0)]
+    gt_color = [(255,255,255),(255,255,255),(255,255,255)]
+    # random.seed(0)
+    # random.shuffle(colors)
+    # random.seed(None)
 
     out_boxes, out_scores, out_classes, num_boxes = bboxes
     for i in range(num_boxes[0]):

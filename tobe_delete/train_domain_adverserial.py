@@ -7,7 +7,7 @@ import os, shutil
 import tensorflow as tf
 from core.yolov4 import YOLO, compute_loss, compute_da_loss, decode_train
 from core.dataset_tiny import Dataset, tfDataset, tfAdversailDataset
-from core.config import cfg
+from core.config_adverserial import cfg
 import numpy as np
 from core import utils
 from core.utils import freeze_all, unfreeze_all

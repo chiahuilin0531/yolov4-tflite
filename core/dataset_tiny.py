@@ -121,8 +121,8 @@ class tfDataset(object):
     def get_padding_val(cls):
         return cls.FILL_VALUE
 
-    def dataset_gen(self, yolo_data=True):
-        dataset = tf.data.Dataset.from_tensor_slices(self.annotations)
+    def dataset_gen(self, yolo_data=True, repeat_times=1):
+        dataset = tf.data.Dataset.from_tensor_slices(self.annotations).repeat(repeat_times)
         if self.data_aug:
             dataset=dataset.shuffle(buffer_size=2048)
         dataset = dataset.map(self.parse_annotation, num_parallel_calls=tf.data.experimental.AUTOTUNE)

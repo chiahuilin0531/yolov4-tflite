@@ -101,7 +101,7 @@ def get_anchors(anchors_path, tiny=False):
     else:
         return anchors.reshape(3, 3, 2)
 
-def image_preprocess(image, target_size, gt_boxes=None):
+def image_preprocess(image, target_size, gt_boxes=None, fill_value=0):
     """
     Parameter
     ---------
@@ -121,7 +121,7 @@ def image_preprocess(image, target_size, gt_boxes=None):
     nw, nh  = int(scale * w), int(scale * h)
     image_resized = cv2.resize(image, (nw, nh))
 
-    image_paded = np.full(shape=[ih, iw, 3], fill_value=128.0)
+    image_paded = np.full(shape=[ih, iw, 3], fill_value=fill_value)
     dw, dh = (iw - nw) // 2, (ih-nh) // 2
     image_paded[dh:nh+dh, dw:nw+dw, :] = image_resized
     image_paded = image_paded / 255.

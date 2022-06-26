@@ -14,10 +14,10 @@ import core.backbone as backbone
 # XYSCALE = cfg.YOLO.XYSCALE
 # ANCHORS = utils.get_anchors(cfg.YOLO.ANCHORS)
 
-def YOLO(input_layer, NUM_CLASS, model='yolov4', is_tiny=False, dc_head_type=0):
+def YOLO(input_layer, NUM_CLASS, model='yolov4', is_tiny=False, dc_head_type=0, nl='BatchNorm'):
     if is_tiny:
         if model == 'yolov4':
-            return YOLOv4_tiny(input_layer, NUM_CLASS, dc_head_type)
+            return YOLOv4_tiny(input_layer, NUM_CLASS, dc_head_type, nl)
         elif model == 'yolov3':
             return YOLOv3_tiny(input_layer, NUM_CLASS)
     else:
@@ -26,7 +26,7 @@ def YOLO(input_layer, NUM_CLASS, model='yolov4', is_tiny=False, dc_head_type=0):
         elif model == 'yolov3':
             return YOLOv3(input_layer, NUM_CLASS)
 
-def YOLOv3(input_layer, NUM_CLASS, use_dc_head):
+def YOLOv3(input_layer, NUM_CLASS, dc_head_type):
     route_1, route_2, conv = backbone.darknet53(input_layer)
 
     conv = common.convolutional(conv, (1, 1, 1024, 512))
@@ -68,7 +68,7 @@ def YOLOv3(input_layer, NUM_CLASS, use_dc_head):
 
     return [conv_sbbox, conv_mbbox, conv_lbbox]
 
-def YOLOv4(input_layer, NUM_CLASS, use_dc_head):
+def YOLOv4(input_layer, NUM_CLASS, dc_head_type):
     route_1, route_2, conv = backbone.cspdarknet53(input_layer)
 
     route = conv
@@ -126,31 +126,31 @@ def YOLOv4(input_layer, NUM_CLASS, use_dc_head):
 
     return [conv_sbbox, conv_mbbox, conv_lbbox]
 
-def YOLOv4_tiny(input_layer, NUM_CLASS, dc_head_type):
-    route_1, conv = backbone.cspdarknet53_tiny(input_layer)
+def YOLOv4_tiny(input_layer, NUM_CLASS, dc_head_type, nl="batchnorm"):
+    route_1, conv = backbone.cspdarknet53_tiny(input_layer, nl)
     if dc_head_type == 1:
         conv_mdc, conv_ldc = DomainClassifier([route_1, conv])
     elif dc_head_type == 2:
         conv_mdc, conv_ldc = [route_1, conv]
 
-    conv = common.convolutional(conv, (1, 1, 512, 256))
+    conv = common.convolutional(conv, (1, 1, 512, 256), nl=nl)
 
-    conv_lobj_branch = common.convolutional(conv, (3, 3, 256, 512))
-    conv_lbbox = common.convolutional(conv_lobj_branch, (1, 1, 512, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
+    conv_lobj_branch = common.convolutional(conv, (3, 3, 256, 512), nl=nl)
+    conv_lbbox = common.convolutional(conv_lobj_branch, (1, 1, 512, 3 * (NUM_CLASS + 5)), activate=False, nl=None)
 
-    conv = common.convolutional(conv, (1, 1, 256, 128))
+    conv = common.convolutional(conv, (1, 1, 256, 128), nl=nl)
     conv = common.upsample(conv)
     conv = tf.concat([conv, route_1], axis=-1)
 
-    conv_mobj_branch = common.convolutional(conv, (3, 3, 128, 256))
-    conv_mbbox = common.convolutional(conv_mobj_branch, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, bn=False)
+    conv_mobj_branch = common.convolutional(conv, (3, 3, 128, 256), nl=nl)
+    conv_mbbox = common.convolutional(conv_mobj_branch, (1, 1, 256, 3 * (NUM_CLASS + 5)), activate=False, nl=None)
 
     if dc_head_type == 0:
         return [conv_mbbox, conv_lbbox]
     else:
         return [conv_mbbox, conv_lbbox, conv_mdc, conv_ldc]
 
-def YOLOv3_tiny(input_layer, NUM_CLASS, use_dc_head):
+def YOLOv3_tiny(input_layer, NUM_CLASS, dc_head_type):
     route_1, conv = backbone.darknet53_tiny(input_layer)
 
     conv = common.convolutional(conv, (1, 1, 1024, 256))
@@ -178,6 +178,7 @@ def decode(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE=[1,
         raise NotImplementedError(f'No such framewrok {FRAMEWORK}')
 
 def decode_train(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1, 1, 1]):
+    return decode_train_v2(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
     conv_output = tf.reshape(conv_output,
                              (tf.shape(conv_output)[0], output_size, output_size, 3, 5 + NUM_CLASS))
 
@@ -200,11 +201,47 @@ def decode_train(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYS
 
     return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
 
+def decode_train_v2(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1, 1, 1]):
+    conv_output = tf.reshape(conv_output, (-1, output_size, output_size, 3, 5 + NUM_CLASS))
+
+    # conv_raw_dxdy, conv_raw_dwdh, conv_raw_conf, conv_raw_prob = tf.split(conv_output, (2, 2, 1, NUM_CLASS),
+    #                                                                       axis=-1)
+    conv_raw_dxdy, conv_raw_dwdh, conv_raw_conf, conv_raw_prob = \
+        tf.keras.layers.Lambda(lambda x: tf.split(x, num_or_size_splits=(2, 2, 1, NUM_CLASS), axis=-1))(conv_output) #LB5, LB4
+
+    xy_grid = tf.meshgrid(tf.range(output_size), tf.range(output_size))
+    xy_grid = tf.expand_dims(tf.stack(xy_grid, axis=-1), axis=2)  # [gx, gy, 1, 2]
+    xy_grid = tf.tile(tf.expand_dims(xy_grid, axis=0), [1, 1, 1, 3, 1])
+
+    xy_grid = tf.cast(xy_grid, tf.float32)
+    
+    # a = tf.math.multiply(tf.keras.layers.Activation('sigmoid', name=f'123123123123123_{i}')(conv_raw_dxdy), tf.constant(XYSCALE[i]), name=f'basdbadadbb_{i}')
+    a = tf.keras.layers.Lambda(lambda x: x[0] * x[1])([
+        tf.keras.layers.Activation('sigmoid')(conv_raw_dxdy), 
+        XYSCALE[i]
+    ])
+
+    b = tf.math.multiply(0.5, (XYSCALE[i] - 1))
+    # pred_xy = (a - b + xy_grid) * STRIDES[i]
+    pred_xy = tf.keras.layers.Lambda(lambda x: ((x[0] - x[1] + xy_grid) *x[2]))([a, b, STRIDES[i]])
+    
+    # print(ANCHORS[i])
+    # pred_wh = tf.keras.layers.Lambda(lambda x: tf.exp(x))(conv_raw_dwdh) * ANCHORS[i]
+    # pred_wh = tf.keras.layers.Lambda(lambda x: tf.exp(x))(conv_raw_dwdh) * tf.reshape(tf.constant(ANCHORS[i], tf.float32), (1,1,1,3,2))
+    pred_wh = tf.keras.layers.Lambda(lambda x: tf.exp(x) * ANCHORS[i])(conv_raw_dwdh) 
+    pred_xywh = tf.concat([pred_xy, pred_wh], axis=-1)
+
+    pred_conf = tf.keras.layers.Activation('sigmoid')(conv_raw_conf)
+    pred_prob = tf.keras.layers.Activation('sigmoid')(conv_raw_prob)
+
+    return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
+
 def decode_tf(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1, 1, 1]):
+    return decode_tf_v2(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
     batch_size = tf.shape(conv_output)[0]
     conv_output = tf.reshape(conv_output,
                              (batch_size, output_size, output_size, 3, 5 + NUM_CLASS))
-
+    
     conv_raw_dxdy, conv_raw_dwdh, conv_raw_conf, conv_raw_prob = tf.split(conv_output, (2, 2, 1, NUM_CLASS),
                                                                           axis=-1)
 
@@ -229,7 +266,42 @@ def decode_tf(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCAL
     return pred_xywh, pred_prob
     # return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
 
+def decode_tf_v2(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1, 1, 1]):
+    batch_size = tf.shape(conv_output)[0]
+    conv_output = tf.reshape(conv_output, (-1, output_size, output_size, 3, 5 + NUM_CLASS))
+
+    conv_raw_dxdy, conv_raw_dwdh, conv_raw_conf, conv_raw_prob = \
+        tf.keras.layers.Lambda(lambda x: tf.split(x, (2, 2, 1, NUM_CLASS), axis=-1))(conv_output)
+
+    xy_grid = tf.meshgrid(tf.range(output_size), tf.range(output_size))
+    xy_grid = tf.expand_dims(tf.stack(xy_grid, axis=-1), axis=2)  # [gx, gy, 1, 2]
+    xy_grid = tf.tile(tf.expand_dims(xy_grid, axis=0), [1, 1, 1, 3, 1])
+    xy_grid = tf.cast(xy_grid, tf.float32).numpy()
+
+
+    a = tf.keras.layers.Lambda(lambda x: x[0] * x[1])([
+        tf.keras.layers.Activation('sigmoid')(conv_raw_dxdy), 
+        float(XYSCALE[i])
+    ])
+    b = tf.math.multiply(0.5, (XYSCALE[i] - 1))
+    pred_xy = tf.keras.layers.Lambda(lambda x: ((x[0] - x[1] + xy_grid) *x[2]))([a, b, float(STRIDES[i])])
+    # pred_xy = ((tf.sigmoid(conv_raw_dxdy) * XYSCALE[i]) - 0.5 * (XYSCALE[i] - 1) + xy_grid) * STRIDES[i]
+    
+    pred_wh = tf.keras.layers.Lambda(lambda x: tf.exp(x) * ANCHORS[i])(conv_raw_dwdh) 
+    pred_xywh = tf.concat([pred_xy, pred_wh], axis=-1)
+
+    pred_conf = tf.keras.layers.Activation('sigmoid')(conv_raw_conf)
+    pred_prob = tf.keras.layers.Activation('sigmoid')(conv_raw_prob)
+
+    pred_prob = pred_conf * pred_prob
+    pred_prob = tf.reshape(pred_prob, (batch_size, -1, NUM_CLASS))
+    pred_xywh = tf.reshape(pred_xywh, (batch_size, -1, 4))
+
+    return pred_xywh, pred_prob
+    # return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
+
 def decode_tflite(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1,1,1]):
+    return decode_tf(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
     conv_raw_dxdy_0, conv_raw_dwdh_0, conv_raw_score_0,\
     conv_raw_dxdy_1, conv_raw_dwdh_1, conv_raw_score_1,\
     conv_raw_dxdy_2, conv_raw_dwdh_2, conv_raw_score_2 = tf.split(conv_output, (2, 2, 1+NUM_CLASS, 2, 2, 1+NUM_CLASS,
@@ -256,12 +328,55 @@ def decode_tflite(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XY
     conv_raw_dxdy = [conv_raw_dxdy_0, conv_raw_dxdy_1, conv_raw_dxdy_2]
     for idx, dxdy in enumerate(conv_raw_dxdy):
         dxdy = ((tf.sigmoid(dxdy) * XYSCALE[i]) - 0.5 * (XYSCALE[i] - 1) + xy_grid) * \
-              STRIDES[i]
+            STRIDES[i]
         conv_raw_dxdy[idx] = tf.reshape(dxdy, (1, -1, 2))
     pred_xy = tf.concat(conv_raw_dxdy, axis=1)
     pred_xywh = tf.concat([pred_xy, pred_wh], axis=-1)
     return pred_xywh, pred_prob
     # return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
+
+def decode_tflite_v2(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1,1,1]):
+    conv_raw_dxdy_0, conv_raw_dwdh_0, conv_raw_score_0,\
+    conv_raw_dxdy_1, conv_raw_dwdh_1, conv_raw_score_1,\
+    conv_raw_dxdy_2, conv_raw_dwdh_2, conv_raw_score_2 = \
+        tf.keras.layers.Lambda(lambda x: tf.split(x, (2, 2, 1+NUM_CLASS, 2, 2, 1+NUM_CLASS, 2, 2, 1+NUM_CLASS), axis=-1))(conv_output)
+
+    conv_raw_score = [conv_raw_score_0, conv_raw_score_1, conv_raw_score_2]
+    for idx, raw_score in enumerate(conv_raw_score):
+        score = tf.keras.layers.Activation('sigmoid')(raw_score)
+        score = tf.keras.layers.Multiply()([score[:, :, :, 0:1], score[:, :, :, 1:]])
+        conv_raw_score[idx] = tf.reshape(score, (1, -1, NUM_CLASS))
+    pred_prob = tf.concat(conv_raw_score, axis=1)
+
+    conv_raw_dwdh = [conv_raw_dwdh_0, conv_raw_dwdh_1, conv_raw_dwdh_2]
+    for idx, dwdh in enumerate(conv_raw_dwdh):
+        dwdh = tf.keras.layers.Lambda(lambda x: tf.exp(x) * ANCHORS[i])(dwdh)
+        conv_raw_dwdh[idx] = tf.reshape(dwdh, (1, -1, 2))
+    pred_wh = tf.concat(conv_raw_dwdh, axis=1)
+
+    xy_grid = tf.meshgrid(tf.range(output_size), tf.range(output_size))
+    xy_grid = tf.stack(xy_grid, axis=-1)  # [gx, gy, 2]
+    xy_grid = tf.expand_dims(xy_grid, axis=0)
+    xy_grid = tf.cast(xy_grid, tf.float32).numpy()
+
+    conv_raw_dxdy = [conv_raw_dxdy_0, conv_raw_dxdy_1, conv_raw_dxdy_2]
+    for idx, dxdy in enumerate(conv_raw_dxdy):
+        a = tf.keras.layers.Lambda(lambda x: x[0] * x[1])([
+            tf.keras.layers.Activation('sigmoid')(dxdy), 
+            XYSCALE[i]
+        ])
+        b = tf.math.multiply(0.5, (XYSCALE[i] - 1))
+        dxdy = tf.keras.layers.Lambda(lambda x: ((x[0] - x[1] + xy_grid) *x[2]))([a,b,float(STRIDES[i])])       #  unserizable
+        # dxdy = tf.keras.layers.Lambda(lambda x: ((x[0] - x[1] + x[2]) *x[3]))([a,b,xy_grid,float(STRIDES[i])])#  list index out of range
+        # tmp = a-b+xy_grid
+        # dxdy = tf.keras.layers.Lambda(lambda x: a[0] * x[1])([tmp, float(STRIDES[i])])
+
+        # dxdy = ((tf.sigmoid(dxdy) * XYSCALE[i]) - 0.5 * (XYSCALE[i] - 1) + xy_grid) * STRIDES[i]
+        conv_raw_dxdy[idx] = tf.reshape(dxdy, (1, -1, 2))
+    pred_xy = tf.concat(conv_raw_dxdy, axis=1)
+    pred_xywh = tf.concat([pred_xy, pred_wh], axis=-1)
+    return pred_xywh, pred_prob
+
 
 def decode_trt(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1,1,1]):
     batch_size = tf.shape(conv_output)[0]

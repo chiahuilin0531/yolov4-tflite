@@ -15,3 +15,4 @@ mAP/correct
 visualize_anno
 output
 scripts/*.png
+*.log

@@ -2,7 +2,9 @@
 # coding=utf-8
 
 import tensorflow as tf
-# import tensorflow_addons as tfa
+import tensorflow_addons as tfa
+
+
 class BatchNormalization(tf.keras.layers.BatchNormalization):
     """
     "Frozen state" and "inference mode" are two separate concepts.
@@ -16,7 +18,28 @@ class BatchNormalization(tf.keras.layers.BatchNormalization):
         training = tf.logical_and(training, self.trainable)
         return super().call(x, training)
 
-def convolutional(input_layer, filters_shape, downsample=False, activate=True, bn=True, activate_type='relu', prefix=None):
+class InstanceNormalization(tfa.layers.InstanceNormalization):
+    """
+    "Frozen state" and "inference mode" are two separate concepts.
+    `layer.trainable = False` is to freeze the layer, so the layer will use
+    stored moving `var` and `mean` in the "inference mode", and both `gama`
+    and `beta` will not be updated !
+    """
+    def call(self, x, training=False):
+        if not training:
+            training = tf.constant(False)
+        training = tf.logical_and(training, self.trainable)
+        return super().call(x)
+
+
+NORMALIZATION = {
+    'BatchNorm': BatchNormalization,
+    'InstanceNorm': tfa.layers.InstanceNormalization,
+    # 'LayerNorm': tfa.layers.LayerNormalization,
+}
+
+def convolutional(input_layer, filters_shape, downsample=False, activate=True, nl='BatchNorm', activate_type='relu', prefix=None):
+    any_nl = nl is not None
     if prefix==None: 
         conv_name = None
         bn_name = None
@@ -34,16 +57,17 @@ def convolutional(input_layer, filters_shape, downsample=False, activate=True, b
         padding = 'same'
 
     conv = tf.keras.layers.Conv2D(filters=filters_shape[-1], kernel_size = filters_shape[0], strides=strides, padding=padding,
-                                  use_bias=not bn, kernel_regularizer=tf.keras.regularizers.l2(0.0005),
+                                  use_bias=not any_nl, kernel_regularizer=tf.keras.regularizers.l2(0.0005),
                                   kernel_initializer=tf.random_normal_initializer(stddev=0.01),
                                   bias_initializer=tf.random_normal_initializer(stddev=0.0001), name=conv_name)(input_layer)
 
-    if bn: conv = BatchNormalization(name=bn_name)(conv)
+    if any_nl: conv = NORMALIZATION[nl](name=bn_name)(conv)
     if activate == True:
         if activate_type == "leaky":
             conv = tf.nn.leaky_relu(conv, alpha=0.1)
         elif activate_type == 'relu':
             conv = tf.nn.relu(conv)
+            # conv = tf.keras.layers.Activation(activate_type)(conv)
         elif activate_type == "mish":
             conv = mish(conv)
     return conv
@@ -74,12 +98,15 @@ def residual_block(input_layer, input_channel, filter_num1, filter_num2, activat
 #     return residual_output
 
 def route_group(input_layer, groups, group_id):
-    convs = tf.split(input_layer, num_or_size_splits=groups, axis=-1)
+    # convs = tf.split(input_layer, num_or_size_splits=groups, axis=-1)
+    # return convs[group_id]
+    convs = tf.keras.layers.Lambda(lambda x: tf.split(x, num_or_size_splits=groups, axis=-1))(input_layer)
     return convs[group_id]
 
 def upsample(input_layer):
-    return tf.image.resize(input_layer, (input_layer.shape[1] * 2, input_layer.shape[2] * 2), method='bilinear')
-
+    # return tf.image.resize(input_layer, (input_layer.shape[1] * 2, input_layer.shape[2] * 2), method='bilinear')
+    convs = tf.keras.layers.Lambda(lambda x: tf.image.resize(x, (x.shape[1] * 2, x.shape[2] * 2), method='bilinear'))(input_layer)
+    return convs
 @tf.custom_gradient
 def grad_reverse(x):
     # write your gradient reversal operation

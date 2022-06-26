@@ -21,12 +21,16 @@ flags.DEFINE_string('weights', None, 'pretrained weights')
 flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
 flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
 flags.DEFINE_string('save_dir', 'checkpoints/yolov4_tiny', 'save model dir')
+flags.DEFINE_float('repeat_times', 1.0, 'repeat of dataset')
 # tf.config.optimizer.set_jit(True)
 
 def apply_quantization(layer):
-    if isinstance(layer, tf.python.keras.engine.base_layer.TensorFlowOpLayer):
-    # if isinstance(layer, keras.engine.base_layer.TensorFlowOpLayer):
-         return layer
+    # if isinstance(layer, tf.python.keras.engine.base_layer.TensorFlowOpLayer):
+    if 'tf_op' in layer.name or 'lambda' in layer.name or \
+        'tf.' in layer.name or 'activation' in layer.name or \
+            'multiply' in layer.name:
+        print(layer.name)
+        return layer
     return tfmot.quantization.keras.quantize_annotate_layer(layer)
 
 def qa_train(model):
@@ -46,8 +50,10 @@ def copytree(src, dst, symlinks=False, ignore=None):
         s = os.path.join(src, item)
         d = os.path.join(dst, item)
         if os.path.isdir(s):
+            shutil.rmtree(d, ignore_errors=True)
             shutil.copytree(s, d, symlinks, ignore)
         else:
+            shutil.rmtree(d, ignore_errors=True)
             shutil.copy2(s, d)
 
 def main(_argv):
@@ -58,8 +64,8 @@ def main(_argv):
     #########################################################
     # use_imgaug augmentation would lead to unknown performance drop
     # this issue should be resolved in the future.
-    trainset = tfDataset(FLAGS, cfg, is_training=True, filter_area=64, use_imgaug=False).dataset_gen()
-    testset = tfDataset(FLAGS, cfg, is_training=False, filter_area=64, use_imgaug=False).dataset_gen()
+    trainset = tfDataset(FLAGS, cfg, is_training=True, filter_area=123, use_imgaug=False).dataset_gen(repeat_times=int(FLAGS.repeat_times))
+    testset = tfDataset(FLAGS, cfg, is_training=False, filter_area=123, use_imgaug=False).dataset_gen()
 
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)
@@ -138,7 +144,7 @@ def main(_argv):
     
     model.summary()
 
-    optimizer = tf.keras.optimizers.Adam()
+    optimizer = tf.keras.optimizers.Adam(clipvalue=10.0)
     if os.path.exists(logdir): shutil.rmtree(logdir)
     writer = tf.summary.create_file_writer(logdir)
 
@@ -266,7 +272,7 @@ def main(_argv):
                         (1 + tf.cos((global_steps - warmup_steps) / (total_steps - warmup_steps) * np.pi)))
                 optimizer.lr.assign(lr.numpy())
 
-                if (iter_idx + 1) % 200 == 0:
+                if (iter_idx + 1) % 100 == 0:
                     dict_result = model(image_data, training=False)
                     processed_bboxes = utils.raw_output_to_bbox([
                         dict_result['bbox_m'],
@@ -343,7 +349,8 @@ def main(_argv):
                 tf.summary.scalar("val/giou_loss", giou_loss_counter.get_average(), step=epoch)
                 tf.summary.scalar("val/conf_loss", conf_loss_counter.get_average(), step=epoch)
                 tf.summary.scalar("val/prob_loss", prob_loss_counter.get_average(), step=epoch)
-            
+        
+        if epoch % 5 == 0 or (1+first_stage_epochs + second_stage_epochs- epoch < 10):
             model.save_weights(os.path.join(FLAGS.save_dir, 'ckpt', f'{epoch:04d}.ckpt'))
         
     model.save_weights(os.path.join(FLAGS.save_dir, 'ckpt', 'final.ckpt'))

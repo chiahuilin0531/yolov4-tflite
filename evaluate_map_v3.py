@@ -17,12 +17,12 @@ import sys
 
 
 flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
-flags.DEFINE_string('annotation_path', "./data/dataset/val2017.txt", 'annotation path')
-flags.DEFINE_string('class_path', './data/classes/1cls.names', 'class name path')
+flags.DEFINE_string('annotation_path', "./datasets/data_selection_mix/anno/val_3cls.txt", 'annotation path')
+flags.DEFINE_string('class_path', './data/classes/3cls.names', 'class name path')
 
 flags.DEFINE_string('framework', 'tf', 'select model type in (tf, tflite, tf_ckpt, trt)path to weights file')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
-flags.DEFINE_boolean('tiny', True, 'yolov3 or yolov3-tiny')
+flags.DEFINE_boolean('tiny', False, 'yolov3 or yolov3-tiny')
 flags.DEFINE_integer('input_size', 608, 'resize images to')
 flags.DEFINE_boolean('draw_image', False, 'write image path')
 flags.DEFINE_float('iou', 0.5, 'iou threshold')
@@ -177,7 +177,7 @@ def main(_argv):
 
     # Build Model According to different model weight format
     if FLAGS.framework == 'tflite':
-        interpreter = tf.lite.Interpreter(model_path=FLAGS.weights, num_threads=4)
+        interpreter = tf.lite.Interpreter(model_path=FLAGS.weights, num_threads=8) #, experimental_preserve_all_tensors=True)
         interpreter.allocate_tensors()
         input_details = interpreter.get_input_details()
         output_details = interpreter.get_output_details()
@@ -240,10 +240,7 @@ def main(_argv):
                         interpreter.invoke()
                         pred = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
                         if FLAGS.model == 'yolov4' and FLAGS.tiny == True:
-                            # boxes, pred_conf = filter_boxes(pred[1], pred[0], score_threshold=0.25, input_shape = tf.constant([INPUT_SIZE,INPUT_SIZE]))
-                            # print(pred[0].shape)
-                            boxes = pred[0][..., 0:4]
-                            pred_conf = pred[0][..., 4:]
+                            boxes, pred_conf = filter_boxes(pred[1], pred[0], score_threshold=0.25, input_shape = tf.constant([INPUT_SIZE,INPUT_SIZE]))
                         else:
                             boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25, input_shape = tf.constant([INPUT_SIZE,INPUT_SIZE]))
                     elif FLAGS.framework == 'tf':
@@ -313,7 +310,7 @@ def main(_argv):
                             # check the recall rate
                             for gt_idx in range(len(gt_class_bbox)):
                                 dt_idx = np.argmax(iou_matrix[gt_idx])
-                                if iou_matrix[gt_idx][dt_idx] < 0.3 or gt_idx in matched_gt_instance:
+                                if iou_matrix[gt_idx][dt_idx] < 0.5 or gt_idx in matched_gt_instance:
                                     any_error = True
                                 else:
                                     sub_match += 1
@@ -356,11 +353,12 @@ def main(_argv):
                         else:
                             cv2.imwrite(os.path.join(correct_image_dir, image_name), image_result[...,::-1])
 
+                    acc = correct_detected_instance/total_dt_instance if total_dt_instance > 0 else 0
                     pbar.set_postfix({
                         'image_path': f"{image_name}",
                         "correct_img":  f'{(total_img-wrong_img)/total_img:5.2f}({total_img-wrong_img}/{total_img})',
                         "recall_instance": f'{correct_detected_instance/total_gt_instance:5.2f}({correct_detected_instance}/{total_gt_instance})',
-                        "accuracy_instance":   f'{correct_detected_instance/total_dt_instance:5.2f}({correct_detected_instance}/{total_dt_instance})',
+                        "accuracy_instance":   f'{acc:5.2f}({correct_detected_instance}/{total_dt_instance})',
                     })
                     pbar.update(1)
 
@@ -381,6 +379,8 @@ def main(_argv):
     sys.stdout = open(os.path.join(os.path.dirname(FLAGS.weights), 'mAP.txt'), 'w')
     print(FLAGS.annotation_path)
     print(FLAGS.weights)
+    print(f'instance recall  : {correct_detected_instance/total_gt_instance:5.2f}({correct_detected_instance}/{total_gt_instance})')
+    print(f'instance accuracy: {acc:5.2f}({correct_detected_instance}/{total_dt_instance})')
     print(cocoEval.params.areaRng)
     cocoEval.summarize()
     sys.stdout.close()

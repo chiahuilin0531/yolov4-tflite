@@ -1,4 +1,5 @@
 from builtins import NotImplementedError
+import tempfile
 from absl import app, flags, logging
 from absl.flags import FLAGS
 import cv2
@@ -152,14 +153,18 @@ def yolo2coco(label_path, pred_path, class_list):
 
 def main(_argv):
     import importlib
+    print(FLAGS.framework)
+    print(FLAGS.weights)
+
     cfg = importlib.import_module(FLAGS.config_name).cfg
     INPUT_SIZE = FLAGS.input_size
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS, cfg)
     CLASSES = utils.read_class_names(FLAGS.class_path)
     print(f'CLASSES: {CLASSES}')
 
-    predicted_dir_path = './mAP/predicted'
-    ground_truth_dir_path = './mAP/ground-truth'
+    tmp_dir_name = tempfile.mkdtemp(dir='mAP')
+    predicted_dir_path =  os.path.join(tmp_dir_name, 'predicted') # './mAP/predicted'
+    ground_truth_dir_path = os.path.join(tmp_dir_name, 'ground-truth') # './mAP/ground-truth'
     error_image_dir = './mAP/error'
     correct_image_dir = './mAP/correct'
     shutil.rmtree(error_image_dir, ignore_errors=True)
@@ -181,8 +186,6 @@ def main(_argv):
         interpreter.allocate_tensors()
         input_details = interpreter.get_input_details()
         output_details = interpreter.get_output_details()
-        print(input_details)
-        print(output_details)
     elif FLAGS.framework == 'tf':
         infer = tf.keras.models.load_model(FLAGS.weights)
     else:
@@ -376,11 +379,18 @@ def main(_argv):
     cocoEval.accumulate()
     cocoEval.summarize()
 
-    sys.stdout = open(os.path.join(os.path.dirname(FLAGS.weights), 'mAP.txt'), 'w')
+    if os.path.isfile(FLAGS.weights):
+        mAP_name = os.path.basename(FLAGS.weights) + '_mAP.txt'
+        sys.stdout = open(os.path.join(os.path.dirname(FLAGS.weights), mAP_name), 'w')
+    else:
+        sys.stdout = open(os.path.join(os.path.dirname(FLAGS.weights), 'mAP.txt'), 'w')
+
     print(FLAGS.annotation_path)
     print(FLAGS.weights)
-    print(f'instance recall  : {correct_detected_instance/total_gt_instance:5.2f}({correct_detected_instance}/{total_gt_instance})')
-    print(f'instance accuracy: {acc:5.2f}({correct_detected_instance}/{total_dt_instance})')
+    if not should_pass:
+        print('annotation_dir_name: ', tmp_dir_name)
+        print(f'instance recall  : {correct_detected_instance/total_gt_instance:5.2f}({correct_detected_instance}/{total_gt_instance})')
+        print(f'instance accuracy: {acc:5.2f}({correct_detected_instance}/{total_dt_instance})')
     print(cocoEval.params.areaRng)
     cocoEval.summarize()
     sys.stdout.close()

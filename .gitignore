@@ -12,7 +12,13 @@ mAP/*/*.png
 mAP/*/*/*.png
 mAP/error
 mAP/correct
+mAP/tmp*
 visualize_anno
 output
 scripts/*.png
 *.log
+
+#########
+tflite_exp
+tflite_exp_v1
+tflite_exp_v2

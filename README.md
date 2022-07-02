@@ -87,6 +87,23 @@ python ./save_model.py --weights ./checkpoints/test/ckpt/final.ckpt --output ./c
 python ./evaluate_map.py --weights ./checkpoints/test/save_model_final/ --framework tf --input_size 608 --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt
 ```
 
+## 5. Convert Model to different format and evaluate
+```
+# convert to SaveModel format and evaluate mAP
+python ./save_model.py --tiny --weights ./checkpoints/test/ckpt/final.ckpt --output ./checkpoints/test/save_model_final_tf --framework tf
+python ./evaluate_map.py --weights ./checkpoints/test/save_model_final_tf/ --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt --framework tf 
+
+# convert to fp32 tflite format and evaluate mAP
+python ./save_model.py --tiny --weights ./checkpoints/test/ckpt/final.ckpt --output ./checkpoints/test/save_model_final_tflite --framework tflite
+python ./convert_tflite.py --weights ./checkpoints/test/save_model_final_tflite --output ./checkpoints/test/tflite/float32.tflite
+python ./evaluate_map.py --weights ./checkpoints/test/tflite/float32.tflite --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt --framework tflite
+
+# convert to int8 tflite format and evaluate mAP
+python ./save_model.py --tiny --weights ./checkpoints/test/ckpt/final.ckpt --output ./checkpoints/test/save_model_final_tflite --framework tflite
+python ./convert_tflite.py --weights ./checkpoints/test/save_model_final_tflite --output ./checkpoints/test/tflite/int8.tflite --quantize_mode int8 --dataset ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt
+python ./evaluate_map.py --weights ./checkpoints/test/tflite/int8.tflite --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt --framework tflite
+```
+
 
 ## 5. Other Usuage of script
 ### Visualize Anntation
@@ -189,6 +206,9 @@ python ./evaluate_map.py --weights ./checkpoints/test/save_model_final/ --framew
     ```
 
 ----
+
+### 
+
 
 ### Other usuage of script to be add
 ```bash

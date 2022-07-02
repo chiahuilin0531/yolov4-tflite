@@ -30,7 +30,7 @@ __C.TRAIN                     = edict()
 __C.TRAIN.ANNOT_PATHS          = [
     "datasets/data_selection_mix/anno/train_3cls_filter_small.txt",
     "datasets/Taiwan_trafficlight.v1.coco/anno/train_3cls.txt",
-    # "datasets/night_dataset/anno/train_3cls.txt"    
+    "datasets/night_dataset/anno/train_3cls.txt"    
 ]
 
 __C.TRAIN.BATCH_SIZE          = 8 # 8 #2
@@ -49,7 +49,7 @@ __C.TEST                      = edict()
 
 __C.TEST.ANNOT_PATHS           = [
     "datasets/data_selection_mix/anno/val_3cls_filter_small.txt",
-    # "datasets/night_dataset/anno/val_3cls.txt",
+    "datasets/night_dataset/anno/val_3cls.txt",
 ]
 __C.TEST.BATCH_SIZE           = 8
 __C.TEST.INPUT_SIZE           = 608

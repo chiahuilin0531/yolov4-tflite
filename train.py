@@ -29,7 +29,6 @@ def apply_quantization(layer):
     if 'tf_op' in layer.name or 'lambda' in layer.name or \
         'tf.' in layer.name or 'activation' in layer.name or \
             'multiply' in layer.name:
-        print(layer.name)
         return layer
     return tfmot.quantization.keras.quantize_annotate_layer(layer)
 
@@ -215,6 +214,7 @@ def main(_argv):
             'total_loss': total_loss
         }
 
+    best_loss = np.inf
     for epoch in range(1, 1+first_stage_epochs + second_stage_epochs):
         if epoch <= first_stage_epochs:
             if not isfreeze:
@@ -312,7 +312,6 @@ def main(_argv):
 
                 tmp=time.time()
         if True:
-        # if epoch % 5 == 0 or (1+first_stage_epochs + second_stage_epochs- epoch < 10):
             giou_loss_counter.reset()
             conf_loss_counter.reset()
             prob_loss_counter.reset()
@@ -349,7 +348,10 @@ def main(_argv):
                 tf.summary.scalar("val/giou_loss", giou_loss_counter.get_average(), step=epoch)
                 tf.summary.scalar("val/conf_loss", conf_loss_counter.get_average(), step=epoch)
                 tf.summary.scalar("val/prob_loss", prob_loss_counter.get_average(), step=epoch)
-        
+        if total < best_loss:
+            best_loss = total
+            print('[Info] Save Best Model')
+            model.save_weights(os.path.join(FLAGS.save_dir, 'ckpt', f'best.ckpt'))
         if epoch % 5 == 0 or (1+first_stage_epochs + second_stage_epochs- epoch < 10):
             model.save_weights(os.path.join(FLAGS.save_dir, 'ckpt', f'{epoch:04d}.ckpt'))
         

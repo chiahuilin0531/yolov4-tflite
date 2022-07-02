@@ -119,7 +119,6 @@ def main(_argv):
         'bbox_l': bbox_tensors[3],
         'da_l': da_maps[1],
     })
-    model.summary()
     if FLAGS.weights == None:
         print("Training from scratch ......................")
     else:

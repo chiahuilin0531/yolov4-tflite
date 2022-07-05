@@ -53,6 +53,7 @@ class tfDataset(object):
         self.filter_area = filter_area
         self.create_augment_env()
         self.use_imgaug=use_imgaug
+        _, self.global_epoch = utils.get_shared_variable()
 
     def load_annotations(self):
         annotations = []
@@ -132,6 +133,7 @@ class tfDataset(object):
             dataset = dataset.map(self.random_horizontal_flip, num_parallel_calls=tf.data.experimental.AUTOTUNE)
             dataset = dataset.map(self.random_crop, num_parallel_calls=tf.data.experimental.AUTOTUNE)
             dataset = dataset.map(self.random_translate, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            # dataset = dataset.map(self.random_hsl_enhance, num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
         dataset = dataset.map(self.pad_image, num_parallel_calls=tf.data.experimental.AUTOTUNE)
         dataset = dataset.map(self.pad_bbox, num_parallel_calls=tf.data.experimental.AUTOTUNE)
@@ -144,7 +146,7 @@ class tfDataset(object):
                     num_parallel_calls=tf.data.experimental.AUTOTUNE,
                 )
             dataset = dataset.map(
-                lambda x,y: tf.numpy_function(self.generate_gth, [x,y], [tf.float32,tf.float32,tf.float32,tf.float32,tf.float32]),
+                lambda x,y: tf.numpy_function(self.generate_gth, [x,y], [tf.float32,tf.float32,tf.float32,tf.float32,tf.float32], stateful=False),
                 num_parallel_calls=tf.data.experimental.AUTOTUNE,
             )
         else:
@@ -202,7 +204,8 @@ class tfDataset(object):
         bboxes: float32(num_of_bbox, 5)\\
             x1y1x2y2 class
         """
-        if tf.random.uniform((1,), 0, 1)[0] < 0.5:
+        prob_thresh = self.prob_scheduler(self.global_epoch)
+        if tf.random.uniform((1,), 0, 1)[0] < prob_thresh:
             h =tf.shape(image)[0]
             w = tf.shape(image)[1]
             h_fp32 = tf.cast(h, tf.float32)
@@ -218,32 +221,21 @@ class tfDataset(object):
 
             max_l_trans = tf.minimum(max_bbox[0], 0.2 * w_fp32)
             max_u_trans = tf.minimum(max_bbox[1], 0.2 * h_fp32)
-            max_r_trans = tf.maximum(w_fp32 - max_bbox[2], w_fp32 * 0.8)
-            max_d_trans = tf.maximum(h_fp32 - max_bbox[3], h_fp32 * 0.8)
+            max_r_trans = tf.minimum(w_fp32 - max_bbox[2], w_fp32 * 0.2)
+            max_d_trans = tf.minimum(h_fp32 - max_bbox[3], h_fp32 * 0.2)
 
 
-            crop_xmin = tf.maximum(
-                0, tf.cast(max_bbox[0] - tf.random.uniform((1,), 0, max_l_trans)[0], tf.int32)
-            )
-            crop_ymin = tf.maximum(
-                0, tf.cast((max_bbox[1] - tf.random.uniform((1,), 0, max_u_trans))[0], tf.int32)
-            )
-            crop_xmax = tf.maximum(
-                w, tf.cast((
-                                               tf.maximum(max_bbox[2], w_fp32 * 0.8) + 
-                    tf.random.uniform((1,), 0, tf.minimum(max_r_trans, w_fp32 * 0.2))
-                )[0], tf.int32)
-            )
-            crop_ymax = tf.maximum(
-                h, tf.cast((
-                                               tf.maximum(max_bbox[3], h_fp32 * 0.8) + 
-                    tf.random.uniform((1,), 0, tf.minimum(max_d_trans, h_fp32 * 0.2))
-                )[0], tf.int32)
-            )
+            crop_xmin = tf.cast(tf.random.uniform((1,), 0, max_l_trans)[0], tf.int32)
+            crop_ymin = tf.cast(tf.random.uniform((1,), 0, max_u_trans)[0], tf.int32)
+            crop_xmax = tf.cast((
+                w_fp32 -tf.random.uniform((1,), 0, max_r_trans)
+            )[0], tf.int32)
+            crop_ymax = tf.cast((
+                h_fp32 - tf.random.uniform((1,), 0, max_d_trans)
+            )[0], tf.int32)
 
             image = image[crop_ymin:crop_ymax, crop_xmin:crop_xmax]
             bboxes = bboxes - tf.cast(tf.stack([crop_xmin,crop_ymin,crop_xmin,crop_ymin,0]), dtype=tf.float32)
-        # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), ['some of coordinate are negative!!'])
         return image, bboxes
 
     @tf.function
@@ -264,6 +256,8 @@ class tfDataset(object):
         if tf.random.uniform((1,), 0, 1)[0] < 0.5:
             h = tf.shape(image)[0]
             w = tf.shape(image)[1]
+            h_fp32 = tf.cast(h, tf.float32)
+            w_fp32 = tf.cast(w, tf.float32)
             max_bbox = tf.concat(
                 [
                     tf.reduce_min(bboxes[:, 0:2], axis=0),
@@ -272,10 +266,14 @@ class tfDataset(object):
                 axis=-1,
             )
 
-            max_l_trans = max_bbox[0]
-            max_u_trans = max_bbox[1]
-            max_r_trans = tf.cast(w, dtype=tf.float32) - max_bbox[2]
-            max_d_trans = tf.cast(h, dtype=tf.float32) - max_bbox[3]
+            # max_l_trans = max_bbox[0]
+            # max_u_trans = max_bbox[1]
+            # max_r_trans = tf.cast(w, dtype=tf.float32) - max_bbox[2]
+            # max_d_trans = tf.cast(h, dtype=tf.float32) - max_bbox[3]
+            max_l_trans = tf.minimum(max_bbox[0], 0.2 * w_fp32)
+            max_u_trans = tf.minimum(max_bbox[1], 0.2 * h_fp32)
+            max_r_trans = tf.minimum(w_fp32 - max_bbox[2], w_fp32 * 0.2)
+            max_d_trans = tf.minimum(h_fp32 - max_bbox[3], h_fp32 * 0.2)
 
             tx = tf.random.uniform((1,),-(max_l_trans - 1), (max_r_trans - 1))[0]
             ty = tf.random.uniform((1,),-(max_u_trans - 1), (max_d_trans - 1))[0]
@@ -312,6 +310,24 @@ class tfDataset(object):
                   bboxes[:,4:5]
             ], axis=-1)
         # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), [['some of coordinate are negative!!']])
+        return image, bboxes
+
+    @tf.function
+    def random_hsl_enhance(self, image, bboxes):
+        im_shape = image.shape
+        def aug_ops(op_image):
+            prob_thresh = self.prob_scheduler(self.global_epoch)
+            # print('random_hsl_enhance', prob_thresh, self.global_epoch.numpy())
+            if np.random.uniform(size=(1,), low=0, high=1)[0] < prob_thresh:
+                hsl_img = cv2.cvtColor(op_image, cv2.COLOR_RGB2HLS)
+                hsl_img[..., 1] = hsl_img[..., 1] * np.random.uniform(size=[], low=0.5, high=1.0)
+                hsl_img[..., 2] = hsl_img[..., 2] * np.random.uniform(size=[], low=0.2, high=1.5)
+                aug_img = cv2.cvtColor(hsl_img, cv2.COLOR_HLS2RGB)
+                op_image = aug_img.astype(np.uint8)
+            return op_image
+
+        [image,] = tf.numpy_function(aug_ops, [image], [tf.uint8])
+        image.set_shape(im_shape)
         return image, bboxes
 
     @tf.function
@@ -488,7 +504,7 @@ class tfDataset(object):
                     self.max_bbox_per_scale,
                     self.strides,
                     self.anchors
-                ], Tout=tf.float32)
+                ], Tout=tf.float32, stateful=False)
             
             fpn_b=target_output[0]
             fpn_m=target_output[1]
@@ -530,6 +546,26 @@ class tfDataset(object):
     def __len__(self):
         return self.num_batchs
 
+    def step_epoch(self):
+        self.global_epoch.assign_add(1)
+    
+    def reset_epoch(self):
+        self.global_epoch.assign(1)
+    
+    def get_epoch(self):
+        return self.global_epoch
+
+    def prob_scheduler(self, epochs):
+        return 0.5
+
+        current_epoch = tf.cast(self.global_epoch, tf.float32)
+        warmup_epochs = 5.0
+        max_prob = 0.5
+        if current_epoch <= warmup_epochs:
+            return 0.0
+        else:
+            prob_thresh = tf.minimum(max_prob, (current_epoch - warmup_epochs) / 15.0 * max_prob)
+            return prob_thresh
 ####################################
 class tfAdversailDataset(object):
 

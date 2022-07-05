@@ -4,6 +4,21 @@ import colorsys
 import numpy as np
 import tensorflow as tf
 
+def init_shared_variable():
+    with tf.compat.v1.variable_scope("shared", reuse=tf.compat.v1.AUTO_REUSE):
+        global_steps = tf.Variable(1, trainable=False, dtype=tf.int64, name="global_steps")  
+        global_epochs = tf.Variable(1, trainable=False, dtype=tf.int64, name="global_epochs")
+        tf.compat.v1.add_to_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, global_steps) 
+        tf.compat.v1.add_to_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, global_epochs) 
+    return global_steps, global_epochs
+
+# @tf.function
+def get_shared_variable():
+    with tf.compat.v1.variable_scope("shared", reuse=tf.compat.v1.AUTO_REUSE):
+        global_steps, global_epochs = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES)
+    return global_steps, global_epochs
+
+
 def load_freeze_layer(model='yolov4', tiny=False):
     if tiny:
         if model == 'yolov3':
@@ -504,6 +519,61 @@ def raw_output_to_bbox(bboxes, image_shape, iou_threshold=0.5, score_threshold=0
         score_threshold=score_threshold
     )
     return [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
+
+def bbox_iou_broacast(bboxes1, bboxes2):
+    """
+    @param bboxes1: (a, b, ..., 4)
+    @param bboxes2: (A, B, ..., 4)
+        x:X is 1:n or n:n or n:1
+    @return (max(a,A), max(b,B), ...)
+    ex) (4,):(3,4) -> (3,)
+        (2,1,4):(2,3,4) -> (2,3)
+    """
+    # (fg, )
+    bboxes1_area = bboxes1[..., 2] * bboxes1[..., 3]
+    bboxes1_area = tf.expand_dims(bboxes1_area, axis=-1) # (fg, 1)
+    # (bg, )
+    bboxes2_area = bboxes2[..., 2] * bboxes2[..., 3]
+    bboxes1_area = tf.expand_dims(bboxes1_area, axis=0) # (1, bg)
+
+    # (fg, 4)  => (fg, 1, 4)
+    bboxes1_coor = tf.concat(  # x1y1x2y2
+        [
+            bboxes1[..., :2] - bboxes1[..., 2:] * 0.5,
+            bboxes1[..., :2] + bboxes1[..., 2:] * 0.5,
+        ],
+        axis=-1,
+    )
+    bboxes1_coor = tf.expand_dims(bboxes1_coor, axis=1)
+
+    # (bg, 4)  => (1, bg, 4)
+    bboxes2_coor = tf.concat(
+        [
+            bboxes2[..., :2] - bboxes2[..., 2:] * 0.5,
+            bboxes2[..., :2] + bboxes2[..., 2:] * 0.5,
+        ],
+        axis=-1,
+    )
+    bboxes2_coor = tf.expand_dims(bboxes2_coor, axis=0)
+
+    # (fg, bg, 2)
+    left_up = tf.maximum(bboxes1_coor[..., :2], bboxes2_coor[..., :2])
+    # (fg, bg, 2)
+    right_down = tf.minimum(bboxes1_coor[..., 2:], bboxes2_coor[..., 2:])
+
+    # (fg, bg, 2)
+    inter_section = tf.maximum(right_down - left_up, 0.0)
+    # (fg, bg)
+    inter_area = inter_section[..., 0] * inter_section[..., 1]
+
+
+    # (fg, bg) = (fg, 1) + (1, bg) - (fg, bg)
+    union_area = bboxes1_area + bboxes2_area - inter_area
+
+    iou = tf.math.divide_no_nan(inter_area, union_area)
+
+    # (fg, bg)
+    return iou
 
 ######################################################
 ######### Numba Version of Code for accelerate  ######

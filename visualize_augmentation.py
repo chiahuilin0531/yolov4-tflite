@@ -37,12 +37,12 @@ def main(_argv):
     tf.random.set_seed(0)
     # area<123, 1203
 
-    trainset = tfDataset(FLAGS, is_training=True, filter_area=123, use_imgaug=False) 
+    trainset = tfDataset(FLAGS, cfg, is_training=True, filter_area=123, use_imgaug=False) 
     trainset.batch_size = 4
     trainset = trainset.dataset_gen()
     no_gt_image_cnt = 0
 
-    with tqdm(total=len(trainset), ncols=150, desc=f"{'Test':<13}") as pbar:
+    with tqdm(total=len(trainset), ncols=150, desc=f"{'Augmenting':<13}") as pbar:
         for batch_idx, data_item in enumerate(trainset):
             if not isinstance(trainset, Dataset):
                 # (b,h,w,3)
@@ -66,7 +66,10 @@ def main(_argv):
                 for bbox in valid_bbox:
                     cnt+=1
                     min_area = min(bbox[2]*bbox[3], min_area)
-                    cv2.rectangle(img, bbox[:2] - bbox[2:4] // 2, bbox[:2] + bbox[2:4] // 2, (255,0,0), 1)
+                    top_left = tuple(map(int, bbox[:2] - bbox[2:4] // 2))
+                    bot_right = tuple(map(int, bbox[:2] + bbox[2:4] // 2))
+                    img = np.ascontiguousarray(img)
+                    img = cv2.rectangle(img, top_left, bot_right, (255,0,0), 1)
                 if cnt == 0: 
                     print(f'non of bboxes in {batch_idx} {i} img')
                     no_gt_image_cnt+=1
@@ -77,7 +80,7 @@ def main(_argv):
             bot_img=np.concatenate(processed_img[2:], axis=1)
             full_img = np.concatenate([top_img, bot_img], axis=0)
 
-            # cv2.imwrite(os.path.join('visualize_anno',folder, f'{batch_idx}.jpg'), full_img[...,::-1])
+            cv2.imwrite(os.path.join('visualize_anno',folder, f'{batch_idx}.jpg'), full_img[...,::-1])
             pbar.set_postfix({
                 "no_gt_image_cnt": f"{no_gt_image_cnt:5d}"
             })

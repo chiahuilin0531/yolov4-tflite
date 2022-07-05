@@ -16,11 +16,12 @@ flags.DEFINE_string('dataset', "datasets/data_selection_mix/anno/val_3cls.txt", 
 def representative_data_gen():
   fimage = open(FLAGS.dataset).readlines()
   fimage = [line.split()[0] for line in fimage]
-  np.random.seed(0)
+  # np.random.seed(0)
   # np.random.seed(49)
+  np.random.seed(2009)
   # np.random.seed(100)
   np.random.shuffle(fimage)
-  for input_value in range(500):
+  for input_value in range(5):
     if os.path.exists(fimage[input_value]):
       original_image=cv2.imread(fimage[input_value])
       original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)

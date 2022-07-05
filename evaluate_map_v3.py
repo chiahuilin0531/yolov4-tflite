@@ -182,7 +182,7 @@ def main(_argv):
 
     # Build Model According to different model weight format
     if FLAGS.framework == 'tflite':
-        interpreter = tf.lite.Interpreter(model_path=FLAGS.weights, num_threads=8) #, experimental_preserve_all_tensors=True)
+        interpreter = tf.lite.Interpreter(model_path=FLAGS.weights, num_threads=16) #, experimental_preserve_all_tensors=True)
         interpreter.allocate_tensors()
         input_details = interpreter.get_input_details()
         output_details = interpreter.get_output_details()

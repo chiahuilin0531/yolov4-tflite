@@ -75,6 +75,8 @@ def save_tf():
       prob_tensors.append(output_tensors[1])
   pred_bbox = tf.concat(bbox_tensors[::-1], axis=1)
   pred_prob = tf.concat(prob_tensors[::-1], axis=1)
+  # pred_bbox = tf.concat(bbox_tensors, axis=1)
+  # pred_prob = tf.concat(prob_tensors, axis=1)
   if FLAGS.framework == 'tflite':
     pred = (pred_bbox, pred_prob)
   elif FLAGS.framework == 'tf':

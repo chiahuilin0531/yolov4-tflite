@@ -11,7 +11,7 @@ from core.dataset_tiny import Dataset, tfDataset
 from core.config import cfg
 import numpy as np
 from core import utils
-from core.utils import draw_bbox, freeze_all, unfreeze_all, read_class_names
+from core.utils import draw_bbox, freeze_all, unfreeze_all, read_class_names, get_shared_variable, init_shared_variable
 from tqdm import tqdm
 import tensorflow_model_optimization as tfmot
 import time
@@ -22,7 +22,7 @@ flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
 flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
 flags.DEFINE_string('save_dir', 'checkpoints/yolov4_tiny', 'save model dir')
 flags.DEFINE_float('repeat_times', 1.0, 'repeat of dataset')
-# tf.config.optimizer.set_jit(True)
+tf.config.optimizer.set_jit(True)
 
 def apply_quantization(layer):
     # if isinstance(layer, tf.python.keras.engine.base_layer.TensorFlowOpLayer):
@@ -55,15 +55,18 @@ def copytree(src, dst, symlinks=False, ignore=None):
             shutil.rmtree(d, ignore_errors=True)
             shutil.copy2(s, d)
 
+
 def main(_argv):
     physical_devices = tf.config.experimental.list_physical_devices('GPU')
-
+    init_shared_variable()
     # trainset = Dataset(FLAGS, is_training=True, filter_area=123)
     # testset = Dataset(FLAGS, is_training=False, filter_area=123)
     #########################################################
     # use_imgaug augmentation would lead to unknown performance drop
     # this issue should be resolved in the future.
-    trainset = tfDataset(FLAGS, cfg, is_training=True, filter_area=123, use_imgaug=False).dataset_gen(repeat_times=int(FLAGS.repeat_times))
+    trainDataLoader = tfDataset(FLAGS, cfg, is_training=True, filter_area=123, use_imgaug=False)
+    trainDataLoader.reset_epoch()
+    trainset = trainDataLoader.dataset_gen(repeat_times=int(FLAGS.repeat_times))
     testset = tfDataset(FLAGS, cfg, is_training=False, filter_area=123, use_imgaug=False).dataset_gen()
 
     os.makedirs(FLAGS.save_dir, exist_ok=True)
@@ -84,14 +87,17 @@ def main(_argv):
     steps_per_epoch = len(trainset)
     first_stage_epochs = cfg.TRAIN.FISRT_STAGE_EPOCHS
     second_stage_epochs = cfg.TRAIN.SECOND_STAGE_EPOCHS
-    global_steps = tf.Variable(1, trainable=False, dtype=tf.int64)
+    global_steps, global_epochs = get_shared_variable()
+    global_steps.assign(1)
+    global_epochs.assign(1)
+
     warmup_steps = cfg.TRAIN.WARMUP_EPOCHS * steps_per_epoch
     total_steps = (first_stage_epochs + second_stage_epochs) * steps_per_epoch
 
     input_layer = tf.keras.layers.Input([cfg.TRAIN.INPUT_SIZE, cfg.TRAIN.INPUT_SIZE, 3])
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS, cfg)
     IOU_LOSS_THRESH = cfg.YOLO.IOU_LOSS_THRESH
-    classes_name = read_class_names(cfg.YOLO.CLASSES )
+    classes_name = read_class_names(cfg.YOLO.CLASSES)
 
     freeze_layers = utils.load_freeze_layer(FLAGS.model, FLAGS.tiny)
 
@@ -311,6 +317,7 @@ def main(_argv):
                 pbar.update(1)
 
                 tmp=time.time()
+        trainDataLoader.step_epoch()
         if True:
             giou_loss_counter.reset()
             conf_loss_counter.reset()

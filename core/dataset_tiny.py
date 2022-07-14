@@ -1,6 +1,7 @@
 import os
 import cv2
 import random
+from cv2 import bilateralFilter
 import numpy as np
 import tensorflow as tf
 import core.utils as utils
@@ -9,6 +10,7 @@ import time
 from imgaug import augmenters as iaa
 import imgaug as ia
 import tensorflow_addons as tfa
+from PIL import Image
 FILL_VALUE=-1
 
 class Dataset:
@@ -130,10 +132,11 @@ class tfDataset(object):
         
 
         if self.data_aug:
-            dataset = dataset.map(self.random_horizontal_flip, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-            dataset = dataset.map(self.random_crop, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-            dataset = dataset.map(self.random_translate, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-            # dataset = dataset.map(self.random_hsl_enhance, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            dataset = dataset.map(self.random_copy_paste,       num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            dataset = dataset.map(self.random_horizontal_flip,  num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            dataset = dataset.map(self.random_crop,             num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            dataset = dataset.map(self.random_translate,        num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            dataset = dataset.map(self.random_hsl_enhance,      num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
         dataset = dataset.map(self.pad_image, num_parallel_calls=tf.data.experimental.AUTOTUNE)
         dataset = dataset.map(self.pad_bbox, num_parallel_calls=tf.data.experimental.AUTOTUNE)
@@ -146,7 +149,7 @@ class tfDataset(object):
                     num_parallel_calls=tf.data.experimental.AUTOTUNE,
                 )
             dataset = dataset.map(
-                lambda x,y: tf.numpy_function(self.generate_gth, [x,y], [tf.float32,tf.float32,tf.float32,tf.float32,tf.float32], stateful=False),
+                lambda x,y: tf.numpy_function(self.generate_gth, [x,y], [tf.float32,tf.float32,tf.float32,tf.float32,tf.float32]),
                 num_parallel_calls=tf.data.experimental.AUTOTUNE,
             )
         else:
@@ -204,7 +207,7 @@ class tfDataset(object):
         bboxes: float32(num_of_bbox, 5)\\
             x1y1x2y2 class
         """
-        prob_thresh = self.prob_scheduler(self.global_epoch)
+        prob_thresh = 0.5 #self.prob_scheduler(self.global_epoch)
         if tf.random.uniform((1,), 0, 1)[0] < prob_thresh:
             h =tf.shape(image)[0]
             w = tf.shape(image)[1]
@@ -221,18 +224,28 @@ class tfDataset(object):
 
             max_l_trans = tf.minimum(max_bbox[0], 0.2 * w_fp32)
             max_u_trans = tf.minimum(max_bbox[1], 0.2 * h_fp32)
-            max_r_trans = tf.minimum(w_fp32 - max_bbox[2], w_fp32 * 0.2)
-            max_d_trans = tf.minimum(h_fp32 - max_bbox[3], h_fp32 * 0.2)
+            max_r_trans = tf.maximum(w_fp32 - max_bbox[2], w_fp32 * 0.8)
+            max_d_trans = tf.maximum(h_fp32 - max_bbox[3], h_fp32 * 0.8)
 
 
-            crop_xmin = tf.cast(tf.random.uniform((1,), 0, max_l_trans)[0], tf.int32)
-            crop_ymin = tf.cast(tf.random.uniform((1,), 0, max_u_trans)[0], tf.int32)
-            crop_xmax = tf.cast((
-                w_fp32 -tf.random.uniform((1,), 0, max_r_trans)
-            )[0], tf.int32)
-            crop_ymax = tf.cast((
-                h_fp32 - tf.random.uniform((1,), 0, max_d_trans)
-            )[0], tf.int32)
+            crop_xmin = tf.maximum(
+                0, tf.cast(max_bbox[0] - tf.random.uniform((1,), 0, max_l_trans)[0], tf.int32)
+            )
+            crop_ymin = tf.maximum(
+                0, tf.cast((max_bbox[1] - tf.random.uniform((1,), 0, max_u_trans))[0], tf.int32)
+            )
+            crop_xmax = tf.maximum(
+                w, tf.cast((
+                                               tf.maximum(max_bbox[2], w_fp32 * 0.8) + 
+                    tf.random.uniform((1,), 0, tf.minimum(max_r_trans, w_fp32 * 0.2))
+                )[0], tf.int32)
+            )
+            crop_ymax = tf.maximum(
+                h, tf.cast((
+                                               tf.maximum(max_bbox[3], h_fp32 * 0.8) + 
+                    tf.random.uniform((1,), 0, tf.minimum(max_d_trans, h_fp32 * 0.2))
+                )[0], tf.int32)
+            )
 
             image = image[crop_ymin:crop_ymax, crop_xmin:crop_xmax]
             bboxes = bboxes - tf.cast(tf.stack([crop_xmin,crop_ymin,crop_xmin,crop_ymin,0]), dtype=tf.float32)
@@ -320,15 +333,124 @@ class tfDataset(object):
             # print('random_hsl_enhance', prob_thresh, self.global_epoch.numpy())
             if np.random.uniform(size=(1,), low=0, high=1)[0] < prob_thresh:
                 hsl_img = cv2.cvtColor(op_image, cv2.COLOR_RGB2HLS)
-                hsl_img[..., 1] = hsl_img[..., 1] * np.random.uniform(size=[], low=0.5, high=1.0)
-                hsl_img[..., 2] = hsl_img[..., 2] * np.random.uniform(size=[], low=0.2, high=1.5)
+                saturation_multiplier = np.random.uniform(size=[], low=0.8, high=1.0) # np.random.choice([1.0, 0.7, 1.0])
+                lightness_multiplier = np.random.uniform(size=[], low=0.5, high=1.5) # np.random.choice([1.0, 0.5, 1.5])
+                hsl_img[..., 1] = hsl_img[..., 1] * saturation_multiplier # np.random.uniform(size=[], low=0.5, high=1.0)
+                hsl_img[..., 2] = hsl_img[..., 2] * lightness_multiplier # np.random.uniform(size=[], low=0.2, high=1.5)
                 aug_img = cv2.cvtColor(hsl_img, cv2.COLOR_HLS2RGB)
                 op_image = aug_img.astype(np.uint8)
+                if False:
+                    op_image = cv2.putText(op_image, f'S: {saturation_multiplier}', (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 4, (255, 0, 0), 4, cv2.LINE_AA)
+                    op_image = cv2.putText(op_image, f'L: {lightness_multiplier}', (10, 160), cv2.FONT_HERSHEY_SIMPLEX, 4, (255, 0, 0), 4, cv2.LINE_AA)
             return op_image
 
         [image,] = tf.numpy_function(aug_ops, [image], [tf.uint8])
         image.set_shape(im_shape)
         return image, bboxes
+
+    @tf.function
+    def random_copy_paste(self, image, bboxes):
+        """
+        Parameter
+        ---------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class
+        Return
+        ------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class
+        """
+        im_shape = image.shape
+        # bx_shape = bboxes.shape
+
+        def copy_paste_aug_ops(input_img, input_bboxes):
+            input_bboxes = input_bboxes.astype(np.int32)
+            add_labels=np.copy(input_bboxes)
+            H,W,C = input_img.shape
+            prob_thresh = 0.5 # self.prob_scheduler(self.global_epoch)
+            min_y_pos = min(input_bboxes[:, 1])
+            # 建立forground mask，判斷該區域是否有label
+            A = np.zeros((input_img.shape[0], input_img.shape[1]))
+            if np.random.uniform(size=(1,), low=0, high=1)[0] < prob_thresh:
+                for i in range(input_bboxes.shape[0]):
+                    clss = input_bboxes[i][4]
+                    x = input_bboxes[i][0] 
+                    y = input_bboxes[i][1] 
+                    w = input_bboxes[i][2] - input_bboxes[i][0]
+                    h = input_bboxes[i][3] - input_bboxes[i][1]
+                    A[y:y+h, x:x+w] = 1
+
+                    # class 1 would not be copied with 33%
+                    # if clss == 1:
+                    #     if 0.66 < np.random.uniform(low=0,high=1,size=(1,))[0]:
+                    #         break
+
+                    crop_img = Image.fromarray(input_img[y:y+h, x:x+w])
+                    patience=20
+                    for i in range(patience):
+                        # Determine Where to Paste 
+                        y_lower_bound = int(np.minimum(H // 6, min_y_pos))
+                        y_upper_bound = int(H // 3 * 2 - np.minimum(h,w) * 1.6)
+                        if W // w > 4:
+                            oversize = False
+                            paste_x = random.randint(0, W - 2 * w)
+                        else:
+                            oversize = True
+                            paste_x = random.randint(0, W - w)
+                        paste_y = random.randint(y_lower_bound, y_upper_bound)
+
+                        #########################################################################
+                        # # 外面變中間要縮小
+                        # if (paste_x > W*1/4 or paste_x < W*3/4) and (x <= W*1/4 or x >= W*3/4):
+                        #     crop_img_resize = resize_image(crop_img, 0.6, 0.8)
+                        # # 中間變外面要放大
+                        # elif (paste_x <= W*1/4 or paste_x >= W*3/4) and (x > W*1/4 or x < W*3/4):
+                        #     crop_img_resize = resize_image(crop_img, 1.2, 1.6) if not oversize else crop_img
+                        # else:
+                        #     crop_img_resize = crop_img
+                        #########################################################################
+                        #外面變中間要縮小(0.3~0.5)
+                        if paste_x > W*1/4 and paste_x < W*3/4 and paste_y > H*1/4 and paste_y < H*3/4 and (x <= W*1/4 or x>=W*3/4 or y<=H*1/4 or y>=H*3/4):
+                            crop_img_resize = resize_image(crop_img,0.4,0.7)
+                        #中間變外面要放大(2~3)
+                        elif (paste_x <= W*1/4 or paste_x >= W*3/4 or paste_y <= H*1/4 or paste_y >= H*3/4) and (x > W*1/4 and x<W*3/4 and y>H*1/4 and y<H*3/4):
+                            crop_img_resize = crop_img
+                            continue
+                        else:
+                            crop_img_resize = crop_img
+                        #########################################################################
+                        
+
+                        # 如果紅燈、綠燈太大，就縮小
+                        if (clss==1 or clss==0) and crop_img_resize.size[0]*crop_img_resize.size[1]>=768:
+                            crop_img_resize = resize_image(crop_img_resize, 0.7, 0.9)
+
+                        validated_region = (not A[paste_y:paste_y+crop_img_resize.size[1], paste_x:paste_x+crop_img_resize.size[0]].any())
+                        if validated_region:
+                            break
+                        else:
+                            if i+1 == patience:
+                                print("over patience")
+                                break
+                            elif i + 1 >= 5:
+                                print("patience ",i+1)
+                            
+                    paste_y_max = int(paste_y + crop_img_resize.size[1])
+                    paste_x_max = int(paste_x + crop_img_resize.size[0])
+                    # img.paste(crop_img_resize, (paste_x,paste_y)) #貼上
+                    input_img[paste_y:paste_y_max, paste_x:paste_x_max] = np.asarray(crop_img_resize)
+                    add_labels = np.append(add_labels, [[paste_x,paste_y,paste_x_max,paste_y_max,clss]], axis=0)
+                    A[paste_y:paste_y_max, paste_x:paste_x_max] = 1
+            add_labels = add_labels.astype(np.float32)
+            return input_img, add_labels, add_labels.shape
+
+        [image, bboxes, _] = tf.numpy_function(copy_paste_aug_ops, [image, bboxes], [tf.uint8, tf.float32, tf.int64])
+        image.set_shape(im_shape)
+        bboxes.set_shape((None,5))
+        return image, bboxes
+
 
     @tf.function
     def pad_image(self, img, bboxes):
@@ -504,7 +626,7 @@ class tfDataset(object):
                     self.max_bbox_per_scale,
                     self.strides,
                     self.anchors
-                ], Tout=tf.float32, stateful=False)
+                ], Tout=tf.float32)
             
             fpn_b=target_output[0]
             fpn_m=target_output[1]
@@ -556,7 +678,7 @@ class tfDataset(object):
         return self.global_epoch
 
     def prob_scheduler(self, epochs):
-        return 0.5
+        # return 0.5
 
         current_epoch = tf.cast(self.global_epoch, tf.float32)
         warmup_epochs = 5.0
@@ -566,6 +688,17 @@ class tfDataset(object):
         else:
             prob_thresh = tf.minimum(max_prob, (current_epoch - warmup_epochs) / 15.0 * max_prob)
             return prob_thresh
+
+
+def resize_image(image,a,b):
+    width, height = image.size[:2]
+    ratio_w = random.uniform(a,b)
+    ratio_h = random.uniform(a,b)
+    width = int(width * ratio_w)
+    height = int(height * ratio_h)
+    image = image.resize( (width, height), Image.BILINEAR )  #  or Image.NEAREST
+    return image
+
 ####################################
 class tfAdversailDataset(object):
 

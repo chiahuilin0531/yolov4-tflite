@@ -301,7 +301,7 @@ def decode_tf_v2(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYS
     # return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
 
 def decode_tflite(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCALE=[1,1,1]):
-    return decode_tf(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
+    # return decode_tf(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
     conv_raw_dxdy_0, conv_raw_dwdh_0, conv_raw_score_0,\
     conv_raw_dxdy_1, conv_raw_dwdh_1, conv_raw_score_1,\
     conv_raw_dxdy_2, conv_raw_dwdh_2, conv_raw_score_2 = tf.split(conv_output, (2, 2, 1+NUM_CLASS, 2, 2, 1+NUM_CLASS,

@@ -64,10 +64,14 @@ def main(_argv):
     #########################################################
     # use_imgaug augmentation would lead to unknown performance drop
     # this issue should be resolved in the future.
-    trainDataLoader = tfDataset(FLAGS, cfg, is_training=True, filter_area=123, use_imgaug=False)
+    filtered_full_HD_area = 123
+    filtered_area = filtered_full_HD_area / (1920 / cfg.TRAIN.INPUT_SIZE) ** 2
+    print('[Info] Filtered Instance Area', filtered_area)
+    filtered_area = max(filtered_area, 49)
+    trainDataLoader = tfDataset(FLAGS, cfg, is_training=True, filter_area=filtered_area, use_imgaug=False)
     trainDataLoader.reset_epoch()
     trainset = trainDataLoader.dataset_gen(repeat_times=int(FLAGS.repeat_times))
-    testset = tfDataset(FLAGS, cfg, is_training=False, filter_area=123, use_imgaug=False).dataset_gen()
+    testset = tfDataset(FLAGS, cfg, is_training=False, filter_area=filtered_area, use_imgaug=False).dataset_gen()
 
     os.makedirs(FLAGS.save_dir, exist_ok=True)
     os.makedirs(os.path.join(FLAGS.save_dir, 'config'), exist_ok=True)

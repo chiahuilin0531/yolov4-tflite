@@ -215,3 +215,9 @@ python ./evaluate_map.py --weights ./checkpoints/test/tflite/int8.tflite --annot
 python benchmarks.py --size 416 --model yolov4 --weights ./data/yolov4.weights
 python detectvideo.py
 ```
+
+
+### Other Reference For Deployment on DSP
+```
+https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/g3doc/performance
+```

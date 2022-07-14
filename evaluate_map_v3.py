@@ -14,7 +14,7 @@ from tqdm import tqdm
 import json
 from pycocotools.coco import COCO
 from mAP.cocoeval import COCOeval
-import sys
+import sys, glob
 
 
 flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
@@ -150,6 +150,13 @@ def yolo2coco(label_path, pred_path, class_list):
             json.dump(predictions, f)
     return label_json, pred_json
 
+def erase_extra_result():
+    list_of_folder = glob.glob(os.path.join('mAP','tmp*'))
+    if len(list_of_folder) > 10:
+        for folder in list_of_folder:
+            shutil.rmtree(folder)
+    else:
+        pass
 
 def main(_argv):
     import importlib
@@ -162,6 +169,7 @@ def main(_argv):
     CLASSES = utils.read_class_names(FLAGS.class_path)
     print(f'CLASSES: {CLASSES}')
 
+    erase_extra_result()
     tmp_dir_name = tempfile.mkdtemp(dir='mAP')
     predicted_dir_path =  os.path.join(tmp_dir_name, 'predicted') # './mAP/predicted'
     ground_truth_dir_path = os.path.join(tmp_dir_name, 'ground-truth') # './mAP/ground-truth'

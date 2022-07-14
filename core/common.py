@@ -66,6 +66,7 @@ def convolutional(input_layer, filters_shape, downsample=False, activate=True, n
         if activate_type == "leaky":
             conv = tf.nn.leaky_relu(conv, alpha=0.1)
         elif activate_type == 'relu':
+            # conv = tf.nn.relu6(conv)
             conv = tf.nn.relu(conv)
             # conv = tf.keras.layers.Activation(activate_type)(conv)
         elif activate_type == "mish":

@@ -63,17 +63,11 @@ def convolutional(input_layer, filters_shape, downsample=False, activate=True, n
 
     if any_nl: conv = NORMALIZATION[nl](name=bn_name)(conv)
     if activate == True:
-        # support activation: relu, relu6, swish
-        conv = tf.keras.layers.Activation(activate_type)(conv)
-        # if activate_type == "leaky":
-        #     conv = tf.nn.leaky_relu(conv, alpha=0.1)
-        # elif activate_type == 'relu':
-        #     # activate_type = 'swish'# conv = tf.nn.relu6(conv)
-        #     # conv = tf.nn.relu(conv)
-        #     conv = tf.keras.layers.Activation(activate_type)(conv)
-        # elif activate_type == "mish":
-        #     conv = mish(conv)
-
+        activation_list=['relu', 'relu6', 'swish', 'leaky_relu', 'hard_sigmoid', 'elu', 'selu', 'gelu']
+        if activate_type in activation_list:
+            conv = tf.keras.layers.Activation(activate_type)(conv)
+        else:
+            raise ValueError(f'invalid activation function {activate_type}')
     return conv
 
 def mish(x):

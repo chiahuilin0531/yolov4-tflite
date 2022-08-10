@@ -7,6 +7,7 @@ from core.accumulator import Accumulator
 import os, shutil
 import tensorflow as tf
 from core.yolov4 import YOLO, decode, compute_loss, decode_train
+from core.iayolo import CNNPP, DIP_FilterGraph
 from core.dataset_tiny import Dataset, tfDataset
 from core.config import cfg
 import numpy as np
@@ -22,6 +23,8 @@ flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
 flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
 flags.DEFINE_string('save_dir', 'checkpoints/yolov4_tiny', 'save model dir')
 flags.DEFINE_float('repeat_times', 1.0, 'repeat of dataset')
+flags.DEFINE_boolean('iayolo', False, 'use IAYOLO or not')
+
 tf.config.optimizer.set_jit(True)
 
 def apply_quantization(layer):
@@ -105,13 +108,21 @@ def main(_argv):
     total_steps = (first_stage_epochs + second_stage_epochs) * steps_per_epoch
 
     input_layer = tf.keras.layers.Input([cfg.TRAIN.INPUT_SIZE, cfg.TRAIN.INPUT_SIZE, 3])
+    if FLAGS.iayolo:
+        resized_input = tf.image.resize(input_layer, [256, 256], method=tf.image.ResizeMethod.BILINEAR)
+        filter_parameters = CNNPP(resized_input)
+        yolo_input = DIP_FilterGraph(input_layer, filter_parameters)
+    else:
+        yolo_input = input_layer
+        
+
     STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS, cfg)
     IOU_LOSS_THRESH = cfg.YOLO.IOU_LOSS_THRESH
     classes_name = read_class_names(cfg.YOLO.CLASSES)
 
     freeze_layers = utils.load_freeze_layer(FLAGS.model, FLAGS.tiny)
 
-    feature_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny, cfg.YOLO.NORMALIZATION)
+    feature_maps = YOLO(yolo_input, NUM_CLASS, FLAGS.model, FLAGS.tiny, nl=cfg.YOLO.NORMALIZATION)
 
     # Decoding YOLOv4 Output
     if FLAGS.tiny:
@@ -134,14 +145,32 @@ def main(_argv):
                 bbox_tensor = decode_train(fm, cfg.TRAIN.INPUT_SIZE // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
             bbox_tensors.append(fm)
             bbox_tensors.append(bbox_tensor)
-
-    model = tf.keras.Model(input_layer, {
+    output_dict = {
         'raw_bbox_m': bbox_tensors[0],          # tensor size of feature map
         'bbox_m': bbox_tensors[1],
         'raw_bbox_l': bbox_tensors[2],
         'bbox_l': bbox_tensors[3],
-    })
+    }
+    if FLAGS.iayolo: output_dict.update({'dip_img': yolo_input})
+    model = tf.keras.Model(input_layer, output_dict)
 
+    if True:
+        bbox_tensors = []
+        prob_tensors = []
+        for i, fm in enumerate(feature_maps):
+            if i == 0:
+                output_tensors = decode(fm, cfg.TRAIN.INPUT_SIZE // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, 'tflite')
+            else:
+                output_tensors = decode(fm, cfg.TRAIN.INPUT_SIZE // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, 'tflite')
+            bbox_tensors.append(output_tensors[0])
+            prob_tensors.append(output_tensors[1])
+        pred_bbox = tf.concat(bbox_tensors[::-1], axis=1)
+        pred_prob = tf.concat(prob_tensors[::-1], axis=1)
+        
+        pred = (pred_bbox, pred_prob)
+        save_test_model = tf.keras.Model(input_layer, pred)
+        save_test_model.save(os.path.join(FLAGS.save_dir, 'save_test'))
+        res = save_test_model(np.zeros((1,608,608,3), dtype=np.float32))
     if FLAGS.weights == None:
         print("Training from scratch ......................")
     else:
@@ -290,10 +319,12 @@ def main(_argv):
 
                 if (iter_idx + 1) % 100 == 0:
                     dict_result = model(image_data, training=False)
+                    if FLAGS.iayolo: display_images = dict_result['dip_img']
                     processed_bboxes = utils.raw_output_to_bbox([
                         dict_result['bbox_m'],
                         dict_result['bbox_l'],
                     ], tf.shape(image_data).numpy()[1:3])
+                    
                     display_images = (image_data*255.0).numpy().astype(np.uint8)
                     display_list = []
 

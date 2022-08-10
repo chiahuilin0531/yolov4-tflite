@@ -132,11 +132,11 @@ class tfDataset(object):
         
 
         if self.data_aug:
-            dataset = dataset.map(self.random_copy_paste,       num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            # dataset = dataset.map(self.random_copy_paste,       num_parallel_calls=tf.data.experimental.AUTOTUNE)
             dataset = dataset.map(self.random_horizontal_flip,  num_parallel_calls=tf.data.experimental.AUTOTUNE)
             dataset = dataset.map(self.random_crop,             num_parallel_calls=tf.data.experimental.AUTOTUNE)
             dataset = dataset.map(self.random_translate,        num_parallel_calls=tf.data.experimental.AUTOTUNE)
-            dataset = dataset.map(self.random_hsl_enhance,      num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            # dataset = dataset.map(self.random_hsl_enhance,      num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
 
         dataset = dataset.map(self.pad_image, num_parallel_calls=tf.data.experimental.AUTOTUNE)

@@ -2,6 +2,7 @@ import tensorflow as tf
 from absl import app, flags, logging
 from absl.flags import FLAGS
 from core.yolov4 import YOLO, decode, decode_train, filter_boxes
+from core.iayolo import CNNPP, DIP_FilterGraph
 import core.utils as utils
 # from keras_flops import get_flops
 import tensorflow_model_optimization as tfmot
@@ -9,6 +10,7 @@ import tensorflow_model_optimization as tfmot
 flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
 flags.DEFINE_string('output', './checkpoints/yolov4-416', 'path to output')
 flags.DEFINE_boolean('tiny', False, 'is yolo-tiny or not')
+flags.DEFINE_boolean('iayolo', False, 'use IAYOLO or not')
 flags.DEFINE_integer('input_size', 608, 'define input size of export model')
 flags.DEFINE_float('score_thres', 0.2, 'define score threshold')
 flags.DEFINE_string('framework', 'tf', 'define what framework do you want to convert (tf, trt, tflite)')
@@ -16,6 +18,7 @@ flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_string('dataset', 'data/dataset/gis_val_1.txt', 'yolov3 or yolov4')
 flags.DEFINE_boolean('qat', False, 'For Qauntize Aware Training')
 flags.DEFINE_string('config_name', 'core.config', 'configuration ')
+tf.config.optimizer.set_jit(True)
 
 
 def apply_quantization(layer):
@@ -55,8 +58,14 @@ def save_tf():
 
   STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS, cfg)
 
-  input_layer = tf.keras.layers.Input([FLAGS.input_size, FLAGS.input_size, 3])
-  feature_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny, cfg.YOLO.NORMALIZATION)
+  input_layer = tf.keras.layers.Input([cfg.TRAIN.INPUT_SIZE, cfg.TRAIN.INPUT_SIZE, 3])
+  if FLAGS.iayolo:
+      resized_input = tf.image.resize(input_layer, [256, 256], method=tf.image.ResizeMethod.BILINEAR)
+      filter_parameters = CNNPP(resized_input)
+      yolo_input = DIP_FilterGraph(input_layer, filter_parameters)
+  else:
+      yolo_input = input_layer
+  feature_maps = YOLO(yolo_input, NUM_CLASS, FLAGS.model, FLAGS.tiny, nl=cfg.YOLO.NORMALIZATION)
   bbox_tensors = []
   prob_tensors = []
   if FLAGS.tiny:
@@ -92,6 +101,36 @@ def save_tf():
   print('========================================== Load model ========================================')
   model = tf.keras.Model(input_layer, pred)
   #####################################################################################################
+  # Decoding YOLOv4 Output
+  # if FLAGS.tiny:
+  #     bbox_tensors = []
+  #     for i, fm in enumerate(feature_maps):
+  #         if i == 0:
+  #             bbox_tensor = decode_train(fm, cfg.TRAIN.INPUT_SIZE // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
+  #         else:
+  #             bbox_tensor = decode_train(fm, cfg.TRAIN.INPUT_SIZE // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
+  #         bbox_tensors.append(fm)
+  #         bbox_tensors.append(bbox_tensor)
+  # else:
+  #     bbox_tensors = []
+  #     for i, fm in enumerate(feature_maps):
+  #         if i == 0:
+  #             bbox_tensor = decode_train(fm, cfg.TRAIN.INPUT_SIZE // 8, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
+  #         elif i == 1:
+  #             bbox_tensor = decode_train(fm, cfg.TRAIN.INPUT_SIZE // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
+  #         else:
+  #             bbox_tensor = decode_train(fm, cfg.TRAIN.INPUT_SIZE // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE)
+  #         bbox_tensors.append(fm)
+  #         bbox_tensors.append(bbox_tensor)
+  # output_dict = {
+  #     'raw_bbox_m': bbox_tensors[0],          # tensor size of feature map
+  #     'bbox_m': bbox_tensors[1],
+  #     'raw_bbox_l': bbox_tensors[2],
+  #     'bbox_l': bbox_tensors[3],
+  # }
+  # if FLAGS.iayolo: output_dict.update({'dip_img': yolo_input})
+  # model = tf.keras.Model(input_layer, output_dict)
+  
   ############################################ Quantize structure #####################################
   print (FLAGS.model+"      ....................................... ")
   if (FLAGS.qat):

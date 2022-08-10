@@ -223,7 +223,7 @@ def decode_train_v2(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, 
 
     b = tf.math.multiply(0.5, (XYSCALE[i] - 1))
     # pred_xy = (a - b + xy_grid) * STRIDES[i]
-    pred_xy = tf.keras.layers.Lambda(lambda x: ((x[0] - x[1] + xy_grid) *x[2]))([a, b, STRIDES[i]])
+    pred_xy = tf.keras.layers.Lambda(lambda x: ((x[0] - x[1] + xy_grid) *x[2]))([a, b, np.float32(STRIDES[i])])
     
     # print(ANCHORS[i])
     # pred_wh = tf.keras.layers.Lambda(lambda x: tf.exp(x))(conv_raw_dwdh) * ANCHORS[i]
@@ -568,3 +568,4 @@ def DomainClassifier(input_tensors):
         x = common.convolutional(x, (1, 1, channel // 2, 1), activate=False, bn=False, prefix=f'domain_adverserial_{i}_1')
         reuslt_tensor.append(x)
     return reuslt_tensor
+

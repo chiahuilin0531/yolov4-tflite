@@ -11,6 +11,7 @@ from core.yolov4 import filter_boxes,decode
 from tensorflow.python.saved_model import tag_constants
 import core.utils as utils
 from tqdm import tqdm
+from PIL import Image
 import json
 from pycocotools.coco import COCO
 from mAP.cocoeval import COCOeval
@@ -73,13 +74,10 @@ def yolo2coco(label_path, pred_path, class_list):
         for file in tqdm(files):
             if '.txt' not in file:
                 continue
-            # img = cv2.imread('imgs/'+file[:-4]+'.jpg')
+            # tmp_img = Image.open()
 
-            # W = img.shape[1]
-            # H = img.shape[0]
-
-            W = 3000
-            H = 3000
+            W = 1920 # tmp_img.size[0] #3000
+            H = 1080 # tmp_img.size[1] #3000
             images.append({'file_name':file[:-4]+'.jpg', 'height': H, 'width': W, 'id':int(file[:-4])})
 
             f1 = open(label_path+'/'+file, 'r')
@@ -299,20 +297,33 @@ def main(_argv):
                     any_error = False
                     
                     boxes_x1y1x2y2 = np.stack([boxes[...,1],boxes[...,0],boxes[...,3],boxes[...,2]], axis=-1)
-                    if len(classes_gt) > 0:
+                    if True:
                         for cls_id in range(NUM_CLASS):
+                            # if ground truth do not have the class, and predict result do not have this class => skip 
+                            if cls_id not in classes_gt and cls_id not in classes[0]: 
+                                continue
+                            # if ground truth do not have the class, but predict result have this class => every prediction yeild wrong detection
+                            elif cls_id not in classes_gt and cls_id in classes[0]:
+                                any_error = True
+                                mis_detected_instance += 1
+                                total_dt_instance += 1
+                                continue
+                            
                             gt_class_bbox = bboxes_gt[classes_gt==cls_id]
                             dt_class_bbox = boxes_x1y1x2y2[0][classes[0]==cls_id]
 
-                            if cls_id not in classes_gt: continue
+                            # if ground truth have the class, but predict result do not have this class => skip
                             if cls_id not in classes:
+                                any_error = True
                                 total_gt_instance += len(gt_class_bbox)
                                 total_dt_instance += 0
                                 correct_detected_instance += 0
                                 mis_detected_instance += 0
                                 continue
-
+                            # if ground truth have the class, and predict result also have this class => 
                             iou_matrix = iou(gt_class_bbox, dt_class_bbox)
+
+                            gt_max_iou[classes_gt==cls_id] = np.max(iou_matrix, axis=-1)
 
                             sub_match = 0
                             matched_gt_instance = []
@@ -321,17 +332,25 @@ def main(_argv):
                             # check the recall rate
                             for gt_idx in range(len(gt_class_bbox)):
                                 dt_idx = np.argmax(iou_matrix[gt_idx])
+                                # if the IoU is less than 0.5 or the prediction result is already matched => wrong result
                                 if iou_matrix[gt_idx][dt_idx] < 0.5 or gt_idx in matched_gt_instance:
                                     any_error = True
                                 else:
                                     sub_match += 1
                                     matched_gt_instance.append(gt_idx)
                                     matched_dt_instance.append(dt_idx)
+                            # Check Statistics is correct or not.
                             if len(np.unique(matched_dt_instance)) != len(matched_dt_instance):
                                 print(f'[Error] {image_path} have smae dt result match different gt')
                                 print(f'\t class: {cls_id}')
                                 print(f'\t matched_gt_instance: {matched_gt_instance}')
                                 print(f'\t matched_dt_instance: {matched_dt_instance}')
+                            if (len(gt_class_bbox) - sub_match) < 0:
+                                print(f'[Error] {image_path} have smae dt result match different gt')
+                                print(f'\t class: {cls_id}')
+                                print(f'gt_class_bbox', gt_class_bbox)
+                                print(f'dt_class_bbox', dt_class_bbox)
+
 
                             
                             # check the accuracy 
@@ -341,10 +360,8 @@ def main(_argv):
                             total_gt_instance += len(gt_class_bbox)
                             total_dt_instance += len(dt_class_bbox)
                             correct_detected_instance += sub_match
-                            mis_detected_instance += (len(gt_class_bbox) - sub_match)                    
-                    else:
-                        if len(boxes) > 0:
-                            any_error = True
+                            mis_detected_instance += (len(gt_class_bbox) - sub_match)      
+
                     total_img += 1
                     if any_error: wrong_img += 1
 

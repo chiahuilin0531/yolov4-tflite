@@ -63,14 +63,16 @@ def convolutional(input_layer, filters_shape, downsample=False, activate=True, n
 
     if any_nl: conv = NORMALIZATION[nl](name=bn_name)(conv)
     if activate == True:
-        if activate_type == "leaky":
-            conv = tf.nn.leaky_relu(conv, alpha=0.1)
-        elif activate_type == 'relu':
-            # conv = tf.nn.relu6(conv)
-            conv = tf.nn.relu(conv)
-            # conv = tf.keras.layers.Activation(activate_type)(conv)
-        elif activate_type == "mish":
-            conv = mish(conv)
+        # support activation: relu, relu6, swish
+        conv = tf.keras.layers.Activation(activate_type)(conv)
+        # if activate_type == "leaky":
+        #     conv = tf.nn.leaky_relu(conv, alpha=0.1)
+        # elif activate_type == 'relu':
+        #     # activate_type = 'swish'# conv = tf.nn.relu6(conv)
+        #     # conv = tf.nn.relu(conv)
+        #     conv = tf.keras.layers.Activation(activate_type)(conv)
+        # elif activate_type == "mish":
+        #     conv = mish(conv)
     return conv
 
 def mish(x):
@@ -113,7 +115,7 @@ def grad_reverse(x):
     # write your gradient reversal operation
     y = tf.identity(x)
     def custom_grad(dy):
-        return -dy * 0.1
+        return -dy
     return y, custom_grad
 
 class GradientReversal(tf.keras.layers.Layer):

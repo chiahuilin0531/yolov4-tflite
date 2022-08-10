@@ -32,7 +32,7 @@ def load_freeze_layer(model='yolov4', tiny=False):
             freeze_layouts = ['conv2d_93', 'conv2d_101', 'conv2d_109']
     return freeze_layouts
 
-def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
+def load_weights(model, weights_file, model_name='yolov4', is_tiny=False, load_batch_weight=True):
     if is_tiny:
         if model_name == 'yolov3':
             layer_size = 13
@@ -65,7 +65,7 @@ def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
             bn_weights = np.fromfile(wf, dtype=np.float32, count=4 * filters)
             # tf weights: [gamma, beta, mean, variance]
             bn_weights = bn_weights.reshape((4, filters))[[1, 0, 2, 3]]
-            bn_layer = model.get_layer(bn_layer_name)
+            if load_batch_weight: bn_layer = model.get_layer(bn_layer_name)
             j += 1
         else:
             conv_bias = np.fromfile(wf, dtype=np.float32, count=filters)
@@ -78,7 +78,7 @@ def load_weights(model, weights_file, model_name='yolov4', is_tiny=False):
 
         if i not in output_pos:
             conv_layer.set_weights([conv_weights])
-            bn_layer.set_weights(bn_weights)
+            if load_batch_weight: bn_layer.set_weights(bn_weights)
         else:
             conv_layer.set_weights([conv_weights, conv_bias])
 
@@ -158,8 +158,8 @@ def draw_bbox(image, bboxes, classes, show_label=True, is_gt=False):
     hsv_tuples = [(1.0 * x / num_classes, 1., 1.) for x in range(num_classes)]
     #colors = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv_tuples))
     #colors = list(map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)), colors))
-    colors = [(0,255,0),(255,0,0),(255,255,0)]
-    gt_color = [(255,255,255),(255,255,255),(255,255,255)]
+    gt_color = [(0,255,0),(255,0,0),(255,255,0),]
+    colors = [(0,200,0),(200,0,0),(255,200,0)]
     # random.seed(0)
     # random.shuffle(colors)
     # random.seed(None)

@@ -25,9 +25,15 @@ flags.DEFINE_float('repeat_times', 1.0, 'repeat of dataset')
 tf.config.optimizer.set_jit(True)
 
 def apply_quantization(layer):
+    # if 'relu' in layer.name:
+    #     return tfmot.quantization.keras.quantize_annotate_layer(layer)
     # if isinstance(layer, tf.python.keras.engine.base_layer.TensorFlowOpLayer):
+    ####3
+    # if 'tf_op' in layer.name or 'lambda' in layer.name or \
+    #     'tf.' in layer.name or 'activation' in layer.name or \
+    #         'multiply' in layer.name:
     if 'tf_op' in layer.name or 'lambda' in layer.name or \
-        'tf.' in layer.name or 'activation' in layer.name or \
+        'tf.' in layer.name or  \
             'multiply' in layer.name:
         return layer
     return tfmot.quantization.keras.quantize_annotate_layer(layer)
@@ -105,7 +111,7 @@ def main(_argv):
 
     freeze_layers = utils.load_freeze_layer(FLAGS.model, FLAGS.tiny)
 
-    feature_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny)
+    feature_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny, cfg.YOLO.NORMALIZATION)
 
     # Decoding YOLOv4 Output
     if FLAGS.tiny:
@@ -140,7 +146,7 @@ def main(_argv):
         print("Training from scratch ......................")
     else:
         if FLAGS.weights.split(".")[len(FLAGS.weights.split(".")) - 1] == "weights":
-            utils.load_weights(model, FLAGS.weights, FLAGS.model, FLAGS.tiny)
+            utils.load_weights(model, FLAGS.weights, FLAGS.model, FLAGS.tiny, load_batch_weight=cfg.YOLO.NORMALIZATION=='BatchNorm')
         else:
             model.load_weights(FLAGS.weights)
         print('Restoring weights from: %s ... ' % FLAGS.weights)

@@ -51,11 +51,11 @@ def save_tflite():
     #converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS]
     converter.allow_custom_ops = True
   elif FLAGS.quantize_mode == 'int8':
-    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
     # converter.inference_input_type = tf.int8  # or tf.uint8
     # converter.inference_output_type = tf.int8  # or tf.uint8
+    converter.experimental_new_converter = True
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
-    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS]
+    converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS, tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
     converter.allow_custom_ops = True
     converter.representative_dataset = representative_data_gen
 

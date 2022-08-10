@@ -1,6 +1,7 @@
 __pycache__
 .ipynb_checkpoints
 GRMN*
+./data
 *.weights
 checkpoints
 checkpoints_da
@@ -22,3 +23,6 @@ scripts/*.png
 tflite_exp*
 tflite_exp_v1
 tflite_exp_v2
+#########
+*.csv
+*.txt

@@ -132,11 +132,11 @@ class tfDataset(object):
         
 
         if self.data_aug:
-            dataset = dataset.map(self.random_copy_paste,       num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            # dataset = dataset.map(self.random_copy_paste,       num_parallel_calls=tf.data.experimental.AUTOTUNE)
             dataset = dataset.map(self.random_horizontal_flip,  num_parallel_calls=tf.data.experimental.AUTOTUNE)
             dataset = dataset.map(self.random_crop,             num_parallel_calls=tf.data.experimental.AUTOTUNE)
             dataset = dataset.map(self.random_translate,        num_parallel_calls=tf.data.experimental.AUTOTUNE)
-            dataset = dataset.map(self.random_hsl_enhance,      num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            # dataset = dataset.map(self.random_hsl_enhance,      num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
         dataset = dataset.map(self.pad_image, num_parallel_calls=tf.data.experimental.AUTOTUNE)
         dataset = dataset.map(self.pad_bbox, num_parallel_calls=tf.data.experimental.AUTOTUNE)
@@ -432,10 +432,12 @@ class tfDataset(object):
                             break
                         else:
                             if i+1 == patience:
-                                print("over patience")
+                                # print("over patience")
+                                pass
                                 break
                             elif i + 1 >= 5:
-                                print("patience ",i+1)
+                                pass
+                                # print("patience ",i+1)
                             
                     paste_y_max = int(paste_y + crop_img_resize.size[1])
                     paste_x_max = int(paste_x + crop_img_resize.size[0])

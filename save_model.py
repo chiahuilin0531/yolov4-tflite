@@ -21,10 +21,14 @@ flags.DEFINE_string('config_name', 'core.config', 'configuration ')
 def apply_quantization(layer):
     # if isinstance(layer, tf.python.keras.engine.base_layer.TensorFlowOpLayer):
 
-    if 'tf_op' in layer.name or 'lambda' in layer.name or\
-       'tf.' in layer.name or 'activation' in layer.name or\
-        'multiply' in layer.name:
-      return layer
+    # if 'tf_op' in layer.name or 'lambda' in layer.name or\
+    #    'tf.' in layer.name or 'activation' in layer.name or\
+    #     'multiply' in layer.name:
+    #   return layer
+    if 'tf_op' in layer.name or 'lambda' in layer.name or \
+        'tf.' in layer.name or  \
+            'multiply' in layer.name:
+        return layer
     return tfmot.quantization.keras.quantize_annotate_layer(layer)
 
     # if isinstance(layer , tf.keras.layers.Conv2D):
@@ -52,7 +56,7 @@ def save_tf():
   STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS, cfg)
 
   input_layer = tf.keras.layers.Input([FLAGS.input_size, FLAGS.input_size, 3])
-  feature_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny)
+  feature_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny, cfg.YOLO.NORMALIZATION)
   bbox_tensors = []
   prob_tensors = []
   if FLAGS.tiny:

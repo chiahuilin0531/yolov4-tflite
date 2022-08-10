@@ -73,6 +73,7 @@ def convolutional(input_layer, filters_shape, downsample=False, activate=True, n
         #     conv = tf.keras.layers.Activation(activate_type)(conv)
         # elif activate_type == "mish":
         #     conv = mish(conv)
+
     return conv
 
 def mish(x):

@@ -15,16 +15,17 @@ from core import utils
 from core.utils import draw_bbox, freeze_all, unfreeze_all, read_class_names, get_shared_variable, init_shared_variable
 from tqdm import tqdm
 import tensorflow_model_optimization as tfmot
+import tensorflow_addons as tfa
 import time
 
 flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
 flags.DEFINE_string('weights', None, 'pretrained weights')
+flags.DEFINE_string('cnnpp_weights', None, 'pretrained dip weights')
 flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
 flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
 flags.DEFINE_string('save_dir', 'checkpoints/yolov4_tiny', 'save model dir')
 flags.DEFINE_float('repeat_times', 1.0, 'repeat of dataset')
 flags.DEFINE_boolean('iayolo', False, 'use IAYOLO or not')
-
 tf.config.optimizer.set_jit(True)
 
 def apply_quantization(layer):
@@ -36,8 +37,8 @@ def apply_quantization(layer):
     #     'tf.' in layer.name or 'activation' in layer.name or \
     #         'multiply' in layer.name:
     if 'tf_op' in layer.name or 'lambda' in layer.name or \
-        'tf.' in layer.name or  \
-            'multiply' in layer.name:
+        'tf.' in layer.name or isinstance(layer, tfa.layers.InstanceNormalization) or \
+        'multiply' in layer.name:
         return layer
     return tfmot.quantization.keras.quantize_annotate_layer(layer)
 
@@ -111,7 +112,7 @@ def main(_argv):
     if FLAGS.iayolo:
         resized_input = tf.image.resize(input_layer, [256, 256], method=tf.image.ResizeMethod.BILINEAR)
         filter_parameters = CNNPP(resized_input)
-        yolo_input = DIP_FilterGraph(input_layer, filter_parameters)
+        yolo_input, processed_list = DIP_FilterGraph(input_layer, filter_parameters)
     else:
         yolo_input = input_layer
         
@@ -151,26 +152,54 @@ def main(_argv):
         'raw_bbox_l': bbox_tensors[2],
         'bbox_l': bbox_tensors[3],
     }
-    if FLAGS.iayolo: output_dict.update({'dip_img': yolo_input})
+    if FLAGS.iayolo: 
+        output_dict.update({
+            'dip_img':              yolo_input,
+            'filter_parameters':    filter_parameters,
+            'ImprovedWhiteBalance': processed_list[0], 
+            'Gamma':                processed_list[1], 
+            'Tone':                 processed_list[2], 
+            'Contrast':             processed_list[3], 
+            'Usm':                  processed_list[4],
+        })
     model = tf.keras.Model(input_layer, output_dict)
-
-    if True:
-        bbox_tensors = []
-        prob_tensors = []
-        for i, fm in enumerate(feature_maps):
-            if i == 0:
-                output_tensors = decode(fm, cfg.TRAIN.INPUT_SIZE // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, 'tflite')
-            else:
-                output_tensors = decode(fm, cfg.TRAIN.INPUT_SIZE // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, 'tflite')
-            bbox_tensors.append(output_tensors[0])
-            prob_tensors.append(output_tensors[1])
-        pred_bbox = tf.concat(bbox_tensors[::-1], axis=1)
-        pred_prob = tf.concat(prob_tensors[::-1], axis=1)
+    # if FLAGS.iayolo: 
+    #     output_dict.update({
+    #         'dip_img':              yolo_input,
+    #         'ImprovedWhiteBalance': processed_list[0], 
+    #         'Gamma':                processed_list[1], 
+    #         'Tone':                 processed_list[2], 
+    #         'Contrast':             processed_list[3], 
+    #         'Usm':                  processed_list[4],
+    #     })
+    #     demo_model = tf.keras.Model(input_layer, output_dict)
+    # else:
+    #     demo_model = model
+    
+    # if True:
+    #     bbox_tensors = []
+    #     prob_tensors = []
+    #     for i, fm in enumerate(feature_maps):
+    #         if i == 0:
+    #             output_tensors = decode(fm, cfg.TRAIN.INPUT_SIZE // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, 'tflite')
+    #         else:
+    #             output_tensors = decode(fm, cfg.TRAIN.INPUT_SIZE // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, 'tflite')
+    #         bbox_tensors.append(output_tensors[0])
+    #         prob_tensors.append(output_tensors[1])
+    #     pred_bbox = tf.concat(bbox_tensors[::-1], axis=1)
+    #     pred_prob = tf.concat(prob_tensors[::-1], axis=1)
         
-        pred = (pred_bbox, pred_prob)
-        save_test_model = tf.keras.Model(input_layer, pred)
-        save_test_model.save(os.path.join(FLAGS.save_dir, 'save_test'))
-        res = save_test_model(np.zeros((1,608,608,3), dtype=np.float32))
+    #     pred = (pred_bbox, pred_prob)
+    #     save_test_model = tf.keras.Model(input_layer, pred)
+    #     save_test_model.save(os.path.join(FLAGS.save_dir, 'save_test'))
+    #     res = save_test_model(np.zeros((1,608,608,3), dtype=np.float32))
+        
+    if FLAGS.cnnpp_weights == None:
+        print("Training from scratch ......................")
+    else:
+        model.load_weights(FLAGS.cnnpp_weights)
+        print('Restoring CNNPP weights from: %s ... ' % FLAGS.weights)
+        
     if FLAGS.weights == None:
         print("Training from scratch ......................")
     else:
@@ -225,6 +254,26 @@ def main(_argv):
                 tf.summary.scalar("loss/giou_loss", giou_loss, step=global_steps)
                 tf.summary.scalar("loss/conf_loss", conf_loss, step=global_steps)
                 tf.summary.scalar("loss/prob_loss", prob_loss, step=global_steps)
+                if FLAGS.iayolo:
+                    iayolo_value = tf.reduce_mean(dict_result['filter_parameters'], axis=0)
+                    tf.summary.scalar("ia-yolo/1", iayolo_value[0], step=global_steps)
+                    tf.summary.scalar("ia-yolo/2", iayolo_value[1], step=global_steps)
+                    tf.summary.scalar("ia-yolo/3", iayolo_value[2], step=global_steps)
+                    tf.summary.scalar("ia-yolo/4", iayolo_value[3], step=global_steps)
+                    tf.summary.scalar("ia-yolo/5", iayolo_value[4], step=global_steps)
+                    tf.summary.scalar("ia-yolo/6", iayolo_value[5], step=global_steps)
+                    tf.summary.scalar("ia-yolo/7", iayolo_value[6], step=global_steps)
+                    tf.summary.scalar("ia-yolo/8", iayolo_value[7], step=global_steps)
+                    tf.summary.scalar("ia-yolo/9", iayolo_value[8], step=global_steps)
+                    tf.summary.scalar("ia-yolo/10", iayolo_value[9], step=global_steps)
+                    tf.summary.scalar("ia-yolo/11", iayolo_value[10], step=global_steps)
+                    tf.summary.scalar("ia-yolo/12", iayolo_value[11], step=global_steps)
+                    tf.summary.scalar("ia-yolo/13", iayolo_value[12], step=global_steps)
+                    tf.summary.scalar("ia-yolo/14", iayolo_value[13], step=global_steps)
+                    
+                    
+                
+                
             writer.flush()
             return {
                 'giou_loss': giou_loss, 
@@ -259,6 +308,7 @@ def main(_argv):
             'total_loss': total_loss
         }
 
+    model.save_weights(os.path.join(FLAGS.save_dir, 'ckpt', f'{0:04d}.ckpt'))
     best_loss = np.inf
     for epoch in range(1, 1+first_stage_epochs + second_stage_epochs):
         if epoch <= first_stage_epochs:
@@ -317,15 +367,19 @@ def main(_argv):
                         (1 + tf.cos((global_steps - warmup_steps) / (total_steps - warmup_steps) * np.pi)))
                 optimizer.lr.assign(lr.numpy())
 
-                if (iter_idx + 1) % 100 == 0:
-                    dict_result = model(image_data, training=False)
-                    if FLAGS.iayolo: display_images = dict_result['dip_img']
+                if (iter_idx + 1) % 200 == 0:
+                    #############################
+                    # Visualize Detection Part
+                    #############################
+                    dict_result = model(image_data[:4], training=False)
+                    if FLAGS.iayolo:  display_images = dict_result['dip_img']
+                    else: display_images = image_data[:4]
                     processed_bboxes = utils.raw_output_to_bbox([
                         dict_result['bbox_m'],
                         dict_result['bbox_l'],
                     ], tf.shape(image_data).numpy()[1:3])
                     
-                    display_images = (image_data*255.0).numpy().astype(np.uint8)
+                    display_images = (display_images*255.0).numpy().astype(np.uint8)
                     display_list = []
 
                     for i in range(4):
@@ -336,10 +390,23 @@ def main(_argv):
                     top_img = np.concatenate(display_list[:2], axis=1)
                     bot_img = np.concatenate(display_list[2:], axis=1)
                     full_img = np.concatenate([top_img, bot_img], axis=0)
-
+                        
                     cv2.imwrite(os.path.join(FLAGS.save_dir, 'pic', f'{epoch}_{iter_idx+1}.jpg'), full_img[..., ::-1])
-
-
+                    #############################
+                    # Visualize DIP Part
+                    #############################
+                    if FLAGS.iayolo:
+                        processed_key_words = ['ImprovedWhiteBalance', 'Gamma', 'Tone', 'Contrast', 'Usm']
+                        for batch_idx in range(2):
+                            processed_images = [image_data[batch_idx]]
+                            for key in processed_key_words:
+                                processed_images.append(dict_result[key][batch_idx])
+                            top_img = np.concatenate(processed_images[:3], axis=1)
+                            bot_img = np.concatenate(processed_images[3:], axis=1)
+                            full_img = np.concatenate([top_img, bot_img], axis=0)
+                            full_img = np.clip(full_img*255.0, 0, 255).astype(np.uint8)
+                            cv2.imwrite(os.path.join(FLAGS.save_dir, 'pic', f'{epoch}_{iter_idx+1}_dip{batch_idx}.jpg'), full_img[..., ::-1])
+                    
                 total = giou_loss_counter.get_average() \
                     + conf_loss_counter.get_average() \
                     + prob_loss_counter.get_average()

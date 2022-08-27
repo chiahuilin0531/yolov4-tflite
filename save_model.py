@@ -4,7 +4,7 @@ from absl.flags import FLAGS
 from core.yolov4 import YOLO, decode, decode_train, filter_boxes
 from core.iayolo import CNNPP, DIP_FilterGraph
 import core.utils as utils
-# from keras_flops import get_flops
+import tensorflow_addons as tfa
 import tensorflow_model_optimization as tfmot
 
 flags.DEFINE_string('weights', './data/yolov4.weights', 'path to weights file')
@@ -29,7 +29,7 @@ def apply_quantization(layer):
     #     'multiply' in layer.name:
     #   return layer
     if 'tf_op' in layer.name or 'lambda' in layer.name or \
-        'tf.' in layer.name or  \
+        'tf.' in layer.name or isinstance(layer, tfa.layers.InstanceNormalization) or \
             'multiply' in layer.name:
         return layer
     return tfmot.quantization.keras.quantize_annotate_layer(layer)
@@ -62,7 +62,7 @@ def save_tf():
   if FLAGS.iayolo:
       resized_input = tf.image.resize(input_layer, [256, 256], method=tf.image.ResizeMethod.BILINEAR)
       filter_parameters = CNNPP(resized_input)
-      yolo_input = DIP_FilterGraph(input_layer, filter_parameters)
+      yolo_input, processed_list = DIP_FilterGraph(input_layer, filter_parameters)
   else:
       yolo_input = input_layer
   feature_maps = YOLO(yolo_input, NUM_CLASS, FLAGS.model, FLAGS.tiny, nl=cfg.YOLO.NORMALIZATION)
@@ -99,8 +99,13 @@ def save_tf():
     raise NotImplementedError(f'No such framework {FLAGS.framework}')
   ## ori code
   print('========================================== Load model ========================================')
-  model = tf.keras.Model(input_layer, pred)
-  #####################################################################################################
+  # model = tf.keras.Model(input_layer, pred)
+  if FLAGS.framework == 'tf':
+    model = tf.keras.Model(input_layer, [pred, yolo_input])
+  elif FLAGS.framework == 'tflite':
+    model = tf.keras.Model(input_layer, pred)
+    
+  ##################################################################################################### 
   # Decoding YOLOv4 Output
   # if FLAGS.tiny:
   #     bbox_tensors = []
@@ -144,6 +149,18 @@ def save_tf():
   model.summary()
   print('========================================== save model ========================================')
   model.save(FLAGS.output)
+  # if FLAGS.iayolo and FLAGS.framework != 'tflite':
+  #   for name in ['ex_conv0_conv2d', 'ex_conv1_conv2d', 'ex_conv2_conv2d', 'ex_conv3_conv2d', 'ex_conv4_conv2d', 'dense', 'dense_1']:
+  #     print('*'*40)
+  #     ly=model.get_layer(name)
+  #     for i in range(len(ly.get_weights())):
+  #       w=ly.get_weights()[i]
+  #       print(w.shape, tf.reduce_sum(w))
+  
+  
+    # test=input("wait for u")
+  # for i in range(10):
+  #   print(model.get_layer(index=i).get_weights())
 
   # converter = tf.lite.TFLiteConverter.from_keras_model(model)
 

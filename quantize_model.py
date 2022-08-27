@@ -9,14 +9,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from easydict import EasyDict as edict
 from tqdm import tqdm
+import  core.utils as utils
 
 flags.DEFINE_string('weights', './checkpoints/yolov4-416', 'path to weights file')
-flags.DEFINE_string('output', './checkpoints/yolov4-416-fp32.tflite', 'path to output')
+flags.DEFINE_string('output', './checkpoints/tflite/', 'output directory')
 flags.DEFINE_integer('input_size', 608, 'path to output')
 flags.DEFINE_string('dataset', "datasets/data_selection_mix/anno/val_3cls.txt", 'path to dataset')
+flags.DEFINE_boolean('stats', False, 'show the quantization error statistics')
+
 
 def representative_data_gen():
-    len_img=10
+    len_img=50
     fimage = open(FLAGS.dataset).readlines()
     fimage = [line.split()[0] for line in fimage]
     np.random.seed(0)
@@ -27,11 +30,11 @@ def representative_data_gen():
                 original_image=cv2.imread(fimage[input_value])
                 original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
                 # Processing V1
-                # image_data = utils.image_preprocess(np.copy(original_image), [FLAGS.input_size, FLAGS.input_size])
+                image_data = utils.image_preprocess(np.copy(original_image), [FLAGS.input_size, FLAGS.input_size])
                 #####################################################################################################
                 # Processing V2
-                image_data = cv2.resize(np.copy(original_image), (FLAGS.input_size, FLAGS.input_size))
-                image_data = image_data / 255.0
+                # image_data = cv2.resize(np.copy(original_image), (FLAGS.input_size, FLAGS.input_size))
+                # image_data = image_data / 255.0
                 #####################################################################################################
                 img_in = image_data[np.newaxis, ...].astype(np.float32)
                 pbar.set_postfix({
@@ -44,6 +47,15 @@ def representative_data_gen():
                     'image': ''
                 })
                 pbar.update(1)
+
+def add_statistic(filename):
+    layer_stats = pd.read_csv(filename)
+    print(layer_stats.head())
+    layer_stats['range'] = 255.0 * layer_stats['scale']
+    layer_stats['rmse/scale'] = layer_stats.apply(
+        lambda row: np.sqrt(row['mean_squared_error']) / row['scale'], axis=1)
+    return layer_stats
+
 
 def main(_argv):
     if not os.path.exists(FLAGS.output):
@@ -67,12 +79,15 @@ def main(_argv):
         debug_dataset=representative_data_gen)
     debugger.run()
 
-    # RESULTS_FILE = './debugger_results.csv'
-    # with open(RESULTS_FILE, 'w') as f:
-    #     debugger.layer_statistics_dump(f)
-    # layer_stats = add_statistic(RESULTS_FILE)
-    # lst = list(layer_stats['tensor_name'])
-    # end=len(list(layer_stats['tensor_name']))
+    if FLAGS.stats:
+        STATS_FILE = 'debugger_results.csv'
+        STATS_PATH = os.path.join(FLAGS.output, STATS_FILE)
+        with open(STATS_PATH, 'w') as f:
+            debugger.layer_statistics_dump(f)
+        layer_stats = add_statistic(STATS_PATH)
+        lst = list(layer_stats['tensor_name'])
+        end=len(list(layer_stats['tensor_name']))
+        layer_stats.to_csv(STATS_PATH+'_v2.csv')
     
     ################################
     # Selected non-quantilize layer
@@ -83,7 +98,18 @@ def main(_argv):
     end = len(op_names)
     st = end - last_k
     suspected_layers = op_names[-last_k:]
-
+    
+    ############################################
+    # If Some Layer Degrade the Performance
+    # Then We May Need To Add Extra Layer 
+    # To Non-Quantization List
+    ############################################
+    suspected_layers += op_names[13:113]
+    suspected_layers += op_names[:11]
+    
+    
+    print('op_names', len(op_names))
+    print('suspected_layers', len(suspected_layers))
     ################################
     # Quantilize Partial Model
     ################################
@@ -97,11 +123,17 @@ def main(_argv):
     ################################
     # Save Tflite Int8 Model
     ################################
-    filename = os.path.join(FLAGS.output,f'selective_int8_model_{len(suspected_layers)}_layer_st{st}_end{end}.tflite')
+    filename = os.path.join(FLAGS.output,f'int8_model_{len(suspected_layers)}_layer_st{st}_end{end}.tflite')
     model = debugger.get_nondebug_quantized_model()
     with open(filename, 'wb') as f:
         num_of_bytes = f.write(model)
     f.close()
+    
+    with open(os.path.join(FLAGS.output, 'readme.txt'), 'w') as f:
+        for layer_name in suspected_layers:
+            f.write(f'{layer_name}\n')
+    f.close()
+    
     print(f'[Info] selective model {filename} {num_of_bytes} bytes. {len(suspected_layers)} layers')
         
 if __name__ == '__main__':

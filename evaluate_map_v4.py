@@ -220,6 +220,7 @@ def main(_argv):
                     image_name = '_'.join(image_path.split('/')[-2:])
                     image = cv2.imread(image_path)
                     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                    
 
                     # Process Annotation in each line 
                     bbox_data_gt = np.array([list(map(int, box.split(','))) for box in annotation[1:]])
@@ -245,24 +246,57 @@ def main(_argv):
                     image_data = cv2.resize(np.copy(image), (INPUT_SIZE, INPUT_SIZE))
                     image_data = image_data / 255.
                     image_data = image_data[np.newaxis, ...].astype(np.float32)
+                    
+                    image_data2 = utils.image_preprocess(np.copy(image),(608, 608))
+                    image_data2 = image_data2[np.newaxis, ...]
+                    image_data2 = image_data2.astype(np.float32)
 
                     # Inference Code for different format of model
                     if FLAGS.framework == 'tflite':
-                        interpreter.set_tensor(input_details[0]['index'], image_data)
+                        interpreter.set_tensor(input_details[0]['index'], image_data2)
                         interpreter.invoke()
                         pred = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
                         if FLAGS.model == 'yolov4' and FLAGS.tiny == True:
                             boxes, pred_conf = filter_boxes(pred[1], pred[0], score_threshold=0.25, input_shape = tf.constant([INPUT_SIZE,INPUT_SIZE]))
                         else:
                             boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25, input_shape = tf.constant([INPUT_SIZE,INPUT_SIZE]))
+                        
+                        w_ratio = 1920/608
+                        input_h = 1080 / w_ratio
+                        ratio = (int(608-input_h)//2)/608
+                        
+                        top_val = 1.0 - ratio*2
+                        scale_term = 1.0 / top_val
+                        
+                        bias_array = np.array([[[ratio, 0.0, ratio, 0.0]]], np.float32)
+                        scale_array = np.array([[[scale_term, 1.0, scale_term, 1.0]]], np.float32)
+                        # print('scale_array', scale_array.shape, bias_array.shape, boxes.shape)
+                        # print('ratio', ratio, 'scale_term', scale_term)
+                        boxes = (boxes - bias_array) * scale_array
+                    
                     elif FLAGS.framework == 'tf':
-                        batch_data = tf.constant(image_data)
+                        batch_data = tf.constant(image_data2)
                         if FLAGS.show_ia:
                             pred_bbox, ia_images = infer(batch_data)
                         else:
                             pred_bbox = infer(batch_data)
                             pred_bbox = pred_bbox[0]
+                        # boxes = pred_bbox[0,..., 0:4]             # ymin,xmin,ymax,xmax
                         boxes = pred_bbox[..., 0:4]             # ymin,xmin,ymax,xmax
+                        
+                        w_ratio = 1920/608
+                        input_h = 1080 / w_ratio
+                        ratio = (int(608-input_h)//2)/608
+                        
+                        top_val = 1.0 - ratio*2
+                        scale_term = 1.0 / top_val
+                        
+                        bias_array = np.array([[[ratio, 0.0, ratio, 0.0]]], np.float32)
+                        scale_array = np.array([[[scale_term, 1.0, scale_term, 1.0]]], np.float32)
+                        # print('scale_array', scale_array.shape, bias_array.shape, boxes.shape)
+                        # print('ratio', ratio, 'scale_term', scale_term)
+                        boxes = (boxes - bias_array) * scale_array
+                            
                         pred_conf = pred_bbox[..., 4:]
                         # pred_conf = tf.reduce_max(pred_bbox[..., 4:], axis=-1, keepdims=True)
                     else:
@@ -270,6 +304,7 @@ def main(_argv):
 
                     # print('tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4))', tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)).shape)
                     # print('tf.reshape(pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1]))', tf.reshape(pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])).shape)
+                    
                     boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
                         boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
                         scores=tf.reshape(pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
@@ -379,7 +414,7 @@ def main(_argv):
                         h,w = image_size
                         img_size_ratio = np.array([[h,w,h,w]])
                         if FLAGS.show_ia:
-                            image = (ia_images[0].numpy() * 255).astype(np.uint8)
+                            image = (image_data[0] * 255).astype(np.uint8)
                             image = cv2.resize(image, (1920, 1080))
                         bboxes_gt_y1x1y2x2 = np.stack([bboxes_gt[...,1],bboxes_gt[...,0],bboxes_gt[...,3],bboxes_gt[...,2]], axis=-1)
                         image_result = utils.draw_bbox(np.copy(image), \
@@ -418,12 +453,12 @@ def main(_argv):
     cocoEval.summarize()
 
     if os.path.isfile(FLAGS.weights):
-        mAP_name = os.path.basename(FLAGS.weights) + '_mAP.txt'
+        mAP_name = os.path.basename(FLAGS.weights) + '_mAP_V4.txt'
         mAP_filepath = os.path.join(os.path.dirname(FLAGS.weights), mAP_name)
         sys.stdout = open(os.path.join(os.path.dirname(FLAGS.weights), mAP_name), 'w')
     else:
-        mAP_filepath = os.path.join(os.path.dirname(FLAGS.weights), 'mAP.txt')
-        sys.stdout = open(os.path.join(os.path.dirname(FLAGS.weights), 'mAP.txt'), 'w')
+        mAP_filepath = os.path.join(os.path.dirname(FLAGS.weights), 'mAP_V4.txt')
+        sys.stdout = open(os.path.join(os.path.dirname(FLAGS.weights), 'mAP_V4.txt'), 'w')
 
     print(FLAGS.annotation_path)
     print(FLAGS.weights)
@@ -434,7 +469,7 @@ def main(_argv):
     print(cocoEval.params.areaRng)
     cocoEval.summarize()
     sys.stdout.close()
-    shutil.copy(mAP_filepath, os.path.join(tmp_dir_name, 'mAP.txt'))
+    shutil.copy(mAP_filepath, os.path.join(tmp_dir_name, 'mAP_V4.txt'))
 
 
 

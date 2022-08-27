@@ -38,7 +38,7 @@ NORMALIZATION = {
     # 'LayerNorm': tfa.layers.LayerNormalization,
 }
 
-def convolutional(input_layer, filters_shape, downsample=False, activate=True, nl='BatchNorm', activate_type='relu', prefix=None):
+def convolutional(input_layer, filters_shape, downsample=False, activate=True, nl='BatchNorm', activate_type='relu', prefix=None, l2_reg=0.0005):
     any_nl = nl is not None
     if prefix==None: 
         conv_name = None
@@ -57,15 +57,17 @@ def convolutional(input_layer, filters_shape, downsample=False, activate=True, n
         padding = 'same'
 
     conv = tf.keras.layers.Conv2D(filters=filters_shape[-1], kernel_size = filters_shape[0], strides=strides, padding=padding,
-                                  use_bias=not any_nl, kernel_regularizer=tf.keras.regularizers.l2(0.0005),
+                                  use_bias=not any_nl, kernel_regularizer=tf.keras.regularizers.l2(l2_reg),
                                   kernel_initializer=tf.random_normal_initializer(stddev=0.01),
                                   bias_initializer=tf.random_normal_initializer(stddev=0.0001), name=conv_name)(input_layer)
 
     if any_nl: conv = NORMALIZATION[nl](name=bn_name)(conv)
     if activate == True:
-        activation_list=['relu', 'relu6', 'swish', 'leaky_relu', 'hard_sigmoid', 'elu', 'selu', 'gelu']
+        activation_list=['relu', 'relu6', 'swish', 'hard_sigmoid', 'elu', 'selu', 'gelu']
         if activate_type in activation_list:
             conv = tf.keras.layers.Activation(activate_type)(conv)
+        elif activate_type == 'leaky_relu':
+            conv = tf.keras.layers.LeakyReLU(0.1)(conv)
         else:
             raise ValueError(f'invalid activation function {activate_type}')
     return conv

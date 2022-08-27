@@ -10,7 +10,7 @@ from core.dataset_tiny import Dataset, tfDataset
 from core.config import cfg
 import numpy as np
 from core import utils
-from core.utils import draw_bbox
+from core.utils import draw_bbox, init_shared_variable
 import cv2
 from tqdm import tqdm
 import tensorflow_model_optimization as tfmot
@@ -30,15 +30,20 @@ def copytree(src, dst, symlinks=False, ignore=None):
             shutil.copy2(s, d)
 
 def main(_argv):
+    init_shared_variable()
     folder='augmentation'
     os.makedirs('visualize_anno', exist_ok=True)
     os.makedirs(f'visualize_anno/{folder}', exist_ok=True)
     
-    tf.random.set_seed(0)
-    # area<123, 1203
+    # tf.random.set_seed(0)
+    
+    filtered_full_HD_area = 123
+    filtered_area = filtered_full_HD_area / (1920 / cfg.TRAIN.INPUT_SIZE) ** 2
+    print('[Info] Filtered Instance Area', filtered_area)
+    filtered_area = max(filtered_area, 49)
 
-    trainset = tfDataset(FLAGS, cfg, is_training=True, filter_area=123, use_imgaug=False) 
-    trainset.batch_size = 4
+    trainset = tfDataset(FLAGS, cfg, is_training=True, filter_area=filtered_area, use_imgaug=False) 
+    batch_size  = trainset.batch_size 
     trainset = trainset.dataset_gen()
     no_gt_image_cnt = 0
 
@@ -53,7 +58,7 @@ def main(_argv):
                 batch_image=(data_item[0] * 255.0).astype(np.uint8)
                 batch_bboxes=np.concatenate([data_item[1][0][1], data_item[1][1][1]], axis=1).astype(np.int32)
             processed_img=[]
-            for i in range(4):
+            for i in range(batch_size):
                 img=batch_image[i]
                 bboxes=batch_bboxes[i]
 
@@ -76,11 +81,11 @@ def main(_argv):
                 img = cv2.putText(img, f'num of box {cnt} min box area: {min_area}', (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 1, cv2.LINE_AA)
                 processed_img.append(img)
             
-            top_img=np.concatenate(processed_img[:2], axis=1)
-            bot_img=np.concatenate(processed_img[2:], axis=1)
-            full_img = np.concatenate([top_img, bot_img], axis=0)
-
-            cv2.imwrite(os.path.join('visualize_anno',folder, f'{batch_idx}.jpg'), full_img[...,::-1])
+            # top_img=np.concatenate(processed_img[:2], axis=1)
+            # bot_img=np.concatenate(processed_img[2:], axis=1)
+            # full_img = np.concatenate([top_img, bot_img], axis=0)
+            # cv2.imwrite(os.path.join('visualize_anno',folder, f'{batch_idx}.jpg'), full_img[...,::-1])
+            
             pbar.set_postfix({
                 "no_gt_image_cnt": f"{no_gt_image_cnt:5d}"
             })

@@ -19,7 +19,7 @@ import tensorflow_addons as tfa
 import time
 
 flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
-flags.DEFINE_string('weights', None, 'pretrained weights')
+flags.DEFINE_string('weights', './data/yolov4-tiny.weights', 'pretrained weights')
 flags.DEFINE_string('cnnpp_weights', None, 'pretrained dip weights')
 flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
 flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
@@ -163,36 +163,6 @@ def main(_argv):
             'Usm':                  processed_list[4],
         })
     model = tf.keras.Model(input_layer, output_dict)
-    # if FLAGS.iayolo: 
-    #     output_dict.update({
-    #         'dip_img':              yolo_input,
-    #         'ImprovedWhiteBalance': processed_list[0], 
-    #         'Gamma':                processed_list[1], 
-    #         'Tone':                 processed_list[2], 
-    #         'Contrast':             processed_list[3], 
-    #         'Usm':                  processed_list[4],
-    #     })
-    #     demo_model = tf.keras.Model(input_layer, output_dict)
-    # else:
-    #     demo_model = model
-    
-    # if True:
-    #     bbox_tensors = []
-    #     prob_tensors = []
-    #     for i, fm in enumerate(feature_maps):
-    #         if i == 0:
-    #             output_tensors = decode(fm, cfg.TRAIN.INPUT_SIZE // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, 'tflite')
-    #         else:
-    #             output_tensors = decode(fm, cfg.TRAIN.INPUT_SIZE // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, 'tflite')
-    #         bbox_tensors.append(output_tensors[0])
-    #         prob_tensors.append(output_tensors[1])
-    #     pred_bbox = tf.concat(bbox_tensors[::-1], axis=1)
-    #     pred_prob = tf.concat(prob_tensors[::-1], axis=1)
-        
-    #     pred = (pred_bbox, pred_prob)
-    #     save_test_model = tf.keras.Model(input_layer, pred)
-    #     save_test_model.save(os.path.join(FLAGS.save_dir, 'save_test'))
-    #     res = save_test_model(np.zeros((1,608,608,3), dtype=np.float32))
         
     if FLAGS.cnnpp_weights == None:
         print("Training from scratch ......................")
@@ -245,6 +215,10 @@ def main(_argv):
             total_loss = giou_loss + conf_loss + prob_loss
 
             gradients = tape.gradient(total_loss, model.trainable_variables)
+            if FLAGS.iayolo:
+                for idx, (g, v) in enumerate(zip(gradients, model.trainable_variables)):
+                    gradients[idx] = tf.clip_by_norm(g, 5)
+                    if  'ex_conv6' in v.name.split(':')[0]: break
             optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
             # writing summary data

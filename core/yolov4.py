@@ -311,13 +311,15 @@ def decode_tflite(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XY
     for idx, score in enumerate(conv_raw_score):
         score = tf.sigmoid(score)
         score = score[:, :, :, 0:1] * score[:, :, :, 1:]
-        conv_raw_score[idx] = tf.reshape(score, (1, -1, NUM_CLASS))
+        w, h = score.shape[1:3]
+        conv_raw_score[idx] = tf.reshape(score, (1, w*h, NUM_CLASS))
     pred_prob = tf.concat(conv_raw_score, axis=1)
 
     conv_raw_dwdh = [conv_raw_dwdh_0, conv_raw_dwdh_1, conv_raw_dwdh_2]
     for idx, dwdh in enumerate(conv_raw_dwdh):
         dwdh = tf.exp(dwdh) * ANCHORS[i][idx]
-        conv_raw_dwdh[idx] = tf.reshape(dwdh, (1, -1, 2))
+        w, h = dwdh.shape[1:3]
+        conv_raw_dwdh[idx] = tf.reshape(dwdh, (1, w*h, 2))
     pred_wh = tf.concat(conv_raw_dwdh, axis=1)
 
     xy_grid = tf.meshgrid(tf.range(output_size), tf.range(output_size))
@@ -329,7 +331,8 @@ def decode_tflite(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XY
     for idx, dxdy in enumerate(conv_raw_dxdy):
         dxdy = ((tf.sigmoid(dxdy) * XYSCALE[i]) - 0.5 * (XYSCALE[i] - 1) + xy_grid) * \
             STRIDES[i]
-        conv_raw_dxdy[idx] = tf.reshape(dxdy, (1, -1, 2))
+        w, h = dxdy.shape[1:3]
+        conv_raw_dxdy[idx] = tf.reshape(dxdy, (1, w*h, 2))
     pred_xy = tf.concat(conv_raw_dxdy, axis=1)
     pred_xywh = tf.concat([pred_xy, pred_wh], axis=-1)
     return pred_xywh, pred_prob

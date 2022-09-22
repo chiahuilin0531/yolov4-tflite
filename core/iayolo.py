@@ -43,9 +43,11 @@ def CNNPP(net):
     # Old Implementation Use Dense Layer
     if implementation==0:
         net = tf.reshape(net, [-1, 2048])
-        features =        tf.keras.layers.Dense(64,         activation=act,     use_bias=True, kernel_initializer='glorot_normal', kernel_regularizer=tf.keras.regularizers.l2(5e-3))(net) # 5e-4
+        features =        tf.keras.layers.Dense(64,         activation=act,     use_bias=True, kernel_initializer='glorot_normal', \
+            name='ex_conv5', kernel_regularizer=tf.keras.regularizers.l2(5e-3))(net) # 5e-4
         features = tf.keras.layers.BatchNormalization(name='ex_batch')(features)
-        filter_features = tf.keras.layers.Dense(output_dim, activation=None,    use_bias=True, kernel_initializer='glorot_normal')(features)
+        filter_features = tf.keras.layers.Dense(output_dim, activation=None,    use_bias=True, kernel_initializer='glorot_normal', \
+            name='ex_conv6')(features)
     
     # New Implementation
     elif implementation==1:
@@ -75,7 +77,7 @@ def DIP_FilterGraph(prossed_imgs, cnn_pp_params):
     for graph in graph_list:
         prossed_imgs = graph(prossed_imgs, cnn_pp_params)
         processed_list.append(prossed_imgs)
-        
+
     return prossed_imgs, processed_list
 
 #####################################################################################
@@ -85,6 +87,7 @@ def ImprovedWhiteBalanceFilterGraph(prossed_imgs, cnn_pp_params):
     """
     prossed_imgs: (batch, 608, 608, 3)
     cnn_pp_params: (batch, 14)
+        use 3 parameter(0,1,2)
     """
     ###########################################
     # Parameter Regression Part
@@ -112,11 +115,13 @@ def ImprovedWhiteBalanceFilterGraph(prossed_imgs, cnn_pp_params):
     
     return prossed_imgs
 
-# VV
+# VV 
+# Extensive Operator Exp
 def GammaFilterGraph(prossed_imgs, cnn_pp_params):
     """
     prossed_imgs: (batch, 608, 608, 3)
     cnn_pp_params: (batch, 14)
+        use 1 parameter(3)
     """
     ###########################################
     # Parameter Regression Part
@@ -132,41 +137,51 @@ def GammaFilterGraph(prossed_imgs, cnn_pp_params):
     # Image Processing Part
     ########################################### 
     # shape=(batch, 3)
-    param_1 = tf.tile(used_params, [1, 3])
+    # param_1 = tf.tile(used_params, [1, 3])
+    # Prevent Using TILE operation !!
+    param_1 = tf.concat([used_params, used_params, used_params], axis=-1)
     prossed_imgs = tf.pow(tf.maximum(prossed_imgs, 0.001), param_1[:, None, None, :])
     
     return prossed_imgs
 
 # VV
+# Extensive Operator SUB (prossed_imgs - 1.0 * i / cfg.curve_steps), 5 Quantization
 def ToneFilterGraph(prossed_imgs, cnn_pp_params):
     """
     prossed_imgs: (batch, 608, 608, 3)
     cnn_pp_params: (batch, 14)
+        use 4 parameter(4,5,6,7)
     """
     ###########################################
     # Parameter Regression Part
     ###########################################
     # (batch, 4)
     used_params = cnn_pp_params[:, 4:8]
-    tone_curve = tf.reshape(used_params, shape=(-1, 1, cfg.curve_steps))[:, None, None, :] #(batch, 4) -> (batch, 1, 4) -> (batch, 1, 1, 1, 4)
+    # tone_curve = tf.reshape(used_params, shape=(-1, 1, cfg.curve_steps))[:, None, None, :] #(batch, 4) -> (batch, 1, 4) -> (batch, 1, 1, 1, 4)
+    # tone_curve = tf.reshape(used_params, shape=(-1, 1, 1, 1, cfg.curve_steps))
+    tone_curve = used_params
     # used_params=(batch, 1, 1, 1, 4), value_range=(0.5,2)
-    used_params = tanh_range(*cfg.tone_curve_range)(tone_curve) #(batch, 1, 1, 4)
+    used_params = tanh_range(*cfg.tone_curve_range)(tone_curve) #(batch, 1, 1, 1, 4)
 
     ###########################################
     # Image Processing Part
     ###########################################
     tone_curve = used_params
-    tone_curve_sum = tf.reduce_sum(tone_curve, axis=4) + 1e-30 #(batch, 1, 1, 1)
+    tone_curve_sum = tf.reduce_sum(tone_curve, axis=-1) + 1e-30 #(batch, 1, 1, 1)
+    tone_curve_sum = tf.reshape(tone_curve_sum, (-1, 1, 1, 1))
     total_image = prossed_imgs * 0
     for i in range(cfg.curve_steps):
-        total_image += tf.clip_by_value(prossed_imgs - 1.0 * i / cfg.curve_steps, 0, 1.0 / cfg.curve_steps) \
-                        * used_params[:, :, :, :, i]
+        tone_step = tf.reshape(used_params[:, i], (-1, 1, 1, 1))
+        total_image += tf.clip_by_value(prossed_imgs - 1.0 * i / cfg.curve_steps, 0, 1.0 / cfg.curve_steps) * tone_step
     total_image *= cfg.curve_steps / tone_curve_sum
     prossed_imgs = total_image
     
     return prossed_imgs
 
 # VV
+# Extensive Operator Cos
+# Extensive Operator Div (contrast_image = prossed_imgs / (luminance + 1e-6) * contrast_lum) 
+# both nominator and denominator require to be dequantize 
 def ContrastFilterGraph(prossed_imgs, cnn_pp_params):
     """
     prossed_imgs: (batch, 608, 608, 3)
@@ -184,6 +199,8 @@ def ContrastFilterGraph(prossed_imgs, cnn_pp_params):
     ###########################################
     luminance = tf.minimum(tf.maximum(rgb2lum(prossed_imgs), 0.0), 1.0)
     contrast_lum = -tf.cos(math.pi * luminance) * 0.5 + 0.5
+    # contrast_lum = -tf.sin(math.pi * luminance + 1.570796) * 0.5 + 0.5
+    
     contrast_image = prossed_imgs / (luminance + 1e-6) * contrast_lum
     prossed_imgs = lerp(prossed_imgs, contrast_image, used_params[:, :, None, None])
     
@@ -253,7 +270,11 @@ def UsmFilterGraph(prossed_imgs, cnn_pp_params):
     return prossed_imgs
 
 def tanh01(x):
-  return tf.tanh(x) * 0.5 + 0.5
+    # const_val = tf.ones(x.shape) * 0.5 # ValueError: Cannot convert a partially known TensorShape (None, 3) to a Tensor.
+    # const_val = tf.ones((1,1,1,1,4)) * 0.5
+    const_val = tf.ones((1, *x.shape[1:])) * 0.5
+    
+    return tf.tanh(x) * const_val + const_val
 
 def tanh_range(l, r, initial=None):
 

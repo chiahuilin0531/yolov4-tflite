@@ -19,7 +19,7 @@ flags.DEFINE_boolean('stats', False, 'show the quantization error statistics')
 
 
 def representative_data_gen():
-    len_img=50
+    len_img=10
     fimage = open(FLAGS.dataset).readlines()
     fimage = [line.split()[0] for line in fimage]
     np.random.seed(0)
@@ -65,8 +65,12 @@ def main(_argv):
     # Construct Int8 Intepreter
     ################################
     converter_int8 = tf.lite.TFLiteConverter.from_saved_model(FLAGS.weights)
-    converter_int8.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS, tf.lite.OpsSet.SELECT_TF_OPS, tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
-    converter_int8.allow_custom_ops = True
+    converter_int8.target_spec.supported_ops = [
+        tf.lite.OpsSet.TFLITE_BUILTINS, 
+        # tf.lite.OpsSet.SELECT_TF_OPS, 
+        tf.lite.OpsSet.TFLITE_BUILTINS_INT8
+    ]
+    converter_int8.allow_custom_ops = False
     converter_int8.experimental_new_converter = True
     converter_int8.optimizations = [tf.lite.Optimize.DEFAULT]
     converter_int8.representative_dataset = representative_data_gen
@@ -104,6 +108,9 @@ def main(_argv):
     # Then We May Need To Add Extra Layer 
     # To Non-Quantization List
     ############################################
+    # suspected_layers += op_names[43:44]
+    # fail case: suspected_layers += op_names[13:25]
+    # success case: only += op_names[13:113], only += op_names[13:57]
     suspected_layers += op_names[13:113]
     suspected_layers += op_names[:11]
     
@@ -135,6 +142,54 @@ def main(_argv):
     f.close()
     
     print(f'[Info] selective model {filename} {num_of_bytes} bytes. {len(suspected_layers)} layers')
+    demo(filename)
+    
+def demo(model_path):
+    # Show Before Quantization
+    infer = tf.keras.models.load_model(FLAGS.weights)
+    res = infer(np.random.uniform(0, 1, size=(1,608,608,3)))
+    print(f'res[0] {res[0].shape}')
+    print(f'res[1] {res[1].shape}')
+    
+    logging.info(f'demo function. load model from {model_path}')
+    interpreter = tf.lite.Interpreter(model_path=model_path)  # , experimental_preserve_all_tensors=True
+    op_list = [op['op_name'] for op in interpreter._get_ops_details()]
+    op_list = set(op_list)
+    print(op_list)
+    interpreter.allocate_tensors()
+    ##############################
+    # input = interpreter.tensor(interpreter.get_input_details()[0]["index"])
+    # output = interpreter.tensor(299)
+    # input().fill(3.)
+    # interpreter.invoke()
+    # print(f"inference tensor {output().shape} {output().dtype}")
+    ##############################
+
+    input_details = interpreter.get_input_details()
+    print('input_details')
+    for i in range(len(input_details)): print('\t',input_details[i])
+
+    output_details = interpreter.get_output_details()
+    print('output_details')
+    for i in range(len(output_details)): print('\t',output_details[i])
+
+    print('_get_full_signature_list', interpreter._get_full_signature_list())
+
+    # Get tensor signature for certain tensor_idx  
+    # interpreter._get_tensor_details(tensor_idx)
+
+
+    input_shape = input_details[0]['shape']
+
+    input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
+    print('input_data', input_data.shape)
+
+    interpreter.set_tensor(input_details[0]['index'], input_data)
+    interpreter.invoke()
+    print("output_details[0]['index']", output_details[0]['index'])
+    output_data = [interpreter.get_tensor(output_details[i]['index']) for i in range(len(output_details))]
+
+    print(output_data)
         
 if __name__ == '__main__':
     try:

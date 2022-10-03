@@ -74,12 +74,13 @@ def save_tf():
         output_tensors = decode(fm, FLAGS.input_size // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, FLAGS.framework)
       else:
         output_tensors = decode(fm, FLAGS.input_size // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, FLAGS.framework)
-      if not FLAGS.iayolo:
-        bbox_tensors.append(output_tensors[0])
-        prob_tensors.append(output_tensors[1])
-      else:
+      if FLAGS.iayolo and FLAGS.framework == 'tflite':
         bbox_tensors.append(output_tensors[1])
         prob_tensors.append(output_tensors[0])
+      else:
+        bbox_tensors.append(output_tensors[0])
+        prob_tensors.append(output_tensors[1])
+        
   else:
     for i, fm in enumerate(feature_maps):
       if i == 0:
@@ -88,12 +89,12 @@ def save_tf():
         output_tensors = decode(fm, FLAGS.input_size // 16, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, FLAGS.framework)
       else:
         output_tensors = decode(fm, FLAGS.input_size // 32, NUM_CLASS, STRIDES, ANCHORS, i, XYSCALE, FLAGS.framework)
-      if not FLAGS.iayolo:
-        bbox_tensors.append(output_tensors[0])
-        prob_tensors.append(output_tensors[1])
-      else:
+      if FLAGS.iayolo and FLAGS.framework == 'tflite':
         bbox_tensors.append(output_tensors[1])
         prob_tensors.append(output_tensors[0])
+      else:
+        bbox_tensors.append(output_tensors[0])
+        prob_tensors.append(output_tensors[1])
   pred_bbox = tf.concat(bbox_tensors[::-1], axis=1)
   pred_prob = tf.concat(prob_tensors[::-1], axis=1)
   # pred_bbox = tf.concat(bbox_tensors, axis=1)
@@ -105,6 +106,7 @@ def save_tf():
   elif FLAGS.framework == 'tf':
     boxes, pred_conf = filter_boxes(pred_bbox, pred_prob, score_threshold=FLAGS.score_thres, input_shape=tf.constant([FLAGS.input_size, FLAGS.input_size]))
     pred = tf.concat([boxes, pred_conf], axis=-1)
+  
   else:
     raise NotImplementedError(f'No such framework {FLAGS.framework}')
   ## ori code

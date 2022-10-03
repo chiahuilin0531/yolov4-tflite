@@ -111,8 +111,8 @@ def main(_argv):
     # suspected_layers += op_names[43:44]
     # fail case: suspected_layers += op_names[13:25]
     # success case: only += op_names[13:113], only += op_names[13:57]
-    suspected_layers += op_names[13:113]
-    suspected_layers += op_names[:11]
+    # suspected_layers += op_names[13:113]
+    # suspected_layers += op_names[:11]
     
     
     print('op_names', len(op_names))

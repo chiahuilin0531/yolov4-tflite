@@ -160,9 +160,6 @@ def draw_bbox(image, bboxes, classes, show_label=True, is_gt=False, gt_info=None
     # colors = list(map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)), colors))
     gt_color = [(0,255,0),(255,0,0),(255,255,0),]
     colors = [(0,200,0),(200,0,0),(200,200,0)]
-    # random.seed(0)
-    # random.shuffle(colors)
-    # random.seed(None)
 
     out_boxes, out_scores, out_classes, num_boxes = bboxes
     for i in range(num_boxes[0]):

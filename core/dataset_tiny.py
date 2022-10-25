@@ -18,7 +18,9 @@ class Dataset:
 
 class tfDataset(object):
     FILL_VALUE = 0
-    def __init__(self, FLAGS, cfg, is_training: bool, dataset_type: str = "converted_coco", filter_area: int = 123, use_imgaug: bool = True, adverserial: bool=False):
+    def __init__(self, FLAGS, cfg, is_training: bool, dataset_type: str = "converted_coco", filter_area: int = 123, \
+        use_imgaug: bool = True, adverserial: bool=False, operand_seed: int = 0):
+        self.operand_seed = None # operand_seed
         self.tiny = FLAGS.tiny
         self.strides, self.anchors, NUM_CLASS, XYSCALE = utils.load_config(FLAGS, cfg)
         self.dataset_type = dataset_type
@@ -94,7 +96,7 @@ class tfDataset(object):
                                 continue
                             else:
                                 annotations.append(image_path + string)
-        np.random.seed(0)
+        # np.random.seed(0)
         np.random.shuffle(annotations)
         np.random.shuffle(annotations)
         return annotations
@@ -125,38 +127,43 @@ class tfDataset(object):
         return cls.FILL_VALUE
 
     def dataset_gen(self, yolo_data=True, repeat_times=1):
+        threads = 16 # tf.data.experimental.AUTOTUNE
+        determin = True
         dataset = tf.data.Dataset.from_tensor_slices(self.annotations).repeat(repeat_times)
         if self.data_aug:
             dataset=dataset.shuffle(buffer_size=2048)
-        dataset = dataset.map(self.parse_annotation, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+        dataset = dataset.map(self.parse_annotation, num_parallel_calls=threads, deterministic=determin)
         
 
         if self.data_aug:
-            # dataset = dataset.map(self.random_copy_paste,       num_parallel_calls=tf.data.experimental.AUTOTUNE)
-            dataset = dataset.map(self.random_horizontal_flip,  num_parallel_calls=tf.data.experimental.AUTOTUNE)
-            dataset = dataset.map(self.random_crop,             num_parallel_calls=tf.data.experimental.AUTOTUNE)
-            dataset = dataset.map(self.random_translate,        num_parallel_calls=tf.data.experimental.AUTOTUNE)
-            # dataset = dataset.map(self.random_hsl_enhance,      num_parallel_calls=tf.data.experimental.AUTOTUNE)
+            dataset = dataset.map(self.random_copy_paste,    num_parallel_calls=threads, deterministic=determin)
+            dataset = dataset.map(self.random_horizontal_flip, num_parallel_calls=threads, deterministic=determin)
+            dataset = dataset.map(self.random_crop,            num_parallel_calls=threads, deterministic=determin)
+            dataset = dataset.map(self.random_translate,       num_parallel_calls=threads, deterministic=determin)
+            # dataset = dataset.map(self.random_hsl_enhance,   num_parallel_calls=threads, deterministic=determin)
 
 
-        dataset = dataset.map(self.pad_image, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-        dataset = dataset.map(self.pad_bbox, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+        dataset = dataset.map(self.pad_image, num_parallel_calls=threads, deterministic=determin)
+        dataset = dataset.map(self.pad_bbox,  num_parallel_calls=threads, deterministic=determin)
 
         dataset = dataset.batch(self.batch_size, drop_remainder=True)
+        threads=16
+        determin=True
         if yolo_data:
             if self.data_aug and self.use_imgaug:
                 dataset = dataset.map(
                     lambda x,y: tf.numpy_function(self.do_augmentation, [x,y], [tf.uint8, tf.float32]),
-                    num_parallel_calls=tf.data.experimental.AUTOTUNE,
+                    num_parallel_calls=threads, deterministic=determin
                 )
             dataset = dataset.map(
                 lambda x,y: tf.numpy_function(self.generate_gth, [x,y], [tf.float32,tf.float32,tf.float32,tf.float32,tf.float32]),
-                num_parallel_calls=tf.data.experimental.AUTOTUNE,
+                num_parallel_calls=threads, deterministic=determin
             )
         else:
             # drop bounding box and turn image into float type, pixel value=[0,1]
-            dataset=dataset.map(lambda a,b: tf.cast(a, dtype=tf.float32) / 255.)
-        dataset = dataset.map(self.to_dict)
+            dataset = dataset.map(lambda a,b: tf.cast(a, dtype=tf.float32) / 255., \
+                num_parallel_calls=threads, deterministic=determin)
+        dataset = dataset.map(self.to_dict,  num_parallel_calls=threads, deterministic=determin)
         dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
         return dataset
         
@@ -166,13 +173,14 @@ class tfDataset(object):
         Parameter
         ---------
         annotation: a string for specify image path and bounding box coordinate
+        domain_id: a integer represent domain
 
         Return
         ------
         image: uint8(train_size, train_size, 3)\\
             a image with training size 
         bboxes: float32(num_of_max_bbox, 5)\\
-            bounding box coordinate(x1y1x2y2) and class
+            bounding box coordinate(x1y1x2y2) and class. image integer coordinate.
         """
         
         line = tf.strings.split(annotation)
@@ -201,15 +209,15 @@ class tfDataset(object):
         ---------
         image: uint8(h,w,3)\\
         bboxes: float32(num_of_bbox, 5)\\
-            x1y1x2y2 class
+            x1y1x2y2 class. image integer coordinate.
         Return
         ------
         image: uint8(h,w,3)\\
         bboxes: float32(num_of_bbox, 5)\\
-            x1y1x2y2 class
+            x1y1x2y2 class. image integer coordinate.
         """
         prob_thresh = 0.5 #self.prob_scheduler(self.global_epoch)
-        if tf.random.uniform((1,), 0, 1)[0] < prob_thresh:
+        if tf.random.uniform((1,), 0, 1, seed=self.operand_seed)[0] < prob_thresh:
             h =tf.shape(image)[0]
             w = tf.shape(image)[1]
             h_fp32 = tf.cast(h, tf.float32)
@@ -230,21 +238,21 @@ class tfDataset(object):
 
 
             crop_xmin = tf.maximum(
-                0, tf.cast(max_bbox[0] - tf.random.uniform((1,), 0, max_l_trans)[0], tf.int32)
+                0, tf.cast(max_bbox[0] - tf.random.uniform((1,), 0, max_l_trans, seed=self.operand_seed)[0], tf.int32)
             )
             crop_ymin = tf.maximum(
-                0, tf.cast((max_bbox[1] - tf.random.uniform((1,), 0, max_u_trans))[0], tf.int32)
+                0, tf.cast((max_bbox[1] - tf.random.uniform((1,), 0, max_u_trans, seed=self.operand_seed))[0], tf.int32)
             )
             crop_xmax = tf.maximum(
                 w, tf.cast((
                                                tf.maximum(max_bbox[2], w_fp32 * 0.8) + 
-                    tf.random.uniform((1,), 0, tf.minimum(max_r_trans, w_fp32 * 0.2))
+                    tf.random.uniform((1,), 0, tf.minimum(max_r_trans, w_fp32 * 0.2), seed=self.operand_seed)
                 )[0], tf.int32)
             )
             crop_ymax = tf.maximum(
                 h, tf.cast((
                                                tf.maximum(max_bbox[3], h_fp32 * 0.8) + 
-                    tf.random.uniform((1,), 0, tf.minimum(max_d_trans, h_fp32 * 0.2))
+                    tf.random.uniform((1,), 0, tf.minimum(max_d_trans, h_fp32 * 0.2), seed=self.operand_seed)
                 )[0], tf.int32)
             )
 
@@ -259,15 +267,15 @@ class tfDataset(object):
         ---------
         image: uint8(h,w,3)\\
         bboxes: float32(num_of_bbox, 5)\\
-            x1y1x2y2 class
+            x1y1x2y2 class. image integer coordinate.
 
         Return
         ------
         image: uint8(h,w,3)\\
         bboxes: float32(num_of_bbox, 5)\\
-            x1y1x2y2 class
+            x1y1x2y2 class. image integer coordinate.
         """
-        if tf.random.uniform((1,), 0, 1)[0] < 0.5:
+        if tf.random.uniform((1,), 0, 1, seed=self.operand_seed)[0] < 0.5:
             h = tf.shape(image)[0]
             w = tf.shape(image)[1]
             h_fp32 = tf.cast(h, tf.float32)
@@ -289,8 +297,8 @@ class tfDataset(object):
             max_r_trans = tf.minimum(w_fp32 - max_bbox[2], w_fp32 * 0.2)
             max_d_trans = tf.minimum(h_fp32 - max_bbox[3], h_fp32 * 0.2)
 
-            tx = tf.random.uniform((1,),-(max_l_trans - 1), (max_r_trans - 1))[0]
-            ty = tf.random.uniform((1,),-(max_u_trans - 1), (max_d_trans - 1))[0]
+            tx = tf.random.uniform((1,),-(max_l_trans - 1), (max_r_trans - 1), seed=self.operand_seed)[0]
+            ty = tf.random.uniform((1,),-(max_u_trans - 1), (max_d_trans - 1), seed=self.operand_seed)[0]
 
             image = tfa.image.translate(image, [tx,ty], fill_value=self.FILL_VALUE)
             bboxes = bboxes + tf.stack([tx, ty, tx, ty, 0])
@@ -304,15 +312,15 @@ class tfDataset(object):
         ---------
         image: uint8(h,w,3)\\
         bboxes: float32(num_of_bbox, 5)\\
-            x1y1x2y2 class
+            x1y1x2y2 class. image integer coordinate.
 
         Return
         ------
         image: uint8(h,w,3)\\
         bboxes: float32(num_of_bbox, 5)\\
-            x1y1x2y2 class
+            x1y1x2y2 class. image integer coordinate.
         """
-        if tf.random.uniform((1,), 0, 1)[0] < 0.5:
+        if tf.random.uniform((1,), 0, 1, seed=self.operand_seed)[0] < 0.5:
             img_shape = tf.shape(image)
             w = tf.cast(img_shape[1], dtype=tf.float32)
             image = image[:, ::-1, :]
@@ -328,6 +336,19 @@ class tfDataset(object):
 
     @tf.function
     def random_hsl_enhance(self, image, bboxes):
+        """
+        Parameter
+        ---------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+
+        Return
+        ------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+        """
         im_shape = image.shape
         def aug_ops(op_image):
             prob_thresh = self.prob_scheduler(self.global_epoch)
@@ -356,12 +377,12 @@ class tfDataset(object):
         ---------
         image: uint8(h,w,3)\\
         bboxes: float32(num_of_bbox, 5)\\
-            x1y1x2y2 class
+            x1y1x2y2 class. image integer coordinate.
         Return
         ------
         image: uint8(h,w,3)\\
         bboxes: float32(num_of_bbox, 5)\\
-            x1y1x2y2 class
+            x1y1x2y2 class. image integer coordinate.
         """
         im_shape = image.shape
         # bx_shape = bboxes.shape
@@ -370,6 +391,7 @@ class tfDataset(object):
             input_bboxes = input_bboxes.astype(np.int32)
             add_labels=np.copy(input_bboxes)
             H,W,C = input_img.shape
+            # prob_thresh = 0.5 # self.prob_scheduler(self.global_epoch)
             prob_thresh = 0.5 # self.prob_scheduler(self.global_epoch)
             min_y_pos = min(input_bboxes[:, 1])
             # 建立forground mask，判斷該區域是否有label
@@ -465,13 +487,13 @@ class tfDataset(object):
         ---------
         img: uint8(h,w,3)\\
         bboxes: float32(num_of_bbox, 5)\\
-            x1y1x2y2 class
+            x1y1x2y2 class. image integer coordinate.
         
         Return
         ------
         img: uint8(h,w,3)\\
         bboxes: float32(num_of_bbox, 5)\\
-            x1y1x2y2 class
+            x1y1x2y2 class. image integer coordinate.
         """
         train_input_size = self.train_input_sizes
         iw, ih = train_input_size, train_input_size
@@ -525,11 +547,13 @@ class tfDataset(object):
         ---------
         image: uint8(h,w,3)\\
         bboxes: float32(num_of_box, 5)\\
+            x1y1x2y2 class. image integer coordinate.
 
         Return
         ------
         image: uint8(h,w,3)\\
-        bboxes: float32(num_max_box, 5)
+        bboxes: float32(num_max_box, 5)\\
+            x1y1x2y2 class. image integer coordinate.
         """
         num_boxes=tf.shape(bboxes)[0]
         bboxes=tf.concat([bboxes, tf.zeros((self.max_bbox_per_scale-num_boxes,5), dtype=bboxes.dtype)], axis=0)
@@ -693,6 +717,666 @@ class tfDataset(object):
             prob_thresh = tf.minimum(max_prob, (current_epoch - warmup_epochs) / 15.0 * max_prob)
             return prob_thresh
 
+class tfAdversalDataset(tfDataset):
+    FILL_VALUE = 0
+    def __init__(self, FLAGS, cfg, is_training: bool, dataset_type: str = "converted_coco", filter_area: int = 123, \
+        use_imgaug: bool = True, adverserial: bool=False, operand_seed: int = 0):
+        self.operand_seed = None # operand_seed
+        self.tiny = FLAGS.tiny
+        self.strides, self.anchors, NUM_CLASS, XYSCALE = utils.load_config(FLAGS, cfg)
+        self.dataset_type = dataset_type
+
+        if is_training:
+            self.annot_paths = cfg.TRAIN.DOMAIN_ANNOT_PATHS
+        else:
+            self.annot_paths = cfg.TEST.DOMAIN_ANNOT_PATHS
+        self.input_sizes = (
+            cfg.TRAIN.INPUT_SIZE if is_training else cfg.TEST.INPUT_SIZE
+        )
+        self.batch_size = (
+            cfg.TRAIN.BATCH_SIZE if is_training else cfg.TEST.BATCH_SIZE
+        )
+        self.data_aug = cfg.TRAIN.DATA_AUG if is_training else cfg.TEST.DATA_AUG
+
+        self.train_input_sizes = cfg.TRAIN.INPUT_SIZE
+        self.train_input_size = cfg.TRAIN.INPUT_SIZE
+        self.classes = utils.read_class_names(cfg.YOLO.CLASSES)
+        self.num_classes = len(self.classes)
+        self.anchor_per_scale = cfg.YOLO.ANCHOR_PER_SCALE
+        self.max_bbox_per_scale = 150
+
+        self.annotations, self.domain_labels = self.load_annotations()
+        self.num_samples = len(self.annotations)
+        self.num_batchs = int(np.ceil(self.num_samples / self.batch_size))
+        self.batch_count = 0
+        self.filter_area = filter_area
+        self.create_augment_env()
+        self.use_imgaug=use_imgaug
+        _, self.global_epoch = utils.get_shared_variable()
+
+    def load_annotations(self):
+        annotations = []
+        for domain_id, domain in enumerate(self.annot_paths):
+            print(f'domain_id {domain_id}. Num of Dataset: {len(domain)}')
+            for annot_path in domain:
+                print(annot_path)
+                with open(annot_path, "r") as f:
+                    txt = f.readlines()
+                    if self.dataset_type == "converted_coco":
+                        new_labels = [
+                            (line.strip(), domain_id)
+                            for line in txt
+                            if len(line.strip().split()[1:]) != 0
+                        ]
+                        annotations += new_labels
+                        
+                    elif self.dataset_type == "yolo":
+                        for line in txt:
+                            image_path = line.strip()
+                            root, _ = os.path.splitext(image_path)
+                            with open(root + ".txt") as fd:
+                                boxes = fd.readlines()
+                                string = ""
+                                for box in boxes:
+                                    box = box.strip()
+                                    box = box.split()
+                                    class_num = int(box[0])
+                                    center_x = float(box[1])
+                                    center_y = float(box[2])
+                                    half_width = float(box[3]) / 2
+                                    half_height = float(box[4]) / 2
+                                    string += " {},{},{},{},{}".format(
+                                        center_x - half_width,
+                                        center_y - half_height,
+                                        center_x + half_width,
+                                        center_y + half_height,
+                                        class_num,
+                                    )
+                                if string=="":
+                                    continue
+                                else:
+                                    annotations.append((image_path + string, domain_id))
+        # np.random.seed(0)
+        np.random.shuffle(annotations)
+        np.random.shuffle(annotations)
+        domain_labels = [b for a,b in annotations]
+        annotations = [ a for a,b in annotations]
+        return annotations, domain_labels
+
+    def dataset_gen(self, yolo_data=True, repeat_times=1):
+        threads = 16 # tf.data.experimental.AUTOTUNE
+        determin = True
+        dataset = tf.data.Dataset.from_tensor_slices(self.annotations) #.repeat(repeat_times)
+        domain_label = tf.data.Dataset.from_tensor_slices(self.domain_labels) #.repeat(repeat_times)
+
+        dataset = tf.data.Dataset.zip((dataset, domain_label))
+        if self.data_aug:
+            dataset=dataset.shuffle(buffer_size=2048)
+        dataset = dataset.map(self.parse_annotation, num_parallel_calls=threads, deterministic=determin)
+        
+
+        if self.data_aug:
+            dataset = dataset.map(self.random_copy_paste,    num_parallel_calls=threads, deterministic=determin)
+            dataset = dataset.map(self.random_horizontal_flip, num_parallel_calls=threads, deterministic=determin)
+            dataset = dataset.map(self.random_crop,            num_parallel_calls=threads, deterministic=determin)
+            dataset = dataset.map(self.random_translate,       num_parallel_calls=threads, deterministic=determin)
+            # dataset = dataset.map(self.random_hsl_enhance,   num_parallel_calls=threads, deterministic=determin)
+
+
+        dataset = dataset.map(self.pad_image, num_parallel_calls=threads, deterministic=determin)
+        dataset = dataset.map(self.pad_bbox,  num_parallel_calls=threads, deterministic=determin)
+
+        dataset = dataset.batch(self.batch_size, drop_remainder=True)
+        threads=16
+        determin=True
+        if yolo_data:
+            if self.data_aug and self.use_imgaug:
+                dataset = dataset.map(
+                    lambda x,y: tf.numpy_function(self.do_augmentation, [x,y], [tf.uint8, tf.float32]),
+                    num_parallel_calls=threads, deterministic=determin
+                )
+            dataset = dataset.map(
+                lambda x,y,z: [*tf.numpy_function(self.generate_gth, [x,y], [tf.float32,tf.float32,tf.float32,tf.float32,tf.float32]), z],
+                num_parallel_calls=threads, deterministic=determin
+            )
+        else:
+            # drop bounding box and turn image into float type, pixel value=[0,1] 
+            dataset = dataset.map(lambda a,b: tf.cast(a, dtype=tf.float32) / 255., \
+                num_parallel_calls=threads, deterministic=determin)
+        dataset = dataset.map(self.to_dict,  num_parallel_calls=threads, deterministic=determin)
+        dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
+        return dataset
+
+    @tf.function
+    def parse_annotation(self, annotation, domain_id):
+        """
+        Parameter
+        ---------
+        annotation: a string for specify image path and bounding box coordinate
+        domain_id: a integer represent domain
+
+        Return
+        ------
+        image: uint8(train_size, train_size, 3)\\
+            a image with training size 
+        bboxes: float32(num_of_max_bbox, 5)\\
+            bounding box coordinate(x1y1x2y2) and class. image integer coordinate.
+        """
+        
+        line = tf.strings.split(annotation)
+        image_path = line[0]
+        img = tf.io.read_file(image_path)
+        img = tf.io.decode_jpeg(img, channels=3)
+        
+        # img = tf.cast(tf.image.resize(img, [nh, nw]), dtype=tf.uint8)
+        if self.dataset_type == "converted_coco":
+            bboxes = tf.map_fn(lambda x: tf.strings.split(x, ','), line[1:])
+            bboxes = tf.strings.to_number(bboxes, tf.float32)
+        elif self.dataset_type == "yolo":
+            height, width, _ = img.shape
+            bboxes = tf.map_fn(lambda x: tf.strings.split(x, ','), line[1:])
+            bboxes = tf.strings.to_number(bboxes, tf.float32)
+            bboxes = bboxes * tf.constant([width, height, width, height, 1], dtype=tf.float32)
+            bboxes = bboxes.astype(np.float32)
+        # bboxes = bboxes * scale
+
+        return img, bboxes, {"domain_id": domain_id}
+        
+    @tf.function
+    def random_crop(self, image, bboxes, info):
+        """
+        Parameter
+        ---------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+        Return
+        ------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+        """
+        prob_thresh = 0.5 #self.prob_scheduler(self.global_epoch)
+        if tf.random.uniform((1,), 0, 1, seed=self.operand_seed)[0] < prob_thresh:
+            h =tf.shape(image)[0]
+            w = tf.shape(image)[1]
+            h_fp32 = tf.cast(h, tf.float32)
+            w_fp32 = tf.cast(w, tf.float32)
+
+            max_bbox = tf.concat(
+                [
+                    tf.reduce_min(bboxes[:, 0:2], axis=0),
+                    tf.reduce_max(bboxes[:, 2:4], axis=0),
+                ],
+                axis=-1,
+            )
+
+            max_l_trans = tf.minimum(max_bbox[0], 0.2 * w_fp32)
+            max_u_trans = tf.minimum(max_bbox[1], 0.2 * h_fp32)
+            max_r_trans = tf.maximum(w_fp32 - max_bbox[2], w_fp32 * 0.8)
+            max_d_trans = tf.maximum(h_fp32 - max_bbox[3], h_fp32 * 0.8)
+
+
+            crop_xmin = tf.maximum(
+                0, tf.cast(max_bbox[0] - tf.random.uniform((1,), 0, max_l_trans, seed=self.operand_seed)[0], tf.int32)
+            )
+            crop_ymin = tf.maximum(
+                0, tf.cast((max_bbox[1] - tf.random.uniform((1,), 0, max_u_trans, seed=self.operand_seed))[0], tf.int32)
+            )
+            crop_xmax = tf.maximum(
+                w, tf.cast((
+                                               tf.maximum(max_bbox[2], w_fp32 * 0.8) + 
+                    tf.random.uniform((1,), 0, tf.minimum(max_r_trans, w_fp32 * 0.2), seed=self.operand_seed)
+                )[0], tf.int32)
+            )
+            crop_ymax = tf.maximum(
+                h, tf.cast((
+                                               tf.maximum(max_bbox[3], h_fp32 * 0.8) + 
+                    tf.random.uniform((1,), 0, tf.minimum(max_d_trans, h_fp32 * 0.2), seed=self.operand_seed)
+                )[0], tf.int32)
+            )
+
+            image = image[crop_ymin:crop_ymax, crop_xmin:crop_xmax]
+            bboxes = bboxes - tf.cast(tf.stack([crop_xmin,crop_ymin,crop_xmin,crop_ymin,0]), dtype=tf.float32)
+        return image, bboxes, info
+
+    @tf.function
+    def random_translate(self, image, bboxes, info):
+        """
+        Parameter
+        ---------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+
+        Return
+        ------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+        """
+        if tf.random.uniform((1,), 0, 1, seed=self.operand_seed)[0] < 0.5:
+            h = tf.shape(image)[0]
+            w = tf.shape(image)[1]
+            h_fp32 = tf.cast(h, tf.float32)
+            w_fp32 = tf.cast(w, tf.float32)
+            max_bbox = tf.concat(
+                [
+                    tf.reduce_min(bboxes[:, 0:2], axis=0),
+                    tf.reduce_max(bboxes[:, 2:4], axis=0),
+                ],
+                axis=-1,
+            )
+
+            # max_l_trans = max_bbox[0]
+            # max_u_trans = max_bbox[1]
+            # max_r_trans = tf.cast(w, dtype=tf.float32) - max_bbox[2]
+            # max_d_trans = tf.cast(h, dtype=tf.float32) - max_bbox[3]
+            max_l_trans = tf.minimum(max_bbox[0], 0.2 * w_fp32)
+            max_u_trans = tf.minimum(max_bbox[1], 0.2 * h_fp32)
+            max_r_trans = tf.minimum(w_fp32 - max_bbox[2], w_fp32 * 0.2)
+            max_d_trans = tf.minimum(h_fp32 - max_bbox[3], h_fp32 * 0.2)
+
+            tx = tf.random.uniform((1,),-(max_l_trans - 1), (max_r_trans - 1), seed=self.operand_seed)[0]
+            ty = tf.random.uniform((1,),-(max_u_trans - 1), (max_d_trans - 1), seed=self.operand_seed)[0]
+
+            image = tfa.image.translate(image, [tx,ty], fill_value=self.FILL_VALUE)
+            bboxes = bboxes + tf.stack([tx, ty, tx, ty, 0])
+        # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), ['some of coordinate are negative!!'])
+        return image, bboxes, info
+
+    @tf.function
+    def random_horizontal_flip(self, image, bboxes, info):
+        """
+        Parameter
+        ---------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+
+        Return
+        ------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+        """
+        if tf.random.uniform((1,), 0, 1, seed=self.operand_seed)[0] < 0.5:
+            img_shape = tf.shape(image)
+            w = tf.cast(img_shape[1], dtype=tf.float32)
+            image = image[:, ::-1, :]
+            bboxes = tf.concat([
+                w-bboxes[:,2:3],
+                  bboxes[:,1:2],
+                w-bboxes[:,0:1],
+                  bboxes[:,3:4],
+                  bboxes[:,4:5]
+            ], axis=-1)
+        # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), [['some of coordinate are negative!!']])
+        return image, bboxes, info
+
+    @tf.function
+    def random_hsl_enhance(self, image, bboxes, info):
+        """
+        Parameter
+        ---------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+
+        Return
+        ------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+        """
+        im_shape = image.shape
+        def aug_ops(op_image):
+            prob_thresh = self.prob_scheduler(self.global_epoch)
+            # print('random_hsl_enhance', prob_thresh, self.global_epoch.numpy())
+            if np.random.uniform(size=(1,), low=0, high=1)[0] < prob_thresh:
+                hsl_img = cv2.cvtColor(op_image, cv2.COLOR_RGB2HLS)
+                saturation_multiplier = np.random.uniform(size=[], low=0.8, high=1.0) # np.random.choice([1.0, 0.7, 1.0])
+                lightness_multiplier = np.random.uniform(size=[], low=0.5, high=1.5) # np.random.choice([1.0, 0.5, 1.5])
+                hsl_img[..., 1] = hsl_img[..., 1] * saturation_multiplier # np.random.uniform(size=[], low=0.5, high=1.0)
+                hsl_img[..., 2] = hsl_img[..., 2] * lightness_multiplier # np.random.uniform(size=[], low=0.2, high=1.5)
+                aug_img = cv2.cvtColor(hsl_img, cv2.COLOR_HLS2RGB)
+                op_image = aug_img.astype(np.uint8)
+                if False:
+                    op_image = cv2.putText(op_image, f'S: {saturation_multiplier}', (10, 80), cv2.FONT_HERSHEY_SIMPLEX, 4, (255, 0, 0), 4, cv2.LINE_AA)
+                    op_image = cv2.putText(op_image, f'L: {lightness_multiplier}', (10, 160), cv2.FONT_HERSHEY_SIMPLEX, 4, (255, 0, 0), 4, cv2.LINE_AA)
+            return op_image
+
+        [image,] = tf.numpy_function(aug_ops, [image], [tf.uint8])
+        image.set_shape(im_shape)
+        return image, bboxes, info
+
+    @tf.function
+    def random_copy_paste(self, image, bboxes, info):
+        """
+        Parameter
+        ---------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+        Return
+        ------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+        """
+        im_shape = image.shape
+        # bx_shape = bboxes.shape
+
+        def copy_paste_aug_ops(input_img, input_bboxes):
+            input_bboxes = input_bboxes.astype(np.int32)
+            add_labels=np.copy(input_bboxes)
+            H,W,C = input_img.shape
+            # prob_thresh = 0.5 # self.prob_scheduler(self.global_epoch)
+            prob_thresh = 0.5 # self.prob_scheduler(self.global_epoch)
+            min_y_pos = min(input_bboxes[:, 1])
+            # 建立forground mask，判斷該區域是否有label
+            A = np.zeros((input_img.shape[0], input_img.shape[1]))
+            if np.random.uniform(size=(1,), low=0, high=1)[0] < prob_thresh:
+                for i in range(input_bboxes.shape[0]):
+                    clss = input_bboxes[i][4]
+                    x = input_bboxes[i][0] 
+                    y = input_bboxes[i][1] 
+                    w = input_bboxes[i][2] - input_bboxes[i][0]
+                    h = input_bboxes[i][3] - input_bboxes[i][1]
+                    A[y:y+h, x:x+w] = 1
+
+                    # class 1 would not be copied with 33%
+                    # if clss == 1:
+                    #     if 0.66 < np.random.uniform(low=0,high=1,size=(1,))[0]:
+                    #         break
+
+                    crop_img = Image.fromarray(input_img[y:y+h, x:x+w])
+                    patience=20
+                    for i in range(patience):
+                        # Determine Where to Paste 
+                        y_lower_bound = int(np.minimum(H // 6, min_y_pos))
+                        y_upper_bound = int(H // 3 * 2 - np.minimum(h,w) * 1.6)
+                        if W // w > 4:
+                            oversize = False
+                            paste_x = random.randint(0, W - 2 * w)
+                        else:
+                            oversize = True
+                            paste_x = random.randint(0, W - w)
+                        paste_y = random.randint(y_lower_bound, y_upper_bound)
+
+                        #########################################################################
+                        # # 外面變中間要縮小
+                        # if (paste_x > W*1/4 or paste_x < W*3/4) and (x <= W*1/4 or x >= W*3/4):
+                        #     crop_img_resize = resize_image(crop_img, 0.6, 0.8)
+                        # # 中間變外面要放大
+                        # elif (paste_x <= W*1/4 or paste_x >= W*3/4) and (x > W*1/4 or x < W*3/4):
+                        #     crop_img_resize = resize_image(crop_img, 1.2, 1.6) if not oversize else crop_img
+                        # else:
+                        #     crop_img_resize = crop_img
+                        #########################################################################
+                        #外面變中間要縮小(0.3~0.5)
+                        if paste_x > W*1/4 and paste_x < W*3/4 and paste_y > H*1/4 and paste_y < H*3/4 and (x <= W*1/4 or x>=W*3/4 or y<=H*1/4 or y>=H*3/4):
+                            crop_img_resize = resize_image(crop_img,0.4,0.7)
+                        #中間變外面要放大(2~3)
+                        elif (paste_x <= W*1/4 or paste_x >= W*3/4 or paste_y <= H*1/4 or paste_y >= H*3/4) and (x > W*1/4 and x<W*3/4 and y>H*1/4 and y<H*3/4):
+                            crop_img_resize = crop_img
+                            continue
+                        else:
+                            crop_img_resize = crop_img
+                        #########################################################################
+                        
+
+                        # 如果紅燈、綠燈太大，就縮小
+                        if (clss==1 or clss==0) and crop_img_resize.size[0]*crop_img_resize.size[1]>=768:
+                            crop_img_resize = resize_image(crop_img_resize, 0.7, 0.9)
+
+                        validated_region = (not A[paste_y:paste_y+crop_img_resize.size[1], paste_x:paste_x+crop_img_resize.size[0]].any())
+                        if validated_region:
+                            break
+                        else:
+                            if i+1 == patience:
+                                # print("over patience")
+                                pass
+                                break
+                            elif i + 1 >= 5:
+                                pass
+                                # print("patience ",i+1)
+
+                            
+                    paste_y_max = int(paste_y + crop_img_resize.size[1])
+                    paste_x_max = int(paste_x + crop_img_resize.size[0])
+                    # img.paste(crop_img_resize, (paste_x,paste_y)) #貼上
+                    input_img[paste_y:paste_y_max, paste_x:paste_x_max] = np.asarray(crop_img_resize)
+                    add_labels = np.append(add_labels, [[paste_x,paste_y,paste_x_max,paste_y_max,clss]], axis=0)
+                    A[paste_y:paste_y_max, paste_x:paste_x_max] = 1
+            add_labels = add_labels.astype(np.float32)
+            return input_img, add_labels, add_labels.shape
+
+        [image, bboxes, _] = tf.numpy_function(copy_paste_aug_ops, [image, bboxes], [tf.uint8, tf.float32, tf.int64])
+        image.set_shape(im_shape)
+        bboxes.set_shape((None,5))
+        return image, bboxes, info
+
+    @tf.function
+    def pad_image(self, img, bboxes, info):
+        """
+        Padding image to same size\\
+
+        Parameter
+        ---------
+        img: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+        
+        Return
+        ------
+        img: uint8(h,w,3)\\
+        bboxes: float32(num_of_bbox, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+        """
+        train_input_size = self.train_input_sizes
+        iw, ih = train_input_size, train_input_size
+        origin_shape=tf.shape(img)
+        h=origin_shape[0]
+        w=origin_shape[1]
+        scale = tf.cast(tf.minimum(train_input_size/w, train_input_size/h), dtype=tf.float32)
+        nw, nh  = tf.math.round(scale * tf.cast(w, tf.float32)), tf.math.round(scale * tf.cast(h, tf.float32))
+        if nw != train_input_size and nh != train_input_size:
+            if nw > nh:
+                nw = tf.cast(train_input_size, tf.float32)
+            elif nw < nh:
+                nh = tf.cast(train_input_size, tf.float32)
+            else:
+                nw = tf.cast(train_input_size, tf.float32)
+                nh = tf.cast(train_input_size, tf.float32)
+        nw = tf.cast(nw, tf.int32)
+        nh = tf.cast(nh, tf.int32)
+        ###########
+        img = tf.cast(tf.image.resize(img, [nh, nw]), dtype=tf.uint8)
+
+        # pad image
+        # pw = tf.cast(tf.math.round((train_input_size - nw) / 2), dtype=tf.int32)
+        # ph = tf.cast(tf.math.round((train_input_size - nh) / 2), dtype=tf.int32)
+        pw =(train_input_size - nw) // 2
+        ph =(train_input_size - nh) // 2
+        if train_input_size - nh != 0:
+            # padding top and bottom
+            remain_h=ih-nh-ph
+            img = tf.concat([tf.ones((ph,iw,3),tf.uint8)*self.FILL_VALUE, img, tf.ones((remain_h,iw,3),tf.uint8)*self.FILL_VALUE], axis=0)
+        elif train_input_size - nw != 0:
+            # padding left and right
+            remain_w=iw-nw-pw
+            img = tf.concat([tf.ones((ih,pw,3),tf.uint8)*self.FILL_VALUE, img, tf.ones((ih,remain_w,3),tf.uint8)*self.FILL_VALUE], axis=1)
+        # Discard too small bounding box in origin image size
+        # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), ['some of coordinate are negative!!'])
+        area = (bboxes[:,0] - bboxes[:,2]) * (bboxes[:,1] - bboxes[:,3])
+        mask = area > self.filter_area
+        bboxes = bboxes[mask]
+        # Turn integer coordinate into padded image integer coordinate 
+        bboxes = bboxes * tf.expand_dims(tf.stack([scale,scale,scale,scale,1]), axis=0)
+        bboxes = bboxes + tf.cast(tf.stack([pw,ph,pw,ph,0], axis=0), dtype=tf.float32)
+        # Pad num of box to fix size
+        # tf.debugging.Assert(tf.reduce_all(bboxes >= 0.0), ['some of coordinate are negative!!'])
+        return img, bboxes, info
+
+    @tf.function
+    def pad_bbox(self, image, bboxes, info):
+        """
+        Parameter
+        ---------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_of_box, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+
+        Return
+        ------
+        image: uint8(h,w,3)\\
+        bboxes: float32(num_max_box, 5)\\
+            x1y1x2y2 class. image integer coordinate.
+        """
+        num_boxes=tf.shape(bboxes)[0]
+        bboxes=tf.concat([bboxes, tf.zeros((self.max_bbox_per_scale-num_boxes,5), dtype=bboxes.dtype)], axis=0)
+        return image, bboxes, info
+
+    def do_augmentation(self, images, bboxes):
+        """
+        Parameter
+        ---------
+        images: uint8(b,h,w,3)
+        bboxes: float32(b,num_of_max_bboxes, 5)\\
+            coordinate in x1y1x2y2 integer coordinate
+
+        Return
+        ------
+        aug_images: uint8(b,h,w,3)
+        aug_bboxes: float32(b,num_of_max_box,4) x1y1x2y2
+        """
+        b, h, w = images.shape[:3]
+        num_max_box= bboxes.shape[1]
+        non_box_mask = np.all(bboxes[...,:4]==0.0, axis=-1, keepdims=True).astype(np.float32)
+
+        division_rate=None
+        #############################################################################################
+        batch_bboxes_in_image = [
+            ia.augmentables.bbs.BoundingBoxesOnImage.from_xyxy_array(bboxes[k, :, :4], (h,w,3)) 
+            for k in range(b)
+        ]
+        # if division_rate==None:
+        # aug_images <class 'numpy.ndarray'>
+        # _aug_bboxes <class 'list'>
+        aug_images, _aug_bboxes=self.aug_env(images=images, bounding_boxes=batch_bboxes_in_image)
+        aug_bboxes=[xyxy.remove_out_of_image_fraction_(0.5).to_xyxy_array() for xyxy in _aug_bboxes]
+        aug_bboxes=[np.concatenate([box, np.zeros((num_max_box-len(box), 4), np.float32)], axis=0) if len(box) != num_max_box else box  for box in aug_bboxes  ]
+        aug_bboxes=np.array(aug_bboxes)
+        # else:
+        #     dr=division_rate
+        #     batches = [
+        #         ia.Batch(
+        #             images=images[i*dr:i*dr+dr], 
+        #             bounding_boxes=batch_bboxes_in_image[i*dr:i*dr+dr]
+        #         )  for i in range(b//dr)
+        #     ]
+        #     aug_batch=list(self.aug_env.augment_batches(batches, background=True))
+        #     aug_images = np.concatenate([aug_batch[i].images_aug for i in range(b//dr)], axis=0)
+        #     _aug_batch_bboxes=[[aug_batch[i].bounding_boxes_aug[j].to_xyxy_array() for j in range(dr)] for i in range(b//dr)]
+        #     _aug_batch_bboxes=[item for sublist in _aug_batch_bboxes for item in sublist]
+        #     _aug_batch_bboxes=[np.concatenate([box, np.zeros((num_max_box-len(box), 4), np.float32)], axis=0) if len(box) != num_max_box else box  for box in _aug_batch_bboxes  ]
+        #     aug_bboxes=np.array(_aug_batch_bboxes)
+
+        #############################################################################################
+        aug_bboxes=aug_bboxes * (1.0 - non_box_mask)
+        aug_bboxes=np.concatenate([aug_bboxes, bboxes[...,4:]], axis=-1)
+        return aug_images, aug_bboxes
+
+    def generate_gth(self, batch_image, batch_label):
+        """
+        Parameter
+        ---------
+        batch_image: tf.uint8(b,h,w,c)\\
+        batch_label: tf.float32(max_num_bbox, 5)\\
+
+        Return
+        ------
+        batch_image: tf.float32(b,h,w,c)
+        batch_label_bboxes[0]: tf.float32(b, fpn_size_b, fpn_size_b, num_of_anchor_per_scale, 5+num_of_class)
+        batch_bboxes[0]: tf.float32(b, num_of_max_box, 4)
+        batch_label_bboxes[1]: tf.float32(b, fpn_size_m, fpn_size_m, num_of_anchor_per_scale, 5+num_of_class)
+        batch_bboxes[1]: tf.float32(b, num_of_max_box, 4)
+        
+        """
+        batch_label = tf.cast(batch_label, dtype=tf.int32)
+        batch_image = tf.cast(batch_image, dtype=tf.float32) / 255.
+        
+        # self.train_input_size = cfg.TRAIN.INPUT_SIZE
+        # strides=[16,32] if tiny else [8,16,32]
+        self.train_output_sizes = self.train_input_size // self.strides     # [input_size//stride1, input_size//stride2......]
+
+        batch_label_bboxes = []         # [(batch, size, size, num_of_anchor, 5+num_of_class)......num_of_fpn]. ex: [(batch, 38, 38, 3, 6), (batch, 19, 19, 3, 6)......]
+        batch_bboxes = []               # [(batch, max_box_scale, 4)......num_of_fpn]. 
+        for size in self.train_output_sizes:
+            label_bbox = np.zeros((self.batch_size, size, size, self.anchor_per_scale, 5 + self.num_classes), dtype=np.float32)
+            batch_label_bboxes.append(label_bbox)
+            batch_bbox = np.zeros((self.batch_size, self.max_bbox_per_scale, 4), dtype=np.float32)
+            batch_bboxes.append(batch_bbox)
+        
+        for num in range(self.batch_size):
+            # bboxes=(num_of_boxes, 5)
+            single_bboxes=batch_label[num]
+            # label_bboxes=[(h,w,num_of_anchor_per_scale,6)...... num_of_fpn]
+            # bboxes=[(num_of_max_bboxes, 4)...... num_of_fpn]
+            target_output= tf.numpy_function(preprocess_true_boxes_jit, inp=[
+                    single_bboxes,
+                    len(self.train_output_sizes), 
+                    self.train_output_sizes, 
+                    self.anchor_per_scale,
+                    self.num_classes,
+                    self.max_bbox_per_scale,
+                    self.strides,
+                    self.anchors
+                ], Tout=tf.float32)
+            
+            fpn_b=target_output[0]
+            fpn_m=target_output[1]
+            bboxes=target_output[2]
+            label_bboxes=[fpn_b, fpn_m]
+
+            for batch_bbox, bbox in zip(batch_bboxes, bboxes):
+                batch_bbox[num,:,:] = bbox
+            for batch_label_bbox, label_bbox in zip(batch_label_bboxes, label_bboxes):
+                batch_label_bbox[num, :, :, :] = label_bbox
+
+        # return {
+        #     'image': batch_image,
+        #     'label_bboxes_m': batch_label_bboxes[0],
+        #     'bboxes_m': batch_bboxes[0],
+        #     'label_bboxes_l': batch_label_bboxes[1],
+        #     'bboxes_l': batch_bboxes[1],
+        # }
+        return (
+            batch_image,
+            batch_label_bboxes[0], batch_bboxes[0],
+            batch_label_bboxes[1], batch_bboxes[1],
+        )        
+
+    def to_dict(self, *list_tensor):
+        if len(list_tensor) == 6:
+            return {
+                'images': list_tensor[0],
+                'label_bboxes_m': list_tensor[1],
+                'bboxes_m': list_tensor[2],
+                'label_bboxes_l': list_tensor[3],
+                'bboxes_l': list_tensor[4],
+                'domain': list_tensor[5]['domain_id']
+            }
+        elif len(list_tensor) == 1:
+            return {
+                'images': list_tensor[0]
+            }
+
+    
+    
+    
+
 
 def resize_image(image,a,b):
     width, height = image.size[:2]
@@ -704,229 +1388,7 @@ def resize_image(image,a,b):
     return image
 
 ####################################
-class tfAdversailDataset(object):
 
-#     def __init__(self, FLAGS, is_training: bool, dataset_type: str = "converted_coco", filter_area: int = 123, use_imgaug: bool = True):
-#         self.tiny = FLAGS.tiny
-#         self.strides, self.anchors, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
-#         self.dataset_type = dataset_type
-
-#         self.annot_paths = (
-#             cfg.TRAIN.ADVERSARIAL_PATHS if is_training else cfg.TEST.ADVERSARIAL_PATHS
-#         )
-#         self.input_sizes = (
-#             cfg.TRAIN.INPUT_SIZE if is_training else cfg.TEST.INPUT_SIZE
-#         )
-#         self.batch_size = (
-#             cfg.TRAIN.BATCH_SIZE if is_training else cfg.TEST.BATCH_SIZE
-#         )
-#         self.data_aug = cfg.TRAIN.DATA_AUG if is_training else cfg.TEST.DATA_AUG
-
-#         self.train_input_sizes = cfg.TRAIN.INPUT_SIZE
-#         self.classes = utils.read_class_names(cfg.YOLO.CLASSES)
-#         self.num_classes = len(self.classes)
-#         self.anchor_per_scale = cfg.YOLO.ANCHOR_PER_SCALE
-#         self.max_bbox_per_scale = 30
-
-#         self.annotations = self.load_annotations()
-#         self.num_samples = len(self.annotations)
-#         self.num_batchs = int(np.ceil(self.num_samples / self.batch_size))
-#         self.batch_count = 0
-#         self.filter_area = filter_area
-#         self.use_imgaug=use_imgaug
-
-#     def load_annotations(self):
-#         annotations = []
-#         for annot_path in self.annot_paths:
-#             with open(annot_path, "r") as f:
-#                 # read every line in the file and append it to the annotations list
-#                 txt = f.readlines()
-#                 if self.dataset_type == "converted_coco":
-#                     annotations += [
-#                         line.strip()
-#                         for line in txt
-#                         if len(line.strip().split()[1:]) != 0
-#                     ]
-#                 elif self.dataset_type == "yolo":
-#                     for line in txt:
-#                         image_path = line.strip()
-#                         root, _ = os.path.splitext(image_path)
-#                         with open(root + ".txt") as fd:
-#                             boxes = fd.readlines()
-#                             string = ""
-#                             for box in boxes:
-#                                 box = box.strip()
-#                                 box = box.split()
-#                                 class_num = int(box[0])
-#                                 center_x = float(box[1])
-#                                 center_y = float(box[2])
-#                                 half_width = float(box[3]) / 2
-#                                 half_height = float(box[4]) / 2
-#                                 string += " {},{},{},{},{}".format(
-#                                     center_x - half_width,
-#                                     center_y - half_height,
-#                                     center_x + half_width,
-#                                     center_y + half_height,
-#                                     class_num,
-#                                 )
-#                             if string=="":
-#                                 continue
-#                             else:
-#                                 annotations.append(image_path + string)
-#         np.random.seed(0)
-#         np.random.shuffle(annotations)
-#         np.random.shuffle(annotations)
-#         return annotations
-
-#     def dataset_gen(self):
-#         dataset = tf.data.Dataset.from_tensor_slices(self.annotations)
-#         if self.data_aug:
-#             dataset=dataset.shuffle(buffer_size=2048)
-#         dataset = dataset.map(self.parse_annotation, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-        
-#         if self.data_aug:
-#             dataset = dataset.map(self.random_horizontal_flip, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-#             dataset = dataset.map(self.random_translate, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-
-#         dataset = dataset.map(self.pad_image, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-
-#         dataset = dataset.batch(self.batch_size, drop_remainder=True)
-#         dataset = dataset.map(lambda imgs: tf.cast(imgs, dtype=tf.float32) / 255.)
-#         dataset = dataset.map(self.to_dict)
-#         dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
-#         return dataset
-        
-
-#     @tf.function
-#     def parse_annotation(self, annotation):
-#         """
-#         Parameter
-#         ---------
-#         annotation: a string for specify image path and bounding box coordinate
-
-#         Return
-#         ------
-#         image: uint8(h, w, 3)\\
-#             a image
-#         """
-#         pass
-
-#         line = tf.strings.split(annotation)
-#         image_path = line[0]
-#         img = tf.io.read_file(image_path)
-#         img = tf.io.decode_jpeg(img, channels=3)
-        
-#         return img
-
-#     @tf.function
-#     def random_translate(self, image):
-#         """
-#         Only translate at most 1.0% of the width
-#                                0.5% of the height
-#         Parameter
-#         ---------
-#         image: uint8(h,w,3)\\
-
-#         Return
-#         ------
-#         image: uint8(h,w,3)\\
-#         """
-#         pass 
-
-#         if tf.random.uniform((1,), 0, 1)[0] < 0.5:
-#             h = tf.shape(image)[0]
-#             w = tf.shape(image)[1]
-
-#             max_w_trans = tf.round(tf.cast(w, dtype=tf.float32) * 0.05)#, dtype=tf.int32)
-#             max_h_trans = tf.round(tf.cast(h, dtype=tf.float32) * 0.05)#, dtype=tf.int32)
-
-#             tx = tf.random.uniform((1,),-max_w_trans, max_w_trans)[0]
-#             ty = tf.random.uniform((1,),-max_h_trans, max_h_trans)[0]
-
-#             image = tfa.image.translate(image, [tx,ty], fill_value=FILL_VALUE)
-#         return image
-
-#     @tf.function
-#     def random_horizontal_flip(self, image):
-#         """
-#         Parameter
-#         ---------
-#         image: uint8(h,w,3)\\
-
-#         Return
-#         ------
-#         image: uint8(h,w,3)\\
-#         """
-#         pass
-
-#         if tf.random.uniform((1,), 0, 1)[0] < 0.5:
-#             image = image[:, ::-1, :]
-#         return image
-
-#     @tf.function
-#     def pad_image(self, img):
-#         """
-#         Padding image to same size\\
-
-#         Parameter
-#         ---------
-#         img: uint8(h,w,3)\\
-#         Return
-#         ------
-#         img: uint8(h,w,3)\\
-#         """
-#         train_input_size = self.train_input_sizes
-#         iw, ih = train_input_size, train_input_size
-#         origin_shape=tf.shape(img)
-#         h=origin_shape[0]
-#         w=origin_shape[1]
-#         scale = tf.cast(tf.minimum(train_input_size/w, train_input_size/h), dtype=tf.float32)
-#         nw, nh  = tf.math.round(scale * tf.cast(w, tf.float32)), tf.math.round(scale * tf.cast(h, tf.float32))
-#         if nw != train_input_size and nh != train_input_size:
-#             if nw > nh:
-#                 nw = tf.cast(train_input_size, tf.float32)
-#             elif nw < nh:
-#                 nh = tf.cast(train_input_size, tf.float32)
-#             else:
-#                 nw = tf.cast(train_input_size, tf.float32)
-#                 nh = tf.cast(train_input_size, tf.float32)
-#         nw = tf.cast(nw, tf.int32)
-#         nh = tf.cast(nh, tf.int32)
-#         ###########
-#         img = tf.cast(tf.image.resize(img, [nh, nw]), dtype=tf.uint8)
-
-#         # pad image
-#         # pw = tf.cast(tf.math.round((train_input_size - nw) / 2), dtype=tf.int32)
-#         # ph = tf.cast(tf.math.round((train_input_size - nh) / 2), dtype=tf.int32)
-#         pw =(train_input_size - nw) // 2
-#         ph =(train_input_size - nh) // 2
-#         if train_input_size - nh != 0:
-#             # padding top and bottom
-#             remain_h=ih-nh-ph
-#             img = tf.concat([tf.ones((ph,iw,3),tf.uint8)*FILL_VALUE, img, tf.ones((remain_h,iw,3),tf.uint8)*FILL_VALUE], axis=0)
-#         elif train_input_size - nw != 0:
-#             # padding left and right
-#             remain_w=iw-nw-pw
-#             img = tf.concat([tf.ones((ih,pw,3),tf.uint8)*FILL_VALUE, img, tf.ones((ih,remain_w,3),tf.uint8)*FILL_VALUE], axis=1)
-#         return img
-
-#     def to_dict(self, *list_tensor):
-#         if len(list_tensor) == 5:
-#             return {
-#                 'images': list_tensor[0],
-#                 'label_bboxes_m': list_tensor[1],
-#                 'bboxes_m': list_tensor[2],
-#                 'label_bboxes_l': list_tensor[3],
-#                 'bboxes_l': list_tensor[4]
-#             }
-#         elif len(list_tensor) == 1:
-#             return {
-#                 'images': list_tensor[0]
-#             }
-
-#     def __len__(self):
-#         return self.num_batchs
-    pass
 
 
 import numba as nb

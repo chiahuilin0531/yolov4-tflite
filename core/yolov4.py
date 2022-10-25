@@ -560,15 +560,69 @@ def compute_da_loss_instance(source_da_result, target_da_result, source_mask=Non
         'da_source_loss': da_source_loss,
         'da_target_loss': da_target_loss
     }
+    
+def compute_domain_loss_instance(source_da_result, target_da_result, source_mask=None, target_mask=None):
+    da_source_loss=0
+    for i, source_da_res in enumerate(source_da_result):
+        source_label=tf.zeros((tf.shape(source_da_res)))
+        tmp=tf.nn.sigmoid_cross_entropy_with_logits(labels=source_label, logits=source_da_res)
+
+        if isinstance(source_mask, list):
+            tmp = tmp * source_mask[i]
+            da_source_loss += tf.math.divide_no_nan(tf.reduce_sum(tmp), tf.reduce_sum(source_mask[i]))
+    
+    da_target_loss=0
+    for j, target_da_res in enumerate(target_da_result):
+        target_label=tf.ones((tf.shape(target_da_res)))
+        tmp=tf.nn.sigmoid_cross_entropy_with_logits(labels=target_label, logits=target_da_res)
+
+        if isinstance(target_mask, list):
+            tmp = tmp * target_mask[j]
+            da_target_loss += tf.math.divide_no_nan(tf.reduce_sum(tmp), tf.reduce_sum(target_mask[j]))
+
+    # da_source_loss = tf.reduce_mean(da_source_loss, axis=0)
+    # da_target_loss = tf.reduce_mean(da_target_loss, axis=0)
+
+    return {
+        'da_source_loss': da_source_loss,
+        'da_target_loss': da_target_loss
+    }
+
+def compute_domain_loss(da_result, da_label, mask=None):
+    """
+    da_result: float32(batch, h, w, feat_dims)
+    da_label:  float32(batch, )
+    mask: float32(batch, h, w, feat_dims) 
+
+    """
+    da_loss=0
+    for i, da_res in enumerate(da_result):
+        label=tf.ones((tf.shape(da_res))) * tf.reshape(tf.cast(da_label, dtype=tf.float32), (-1, 1, 1, 1))
+        full_loss=tf.nn.sigmoid_cross_entropy_with_logits(labels=label, logits=da_res)
+
+        if isinstance(mask, list):
+            mask_loss = full_loss * mask[i]
+            da_loss += tf.math.divide_no_nan(tf.reduce_sum(mask_loss, axis=[1,2,3]), (tf.reduce_sum(mask[i], axis=[1,2,3]) + 1))
+        elif mask is not None:
+            resize_mask = tf.image.resize(mask, tf.shape(label)[1:3])
+            mask_loss = full_loss * resize_mask
+            da_loss += (tf.reduce_sum(mask_loss, axis=[1,2,3]) / (tf.reduce_sum(resize_mask, axis=[1,2,3])))
+        else:
+            da_loss += tf.reduce_mean(full_loss, axis=[1,2,3])
+
+    da_loss = tf.reduce_mean(da_loss, axis=0)
+
+    return da_loss
+
 
 def DomainClassifier(input_tensors):
     # return list of processing symbolic tensor
     reuslt_tensor=[]
     for i,input_tensor in enumerate(input_tensors):
         channel = input_tensor.shape[-1]
-        x = common.GradientReversal(0.1)(input_tensor)
-        x = common.convolutional(x, (3, 3, channel, channel // 2), prefix=f'domain_adverserial_{i}_0')
-        x = common.convolutional(x, (1, 1, channel // 2, 1), activate=False, bn=False, prefix=f'domain_adverserial_{i}_1')
+        x = common.GradientReversal()(input_tensor)
+        x = common.convolutional(x, (3, 3, channel, channel // 2), nl='BatchNorm', prefix=f'domain_adverserial_{i}_0')
+        x = common.convolutional(x, (1, 1, channel // 2, 1), activate=False, nl='BatchNorm', prefix=f'domain_adverserial_{i}_1')
         reuslt_tensor.append(x)
     return reuslt_tensor
 

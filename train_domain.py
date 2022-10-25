@@ -16,14 +16,14 @@ from absl import app, flags, logging
 from absl.flags import FLAGS
 from core.accumulator import Accumulator, AreaCounter
 import os, shutil
-from core.yolov4 import YOLO, decode, compute_loss, decode_train
+from core.yolov4 import YOLO, compute_loss, compute_domain_loss, decode_train
 from core.iayolo import CNNPP, DIP_FilterGraph
 
-from core.dataset_tiny import Dataset, tfDataset
-from core.config import cfg
+# from core.dataset_tiny import Dataset, tfDataset
+# from core.config import cfg
 
-# from core.dataset_tiny import tfAdversalDataset as tfDataset
-# from core.config_adverserial import cfg
+from core.dataset_tiny import tfAdversalDataset as tfDataset
+from core.config_adverserial import cfg
 
 
 from core import utils
@@ -41,7 +41,10 @@ flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
 flags.DEFINE_string('save_dir', 'checkpoints/yolov4_tiny', 'save model dir')
 flags.DEFINE_float('repeat_times', 1.0, 'repeat of dataset')
 flags.DEFINE_boolean('iayolo', False, 'use IAYOLO or not')
-flags.DEFINE_boolean('da', False, 'use Domain Adaptation or not')
+flags.DEFINE_boolean('da', True, 'use Domain Adaptation or not')
+flags.DEFINE_boolean('instance_level', False, 'use instance_level Domain Adaptation or not')
+
+
 tf.config.optimizer.set_jit(True)
 
 def apply_quantization(layer):
@@ -83,6 +86,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
 
 
 def main(_argv):
+    assert(FLAGS.da)
     print(f'Global Seed: {global_random_seed} Operation Seed: {operand_random_seed}')
     physical_devices = tf.config.experimental.list_physical_devices('GPU')
     init_shared_variable()
@@ -143,8 +147,10 @@ def main(_argv):
 
     freeze_layers = utils.load_freeze_layer(FLAGS.model, FLAGS.tiny)
 
-    feature_maps = YOLO(yolo_input, NUM_CLASS, FLAGS.model, FLAGS.tiny, nl=cfg.YOLO.NORMALIZATION)
-
+    output_maps = YOLO(yolo_input, NUM_CLASS, FLAGS.model, FLAGS.tiny, nl=cfg.YOLO.NORMALIZATION, dc_head_type=1)
+    feature_maps = output_maps[:2]
+    da_maps = output_maps[2:]
+    
     # Decoding YOLOv4 Output
     if FLAGS.tiny:
         bbox_tensors = []
@@ -169,8 +175,10 @@ def main(_argv):
     output_dict = {
         'raw_bbox_m': bbox_tensors[0],          # tensor size of feature map
         'bbox_m': bbox_tensors[1],
+        'da_m': da_maps[0],
         'raw_bbox_l': bbox_tensors[2],
         'bbox_l': bbox_tensors[3],
+        'da_l': da_maps[1],
     }
     if FLAGS.iayolo: 
         output_dict.update({
@@ -221,6 +229,22 @@ def main(_argv):
                 dict_result['raw_bbox_l'],
                 dict_result['bbox_l'],
             ]
+            
+            da_reuslt = [
+                dict_result['da_m'],
+                dict_result['da_l'],
+            ]
+            if FLAGS.instance_level:
+                mask_da_m = tf.expand_dims(tf.cast(tf.reduce_any(target[0][0] > 0, axis=(3,4)), dtype=tf.float32), axis=-1)
+                mask_da_l = tf.expand_dims(tf.cast(tf.reduce_any(target[1][0] > 0, axis=(3,4)), dtype=tf.float32), axis=-1)
+            else:
+                mask = tf.cast(tf.reduce_any(image_data != tfDataset.get_padding_val(), axis=-1, keepdims=True), dtype=tf.float32)
+                mask_da_m = tf.image.resize(mask, tf.shape(target[0][0])[1:3])
+                mask_da_l = tf.image.resize(mask, tf.shape(target[1][0])[1:3])
+            maskes=[
+                mask_da_m, 
+                mask_da_l
+            ]
             giou_loss = conf_loss = prob_loss = 0
 
             # optimizing process
@@ -231,8 +255,10 @@ def main(_argv):
                 giou_loss += loss_items[0]
                 conf_loss += loss_items[1]
                 prob_loss += loss_items[2]
-
-            total_loss = giou_loss + conf_loss + prob_loss
+            da_loss = compute_domain_loss(da_reuslt, target[2], mask=maskes)
+            
+            da_loss = cfg.TRAIN.ADVERSERIAL_CONST * da_loss
+            total_loss = giou_loss + conf_loss + prob_loss + da_loss
 
             gradients = tape.gradient(total_loss, model.trainable_variables)
             if FLAGS.iayolo:
@@ -248,6 +274,8 @@ def main(_argv):
                 tf.summary.scalar("loss/giou_loss", giou_loss, step=global_steps)
                 tf.summary.scalar("loss/conf_loss", conf_loss, step=global_steps)
                 tf.summary.scalar("loss/prob_loss", prob_loss, step=global_steps)
+                tf.summary.scalar("loss/da_loss", da_loss, step=global_steps)
+                
                 if FLAGS.iayolo:
                     iayolo_value = tf.reduce_mean(dict_result['filter_parameters'], axis=0)
                     tf.summary.scalar("ia-yolo/1", iayolo_value[0], step=global_steps)
@@ -264,15 +292,13 @@ def main(_argv):
                     tf.summary.scalar("ia-yolo/12", iayolo_value[11], step=global_steps)
                     tf.summary.scalar("ia-yolo/13", iayolo_value[12], step=global_steps)
                     tf.summary.scalar("ia-yolo/14", iayolo_value[13], step=global_steps)
-                    
-                    
-                
-                
+                      
             writer.flush()
             return {
                 'giou_loss': giou_loss, 
                 'conf_loss': conf_loss, 
-                'prob_loss': prob_loss
+                'prob_loss': prob_loss,
+                'da_loss': da_loss
             }
 
     @tf.function
@@ -284,6 +310,23 @@ def main(_argv):
             dict_result['raw_bbox_l'],
             dict_result['bbox_l'],
         ]
+        
+        da_reuslt = [
+            dict_result['da_m'],
+            dict_result['da_l'],
+        ]
+        if FLAGS.instance_level:
+            mask_da_m = tf.expand_dims(tf.cast(tf.reduce_any(target[0][0] > 0, axis=(3,4)), dtype=tf.float32), axis=-1)
+            mask_da_l = tf.expand_dims(tf.cast(tf.reduce_any(target[1][0] > 0, axis=(3,4)), dtype=tf.float32), axis=-1)
+        else:
+            mask = tf.cast(tf.reduce_any(image_data != tfDataset.get_padding_val(), axis=-1, keepdims=True), dtype=tf.float32)
+            mask_da_m = tf.image.resize(mask, tf.shape(target[0][0])[1:3])
+            mask_da_l = tf.image.resize(mask, tf.shape(target[1][0])[1:3])
+        maskes=[
+            mask_da_m, 
+            mask_da_l
+        ]
+            
         giou_loss = conf_loss = prob_loss = 0
         # optimizing process
         for i in range(len(freeze_layers)):
@@ -293,12 +336,16 @@ def main(_argv):
             giou_loss += loss_items[0]
             conf_loss += loss_items[1]
             prob_loss += loss_items[2]
+        da_loss = compute_domain_loss(da_reuslt, target[2], mask=maskes)
+            
+        da_loss = cfg.TRAIN.ADVERSERIAL_CONST * da_loss
         total_loss = giou_loss + conf_loss + prob_loss
 
         return {
             'giou_loss': giou_loss, 
             'conf_loss': conf_loss, 
             'prob_loss': prob_loss,
+            'da_loss': da_loss,
             'total_loss': total_loss
         }
 
@@ -331,6 +378,8 @@ def main(_argv):
         giou_loss_counter = Accumulator()
         conf_loss_counter = Accumulator()
         prob_loss_counter = Accumulator()
+        da_loss_counter = Accumulator()
+        
         tmp=time.time()
         with tqdm(total=len(trainset), ncols=200) as pbar:
             for iter_idx, data_item in enumerate(trainset):
@@ -338,6 +387,7 @@ def main(_argv):
                 target=[
                     [data_item['label_bboxes_m'], data_item['bboxes_m']], 
                     [data_item['label_bboxes_l'], data_item['bboxes_l']], 
+                    data_item['domain']
                 ]
 
                 data_time=time.time()-tmp
@@ -349,6 +399,7 @@ def main(_argv):
                 giou_loss_counter.update(loss_dict['giou_loss'], batch_size)
                 conf_loss_counter.update(loss_dict['conf_loss'], batch_size)
                 prob_loss_counter.update(loss_dict['prob_loss'], batch_size)
+                da_loss_counter.update(loss_dict['da_loss'], batch_size)
 
                 # update learning rate
                 global_steps.assign_add(1)
@@ -364,6 +415,16 @@ def main(_argv):
                     # Visualize Detection Part
                     #############################
                     dict_result = model(image_data[:4], training=False)
+                    
+                    if FLAGS.instance_level:
+                        mask_da_m = tf.expand_dims(tf.cast(tf.reduce_any(target[0][0] > 0, axis=(3,4)), dtype=tf.float32), axis=-1)
+                        mask_da_l = tf.expand_dims(tf.cast(tf.reduce_any(target[1][0] > 0, axis=(3,4)), dtype=tf.float32), axis=-1)
+                    else:
+                        mask = tf.cast(tf.reduce_any(image_data != tfDataset.get_padding_val(), axis=-1, keepdims=True), dtype=tf.float32)
+                        mask_da_m = tf.image.resize(mask, tf.shape(target[0][0])[1:3])
+                        mask_da_l = tf.image.resize(mask, tf.shape(target[1][0])[1:3])
+                    maskes=[ mask_da_m, mask_da_l]
+                    
                     if FLAGS.iayolo:  display_images = dict_result['dip_img']
                     else: display_images = image_data[:4]
                     processed_bboxes = utils.raw_output_to_bbox([
@@ -382,8 +443,21 @@ def main(_argv):
                     top_img = np.concatenate(display_list[:2], axis=1)
                     bot_img = np.concatenate(display_list[2:], axis=1)
                     full_img = np.concatenate([top_img, bot_img], axis=0)
-                        
-                    cv2.imwrite(os.path.join(FLAGS.save_dir, 'pic', f'{epoch}_{iter_idx+1}.jpg'), full_img[..., ::-1])
+                    # Create Display Mask m
+                    mask_m_bool = tf.cast(maskes[0], tf.uint8).numpy() * 255
+                    top_mask_m = np.concatenate(mask_m_bool[:2], axis=1) 
+                    bot_mask_m = np.concatenate(mask_m_bool[2:4], axis=1) 
+                    full_mask_m = np.concatenate([top_mask_m, bot_mask_m], axis=0).repeat(3, axis=-1)
+                    # Create Display Mask l
+                    mask_l_bool = tf.cast(maskes[1], tf.uint8).numpy() * 255
+                    top_mask_l = np.concatenate(mask_l_bool[:2], axis=1) 
+                    bot_mask_l = np.concatenate(mask_l_bool[2:4], axis=1) 
+                    full_mask_l = np.concatenate([top_mask_l, bot_mask_l], axis=0).repeat(3, axis=-1)
+                    
+
+                    cv2.imwrite(os.path.join(FLAGS.save_dir, 'pic', f'{epoch}_{iter_idx+1}_img.jpg'), full_img[..., ::-1])
+                    cv2.imwrite(os.path.join(FLAGS.save_dir, 'pic', f'{epoch}_{iter_idx+1}_msk_m.jpg'), full_mask_m)
+                    cv2.imwrite(os.path.join(FLAGS.save_dir, 'pic', f'{epoch}_{iter_idx+1}_msk_l.jpg'), full_mask_l)
                     #############################
                     # Visualize DIP Part
                     #############################
@@ -401,7 +475,8 @@ def main(_argv):
                     
                 total = giou_loss_counter.get_average() \
                     + conf_loss_counter.get_average() \
-                    + prob_loss_counter.get_average()
+                    + prob_loss_counter.get_average() \
+                    + da_loss_counter.get_average()
 
                 stats_bboxes = tf.concat([data_item['bboxes_m'], data_item['bboxes_l']], axis=0)
                 stats_bboxes = stats_bboxes.numpy()
@@ -412,6 +487,7 @@ def main(_argv):
                     'giou_loss': f"{giou_loss_counter.get_average():6.4f}",
                     'conf_loss': f"{conf_loss_counter.get_average():6.4f}",
                     'prob_loss': f"{prob_loss_counter.get_average():6.4f}",
+                    'da_loss': f"{prob_loss_counter.get_average():6.4f}",
                     'total': f"{total: 6.4f}",
                     # 'data_time': f'{data_time:8.6f}',
                     # 'model_time': f'{model_time:8.6f}'
@@ -437,6 +513,7 @@ def main(_argv):
                     target=[
                         [data_item['label_bboxes_m'], data_item['bboxes_m']], 
                         [data_item['label_bboxes_l'], data_item['bboxes_l']], 
+                        data_item['domain']
                     ]
 
                     batch_size = image_data.shape[0]
@@ -445,14 +522,18 @@ def main(_argv):
                     giou_loss_counter.update(loss_dict['giou_loss'], batch_size)
                     conf_loss_counter.update(loss_dict['conf_loss'], batch_size)
                     prob_loss_counter.update(loss_dict['prob_loss'], batch_size)
+                    da_loss_counter.update(loss_dict['da_loss'], batch_size)
+                    
                     total = giou_loss_counter.get_average() \
                         + conf_loss_counter.get_average() \
-                        + prob_loss_counter.get_average()
+                        + prob_loss_counter.get_average() \
+                        + da_loss_counter.get_average()
 
                     pbar.set_postfix({
                         'giou_loss': f"{giou_loss_counter.get_average():6.4f}",
                         'conf_loss': f"{conf_loss_counter.get_average():6.4f}",
                         'prob_loss': f"{prob_loss_counter.get_average():6.4f}",
+                        'da_loss': f"{da_loss_counter.get_average():6.4f}",
                         'total': f"{total: 6.4f}"
                     })
                     pbar.update(1)
@@ -463,6 +544,8 @@ def main(_argv):
                 tf.summary.scalar("val/giou_loss", giou_loss_counter.get_average(), step=epoch)
                 tf.summary.scalar("val/conf_loss", conf_loss_counter.get_average(), step=epoch)
                 tf.summary.scalar("val/prob_loss", prob_loss_counter.get_average(), step=epoch)
+                tf.summary.scalar("val/da_loss", da_loss_counter.get_average(), step=epoch)
+                
         if total < best_loss:
             best_loss = total
             print('[Info] Save Best Model')

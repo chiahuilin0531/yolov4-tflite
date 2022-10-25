@@ -170,7 +170,7 @@ def main(_argv):
     CLASSES = utils.read_class_names(FLAGS.class_path)
     print(f'CLASSES: {CLASSES}')
 
-    erase_extra_result()
+    # erase_extra_result()
     tmp_dir_name = tempfile.mkdtemp(dir='mAP')
     predicted_dir_path =  os.path.join(tmp_dir_name, 'predicted') # './mAP/predicted'
     ground_truth_dir_path = os.path.join(tmp_dir_name, 'ground-truth') # './mAP/ground-truth'

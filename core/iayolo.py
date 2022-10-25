@@ -73,13 +73,13 @@ def CNNPP(net):
 
 def DIP_FilterGraph(prossed_imgs, cnn_pp_params):
     graph_list = [ImprovedWhiteBalanceFilterGraph, GammaFilterGraph, ToneFilterGraph, ContrastFilterGraph, UsmFilterGraph]
-    # graph_list = [UsmFilterGraph]
+    # graph_list = [ImprovedWhiteBalanceFilterGraph, GammaFilterGraph]
     processed_list = []
     for graph in graph_list:
         prossed_imgs = graph(prossed_imgs, cnn_pp_params)
         processed_list.append(prossed_imgs)
 
-    # processed_list.extend([prossed_imgs,prossed_imgs,prossed_imgs,prossed_imgs])
+    processed_list.extend([prossed_imgs] * (5 - len(graph_list)))
     return prossed_imgs, processed_list
 
 #####################################################################################

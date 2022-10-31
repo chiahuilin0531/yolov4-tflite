@@ -84,25 +84,27 @@ python ./train.py --tiny --model yolov4 --save_dir ./checkpoints/test --weights 
 python ./save_model.py --weights ./checkpoints/test/ckpt/final.ckpt --output ./checkpoints/test/save_model_final --tiny --input_size 608
 
 # calculate mAP
-python ./evaluate_map.py --weights ./checkpoints/test/save_model_final/ --framework tf --input_size 608 --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt
+python ./evaluate_map_v4.py --weights ./checkpoints/test/save_model_final/ --framework tf --input_size 608 --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt
 ```
 
 ## 5. Convert Model to different format and evaluate
 ```
 # convert to SaveModel format and evaluate mAP
 python ./save_model.py --tiny --weights ./checkpoints/test/ckpt/final.ckpt --output ./checkpoints/test/save_model_final_tf --framework tf
-python ./evaluate_map.py --weights ./checkpoints/test/save_model_final_tf/ --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt --framework tf 
+python ./evaluate_map_v4.py --weights ./checkpoints/test/save_model_final_tf/ --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt --framework tf 
 
 # convert to fp32 tflite format and evaluate mAP
 python ./save_model.py --tiny --weights ./checkpoints/test/ckpt/final.ckpt --output ./checkpoints/test/save_model_final_tflite --framework tflite
 python ./convert_tflite.py --weights ./checkpoints/test/save_model_final_tflite --output ./checkpoints/test/tflite/float32.tflite
-python ./evaluate_map.py --weights ./checkpoints/test/tflite/float32.tflite --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt --framework tflite
+python ./evaluate_map_v4.py --weights ./checkpoints/test/tflite/float32.tflite --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt --framework tflite
 
 # convert to int8 tflite format and evaluate mAP
+python ./train.py --tiny --qat --model yolov4 --save_dir ./checkpoints/test --weights ./data/yolov4-tiny.weights
 python ./save_model.py --tiny --weights ./checkpoints/test/ckpt/final.ckpt --output ./checkpoints/test/save_model_final_tflite --framework tflite
 python ./convert_tflite.py --weights ./checkpoints/test/save_model_final_tflite --output ./checkpoints/test/tflite/int8.tflite --quantize_mode int8 --dataset ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt
-python ./evaluate_map.py --weights ./checkpoints/test/tflite/int8.tflite --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt --framework tflite
+python ./evaluate_map_v4.py --weights ./checkpoints/test/tflite/int8.tflite --annotation_path ./datasets/data_selection_mix/anno/val_1cls_filter_small.txt --framework tflite
 ```
+- <span style="color:red">Note that for int8 format of model require to specify **--qat** flag while training<span>
 
 
 ## 5. Other Usuage of script

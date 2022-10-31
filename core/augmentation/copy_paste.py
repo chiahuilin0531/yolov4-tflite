@@ -13,6 +13,10 @@ from scipy import signal
 #from general import LOGGER, check_version, colorstr, resample_segments, segment2box
 #from metrics import bbox_ioa
 
+debug=False
+def dprint(*args):
+    if debug:
+        print(*args)
 
 """def input_image(img):
     #image = Image.open(path)
@@ -54,12 +58,14 @@ def copy_paste_hls_image(img_cv2,aug_num): #aug_cls n*5 num,xyxy,cls
     img = Image.fromarray(cv2.cvtColor(img_cv2,cv2.COLOR_BGR2RGB)) #轉image
     A = np.zeros((img_cv2.shape[0],img_cv2.shape[1]))
     add_labels = np.array([])
+    # 先建立一個ones mask, 有紅綠燈的地方是1.0, 其他是0.0
     for i in range(len) :
         x=aug_num[i][1]
         y=aug_num[i][2]
         w=aug_num[i][3]-aug_num[i][1]
         h=aug_num[i][4]-aug_num[i][2]
         A[y:y+h, x:x+w] = np.ones(A[y:y+h, x:x+w].shape)
+    # 
     for i in range(len) :
         
         clss = aug_num[i][5]
@@ -70,13 +76,14 @@ def copy_paste_hls_image(img_cv2,aug_num): #aug_cls n*5 num,xyxy,cls
         num = aug_num[i][0]
         if num == 0:
             continue
+        # 被剪下來的紅綠燈圖片
         crop_img_cv2 = img_cv2[y:y+h, x:x+w] #crop
-        #貼在圖片上面2/3
+        # 貼在圖片上面2/3
         for j in range(num):
 
-            paste_x = random.randint(0,W-w)
+            # paste_x = random.randint(0,W-w)
             #paste_y = random.randint(y-100,y+100)
-            paste_y = random.randint(min(max(0,y-100),min(H,y+100)),max(max(0,y-100),min(H,y+100)))
+            # paste_y = random.randint(min(max(0,y-100),min(H,y+100)),max(max(0,y-100),min(H,y+100)))
 
             #crop_img_cv2_hls = hls_image(crop_img_cv2) #hls轉換
             crop_img = Image.fromarray(cv2.cvtColor(crop_img_cv2,cv2.COLOR_BGR2RGB)) #轉image
@@ -226,12 +233,17 @@ def rotate_image(image):
 # Main
 if __name__=='__main__':
     
+    data_root = "night_dataset"
+    path= f"/mnt/27619746-8786-4cc0-a696-2b6bd7349a04/data/WeiJie/yolov4-tflite-new/datasets/{data_root}/images/"# "/mnt/data0/Garmin/datasets/real_data/data_selection_3/"
+    aug_path= f"/mnt/27619746-8786-4cc0-a696-2b6bd7349a04/data/WeiJie/yolov4-tflite-new/datasets/{data_root}/images_copy_paste/"
 
-    path="/mnt/data0/Garmin/datasets/real_data/data_selection_3/"
-    aug_path= "/mnt/data0/Garmin/datasets/aug_data/images_3/"
-    label_path="/mnt/data0/Garmin/datasets/real_data/anno/03_train_3cls.txt"
-    aug_label_path="/mnt/data0/Garmin/datasets/aug_data/anno/03_train_aug_3cls.txt"
-    scale_aware_path = "/mnt/data0/Garmin/datasets/aug_data/anno/03_scale_aware.txt"
+    label_path=f"/mnt/27619746-8786-4cc0-a696-2b6bd7349a04/data/WeiJie/yolov4-tflite-new/datasets/{data_root}/anno/train_3cls.txt"
+    aug_label_path=f"/mnt/27619746-8786-4cc0-a696-2b6bd7349a04/data/WeiJie/yolov4-tflite-new/datasets/{data_root}/anno_aug/train_3cls_copy_paste.txt"
+    scale_aware_path = f"/mnt/27619746-8786-4cc0-a696-2b6bd7349a04/data/WeiJie/yolov4-tflite-new/datasets/{data_root}/anno_aug/train_3cls_scale_aware.txt"
+
+    os.makedirs(os.path.dirname(aug_path), exist_ok=True)
+    os.makedirs(os.path.dirname(aug_label_path), exist_ok=True)
+
 
     labels = open(label_path,'r')
     label = labels.readlines()
@@ -254,41 +266,41 @@ if __name__=='__main__':
     for line in label:
         
         info = line.split(' ')
-        info[-1] = info[-1].replace("\n","")
+        info[-1] = info[-1].strip()
         pic_path=info[0].split('/')
         title,ext = pic_path[-1].split('.')
-        name = pic_path[-1]
+        name = pic_path[-1].strip()
         boxnum = len(info)-1
         img = cv2.imread(path + name)
         #aug_labels.writelines(line)
         #image = Image.open(path + pic_path[-1])
         #image.save(aug_path+pic_path[-1])
-        if count%10 == 0:
-            print(str(count)+":\n"+line+"\n\n")
+        print(f'path: {path} name: {name}|||||')
+        print(str(count) + f"< {path + name} >")
         count+=1
         aug_num = np.empty((0,6))
         
         for i in range(1,boxnum+1):
             data = info[i].split(',') 
             #paste燈號數量
-            if data[4] == "0":
+            if data[4] == "0": # green 100% copy paste
                 if red%3 ==0:
                     num_pos = np.hstack([np.array([1]),data[0:5]]) 
                 else:
                     num_pos = np.hstack([np.array([1]),data[0:5]]) 
                 red+=1
                 aug_num = np.vstack([aug_num,num_pos])
-            elif data[4] == "1":
+            elif data[4] == "1": # red 66% copy paste
                 if yellow%3 ==0:
                     num_pos = np.hstack([np.array([0]),data[0:5]]) 
                 else:
                     num_pos = np.hstack([np.array([1]),data[0:5]]) 
                 yellow+=1
                 aug_num = np.vstack([aug_num,num_pos])
-            elif data[4] == "2":
+            elif data[4] == "2": # yello 100% copy paste
                 num_pos = np.hstack([np.array([1]),data[0:5]]) 
                 aug_num = np.vstack([aug_num,num_pos])
-        #print(aug_num)
+        dprint(f'{count}:{path + name}\n',aug_num)
         aug_num = aug_num.astype('int')
         if aug_num[:,0].any() :
             for i in range(1):
@@ -358,9 +370,3 @@ if __name__=='__main__':
     print("total: " + str(np.array(pse) + np.array(pre_pse)))
     labels.close()
     aug_labels.close()
-    
-
-
-
-
-

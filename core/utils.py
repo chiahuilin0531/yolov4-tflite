@@ -149,20 +149,17 @@ def image_preprocess(image, target_size, gt_boxes=None, fill_value=0):
         gt_boxes[:, [1, 3]] = gt_boxes[:, [1, 3]] * scale + dh
         return image_paded, gt_boxes
 
-def draw_bbox(image, bboxes, classes, show_label=True, is_gt=False):
+def draw_bbox(image, bboxes, classes, show_label=True, is_gt=False, gt_info=None):
     """
     bboxes: (n,4), y1x1 y2x2
     """
     num_classes = len(classes)
     image_h, image_w, _ = image.shape
-    hsv_tuples = [(1.0 * x / num_classes, 1., 1.) for x in range(num_classes)]
-    #colors = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv_tuples))
-    #colors = list(map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)), colors))
+    # hsv_tuples = [(1.0 * x / num_classes, 1., 1.) for x in range(num_classes)]
+    # colors = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv_tuples))
+    # colors = list(map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)), colors))
     gt_color = [(0,255,0),(255,0,0),(255,255,0),]
-    colors = [(0,200,0),(200,0,0),(255,200,0)]
-    # random.seed(0)
-    # random.shuffle(colors)
-    # random.seed(None)
+    colors = [(0,200,0),(200,0,0),(200,200,0)]
 
     out_boxes, out_scores, out_classes, num_boxes = bboxes
     for i in range(num_boxes[0]):
@@ -183,18 +180,21 @@ def draw_bbox(image, bboxes, classes, show_label=True, is_gt=False):
         cv2.rectangle(image, c1, c2, bbox_color, bbox_thick)
 
         if show_label:
-            bbox_mess = '%s: %.2f' % (classes[class_ind], out_scores[0][i]) if not is_gt else '%s' % (classes[class_ind])
+            if not is_gt:   bbox_mess = f"{classes[class_ind]}: {out_scores[0][i]:.2f} Area: {(coor[3]-coor[1])*(coor[2]-coor[0])}" 
+            else:           
+                if gt_info is None: bbox_mess = f'{classes[class_ind]}'
+                else: bbox_mess = f'{classes[class_ind]} IoU: {gt_info[i]:.2f}'
             t_size = cv2.getTextSize(bbox_mess, 0, fontScale, thickness=bbox_thick // 2)[0]
             if not is_gt:
                 c3 = (c1[0] + t_size[0], c1[1] - t_size[1] - 3)     #(x,y)
                 cv2.rectangle(image, c1, (int(np.float32(c3[0])), int(np.float32(c3[1]))), bbox_color, -1) #filled
                 cv2.putText(image, bbox_mess, (c1[0], int(np.float32(c1[1] - 2))), cv2.FONT_HERSHEY_SIMPLEX,
-                        fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
+                        fontScale, (0, 0, 0), bbox_thick // 4, lineType=cv2.LINE_AA)
             else:
                 c3 = (c1[0] + t_size[0], c2[1] + t_size[1] + 3)
                 cv2.rectangle(image, (c1[0],  c2[1]), (int(np.float32(c3[0])), int(np.float32(c3[1]))), bbox_color, -1) #filled
                 cv2.putText(image, bbox_mess, (c1[0], int(np.float32(c2[1] + t_size[1]))), cv2.FONT_HERSHEY_SIMPLEX,
-                        fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
+                        fontScale, (0, 0, 0), bbox_thick // 4, lineType=cv2.LINE_AA)
     return image
 
 def bbox_iou(bboxes1, bboxes2):

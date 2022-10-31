@@ -30,6 +30,8 @@ import time
 
 flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
 flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
+flags.DEFINE_boolean('draw_image', False, 'draw image or not in visualize_anno directory')
+
 tf.config.optimizer.set_jit(True)
 
 def copytree(src, dst, symlinks=False, ignore=None):

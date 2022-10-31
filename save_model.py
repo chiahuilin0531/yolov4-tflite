@@ -57,6 +57,7 @@ def save_tf():
   cfg = importlib.import_module(FLAGS.config_name).cfg
 
   STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS, cfg)
+  print(f'ANCHORS: {ANCHORS}')
 
   input_layer = tf.keras.layers.Input([cfg.TRAIN.INPUT_SIZE, cfg.TRAIN.INPUT_SIZE, 3])
   if FLAGS.iayolo:
@@ -196,10 +197,10 @@ def save_tf():
   infer = tf.keras.models.load_model(FLAGS.output)
   aft_res = infer(img)
 
-  print('before convert result')
-  print(bef_res)
-  print('after convert result')
-  print(aft_res)
+  # print('before convert result')
+  # print(bef_res)
+  # print('after convert result')
+  # print(aft_res)
 
 def main(_argv):
   save_tf()

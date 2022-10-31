@@ -1,83 +1,109 @@
+import sys
+import cv2
+import os
+import numpy as np
+import random
 import tensorflow as tf
+global_random_seed = random.randint(0, 65535) # 10
+operand_random_seed = random.randint(0, 65535) # 100
+tf.keras.utils.set_random_seed(global_random_seed)
+from absl import app, flags, logging
+from absl.flags import FLAGS
+from core.accumulator import Accumulator, AreaCounter
+import os, shutil
+from core.yolov4 import YOLO, decode, compute_loss, decode_train
+from core.iayolo import CNNPP, DIP_FilterGraph
+
+from core.dataset_tiny import Dataset, tfDataset
+from core.config import cfg
 
 
-# with tf.compat.v1.variable_scope('share', reuse=tf.compat.v1.AUTO_REUSE):
-#     # global_epochs = tf.compat.v1.get_variable("global_epochs", shape=[], trainable=False,  )
-#     global_epochs = tf.Variable(1, trainable=False, name="global_epochs")
-# print('global_epochs', global_epochs)
-
-# with tf.compat.v1.variable_scope('share', reuse=tf.compat.v1.AUTO_REUSE):
-#     v1 = tf.compat.v1.get_variable("global_epochs", shape=[], trainable=False, reuse=True)
-# print('v1', v1)
-
-# print(global_epochs is v1)
-
-#########################################################################
-# @tf.function
-# def foo():
-#     with tf.compat.v1.variable_scope("foo", reuse=tf.compat.v1.AUTO_REUSE):
-#         v = tf.compat.v1.get_variable(name="v", shape=[], initializer=lambda shape,dtype: 1)
-#         return v
-
-# @tf.function
-# def assign_add(v):
-#   v.assign_add(1)
-#   return v
-
-# with tf.compat.v1.variable_scope("foo", reuse=tf.compat.v1.AUTO_REUSE):
-#     vv= tf.Variable(111, trainable=False, dtype=tf.int32)
-#     tf.compat.v1.add_to_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, vv)
-#     vv.assign_add(1)
-
-#     v = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES)
-
-# print(v)
-# v[0].assign_add(1)
-# print(v[0])
-
-# v1 = foo()  # Creates v.
-# v2 = foo()  # Gets the same, existing v.
-# print(v1)
-# print(v2)
-# assert v1 == v2
+from core import utils
+from core.utils import draw_bbox, freeze_all, unfreeze_all, read_class_names, get_shared_variable, init_shared_variable
+from tqdm import tqdm
+import tensorflow_model_optimization as tfmot
+import tensorflow_addons as tfa
+import time
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
 
 
+flags.DEFINE_string('model', 'yolov4', 'yolov4, yolov3')
+flags.DEFINE_boolean('tiny', True, 'yolo or yolo-tiny')
+flags.DEFINE_boolean('qat', False, 'train w/ or w/o quatize aware')
 
-# with tf.Graph().as_default() as g:
-#     g.get_tensor_by_name("foo/v")
-############################################
-# a = tf.constant(1.3, name='const_a')
-# b = tf.Variable(3.1, name='variable_b')
-# c = tf.add(a, b, name='addition')
-# d = tf.multiply(c, a, name='multiply')
+def kmeans_anchor(data, filename):
+    n_clusters=3
+    kmeans3 = KMeans(n_clusters=n_clusters)
+    kmeans3.fit(data)
+    y_kmeans3 = kmeans3.predict(data)
 
-# current_graph = tf.compat.v1.get_default_graph()
-# all_names = [op.name for op in current_graph.get_operations()]
+    yolo_anchor_average=[]
+    for ind in range (n_clusters):
+        yolo_anchor_average.append(np.mean(data[y_kmeans3==ind],axis=0))
 
-# print(all_names)
+    yolo_anchor_average=np.array(yolo_anchor_average, dtype=np.int32)
 
-#####################################################################
-def init_shared_variable():
-            global_steps = tf.Variable(1, trainable=False, dtype=tf.int64, name="global_steps")  
-            global_epochs = tf.Variable(1, trainable=False, dtype=tf.int64, name="global_epochs")
-            tf.compat.v1.add_to_collection("shared", global_steps) 
-            tf.compat.v1.add_to_collection("shared", global_epochs) 
-            print(tf.compat.v1.get_collection("shared"))
+    print(f'anchors are : {yolo_anchor_average}')
+    plt.scatter(data[:, 0], data[:, 1], c=y_kmeans3, s=2, cmap='viridis')
+    plt.scatter(yolo_anchor_average[:, 0], yolo_anchor_average[:, 1], c='black', s=30)
+    plt.title(f'yolov3 anchors k-means {n_clusters} clusters')
+    plt.xlabel('width')
+    plt.ylabel('height')
+    plt.savefig(f'{filename}', dpi = 300)
 
-@tf.function
-def get_shared_variable():
-    print(tf.compat.v1.get_collection("shared"))
-@tf.function
-def test():
-    a,b = get_shared_variable()
-    tf.print(a,b)
+def main(_argv):
+    print(f'Global Seed: {global_random_seed} Operation Seed: {operand_random_seed}')
+    physical_devices = tf.config.experimental.list_physical_devices('GPU')
+    init_shared_variable()
+    filtered_full_HD_area = 123
+    filtered_area = filtered_full_HD_area / (1920 / cfg.TRAIN.INPUT_SIZE) ** 2
+    print('[Info] Filtered Instance Area', filtered_area)
+    cfg.TRAIN.DATA_AUG = False
+    cfg.TRAIN.ANNOT_PATHS          = [
+        "datasets/data_selection_mix/anno/train_3cls_filter_small.txt",
+        "datasets/Taiwan_trafficlight.v1.coco/anno/train_3cls.txt",
+        "datasets/night_dataset/anno/train_3cls.txt"    
+    ]
+    trainset = tfDataset(FLAGS, cfg, is_training=True, filter_area=filtered_area, use_imgaug=False).dataset_gen()
 
-g = init_shared_variable()
-g2 = get_shared_variable()
-print(g, g2)
-print(g is g2)
-exit()
-c = a
-a.assign_add(1)
-print(a, c)
-test()
+    bboxes_list = []
+    for data_item in tqdm(trainset):
+        bboxes = tf.concat([data_item['bboxes_m'], data_item['bboxes_l']], axis=1).numpy()
+        bboxes = np.reshape(bboxes, (-1, 4))
+        area = bboxes[:, 2] * bboxes[:, 3]
+        bboxes = bboxes[area > 1]
+        
+        # print('area', area.mean(), area.max(), area.min())
+        
+        bboxes_list.append(bboxes)
+        
+        
+    bboxes = np.concatenate(bboxes_list, axis=0)
+    print(f'Total Number of BBox {len(bboxes)}')
+    print('bboxes', bboxes.shape)
+    w = bboxes[:, 2]
+    h = bboxes[:, 3]
+    area = w * h
+    
+    print('Kmeans for small bboxes')
+    small_w = w[area <= 78].reshape(-1, 1)
+    small_h = h[area <= 78].reshape(-1, 1)
+    small_data = np.concatenate([small_w, small_h], axis=-1)
+    print(small_data.shape)
+    kmeans_anchor(small_data, 'anchor_small.png')
+
+
+
+    print('Kmeans for large bboxes')
+    large_w = w[area > 78].reshape(-1, 1)
+    large_h = h[area > 78].reshape(-1, 1)
+    large_data = np.concatenate([large_w, large_h], axis=-1)
+    kmeans_anchor(large_data, 'anchor_large.png')
+
+
+if __name__ == '__main__':
+    try:
+        app.run(main)
+    except SystemExit:
+        pass

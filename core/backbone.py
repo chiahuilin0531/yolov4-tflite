@@ -148,21 +148,21 @@ def cspdarknet53_tiny(input_data, nl='BatchNorm'):
     # input_data    channel = 512
     return route_1, input_data
 
-def darknet53_tiny(input_data):
-    input_data = common.convolutional(input_data, (3, 3, 3, 16))
+def darknet53_tiny(input_data, activate_type='relu'):
+    input_data = common.convolutional(input_data, (3, 3, 3, 16), activate_type=activate_type)
     input_data = tf.keras.layers.MaxPool2D(2, 2, 'same')(input_data)
-    input_data = common.convolutional(input_data, (3, 3, 16, 32))
+    input_data = common.convolutional(input_data, (3, 3, 16, 32), activate_type=activate_type)
     input_data = tf.keras.layers.MaxPool2D(2, 2, 'same')(input_data)
-    input_data = common.convolutional(input_data, (3, 3, 32, 64))
+    input_data = common.convolutional(input_data, (3, 3, 32, 64), activate_type=activate_type)
     input_data = tf.keras.layers.MaxPool2D(2, 2, 'same')(input_data)
-    input_data = common.convolutional(input_data, (3, 3, 64, 128))
+    input_data = common.convolutional(input_data, (3, 3, 64, 128), activate_type=activate_type)
     input_data = tf.keras.layers.MaxPool2D(2, 2, 'same')(input_data)
-    input_data = common.convolutional(input_data, (3, 3, 128, 256))
+    input_data = common.convolutional(input_data, (3, 3, 128, 256), activate_type=activate_type)
     route_1 = input_data
     input_data = tf.keras.layers.MaxPool2D(2, 2, 'same')(input_data)
-    input_data = common.convolutional(input_data, (3, 3, 256, 512))
+    input_data = common.convolutional(input_data, (3, 3, 256, 512), activate_type=activate_type)
     input_data = tf.keras.layers.MaxPool2D(2, 1, 'same')(input_data)
-    input_data = common.convolutional(input_data, (3, 3, 512, 1024))
+    input_data = common.convolutional(input_data, (3, 3, 512, 1024), activate_type=activate_type)
 
     return route_1, input_data
 

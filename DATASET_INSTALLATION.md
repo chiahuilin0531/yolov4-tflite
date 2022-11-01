@@ -4,11 +4,18 @@
 data_selection =>   https://drive.google.com/drive/u/0/folders/12nmGKPcq1AaZ5q_5muylp8Vd5-GHMTDm
 data_selection2 =>  https://drive.google.com/drive/u/0/folders/12nmGKPcq1AaZ5q_5muylp8Vd5-GHMTDm
 data_selection3 =>  https://drive.google.com/drive/u/0/folders/12nmGKPcq1AaZ5q_5muylp8Vd5-GHMTDm
-night_dataset =>    https://drive.google.com/drive/u/0/folders/1lj5JwtsleQu3-_WpuwgQTk1bW1B28lPX
-all the annotations => https://drive.google.com/drive/u/0/folders/1rxKecPm5zVBrXlGKzr63cuE4UDfxmNxj
+day annotations => https://drive.google.com/drive/u/0/folders/1rxKecPm5zVBrXlGKzr63cuE4UDfxmNxj
+===============================================================================
+night_dataset images =>    https://drive.google.com/drive/u/0/folders/1lj5JwtsleQu3-_WpuwgQTk1bW1B28lPX
+night_dataset annotation =>    https://drive.google.com/drive/u/0/folders/1HeG-nvAy0Cm0qRHdJi3ds4dD8HxPhnuf
+===============================================================================
+
+# Note!! For all the rainy series dataset, both their annotation and images are in the same link.
+rainy dataset => https://drive.google.com/drive/u/0/folders/1sM1Xu9EvgR31G0ZLDSOg3f2H0R3i5AeT
+night rainy dataset => https://drive.google.com/drive/u/0/folders/1sM1Xu9EvgR31G0ZLDSOg3f2H0R3i5AeT
 ```
 
-note that data_selection ~ data_selection3 and night_dataset would have following file structure after extraction
+Note that data_selection ~ data_selection3 and night_dataset would have following file structure after extraction
 ```
 data_selection\
     image_000000.jpg
@@ -86,11 +93,17 @@ night_dataset\
 ## Path of TW-COCO dataset
 ```
 Taiwan_trafficlight.v1.coco => https://drive.google.com/drive/u/0/folders/1pz02qAsdiK8m42ceZN1K1DUgpq97YDKB
-# convert label script
+==============================================================
+# For generating 1class annotation
 json_to_one_txt.py => https://drive.google.com/drive/u/0/folders/1pz02qAsdiK8m42ceZN1K1DUgpq97YDKB
+
+==============================================================
+# For generating 3class annotation
+json_to_txt_4cls.py => https://drive.google.com/drive/u/0/folders/1pz02qAsdiK8m42ceZN1K1DUgpq97YDKB
+4cls-to-3cls.py => https://drive.google.com/drive/u/0/folders/1pz02qAsdiK8m42ceZN1K1DUgpq97YDKB
 ```
 
-note that Taiwan_trafficlight.v1-taiwan_trafficlight.coco.zip would have following file structure after extraction
+Note that Taiwan_trafficlight.v1-taiwan_trafficlight.coco.zip would have following file structure after extraction
 ```
 Taiwan_trafficlight.v1-taiwan_trafficlight.coco\
     train\
@@ -100,7 +113,7 @@ Taiwan_trafficlight.v1-taiwan_trafficlight.coco\
         ......
     README.robotflow.txt
 ```
-re-organize the file structure to the following format
+Re-organize the file structure to the following format
 ```
 Taiwan_trafficlight.v1-taiwan_trafficlight.coco\
     images\
@@ -111,7 +124,7 @@ Taiwan_trafficlight.v1-taiwan_trafficlight.coco\
     README.robotflow.txt
     json_to_one_txt.py # download the python file from google drive
 ```
-run json_to_one_txt.py to generate train_1cls.txt and val_1cls.txt
+Run json_to_one_txt.py to generate train_1cls.txt and val_1cls.txt
 
 
 
@@ -125,13 +138,16 @@ yolov4-tflite
     \data
     \mAP
     \scripts
-datasets
+    \datasets => soft-link to garmin_dataset
+
+
+garmin_dataset
     \data_selection
         \anno
             \train_1cls.txt
             \train_3cls.txt
             \val_1cls.txt
-            \val_1cls.txt
+            \val_3cls.txt
         \images
             \list of image ......
     \data_selection_2

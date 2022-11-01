@@ -126,8 +126,8 @@ def YOLOv4(input_layer, NUM_CLASS, dc_head_type):
 
     return [conv_sbbox, conv_mbbox, conv_lbbox]
 
-def YOLOv4_tiny(input_layer, NUM_CLASS, dc_head_type, nl="BatchNorm"):
-    route_1, conv = backbone.cspdarknet53_tiny(input_layer, nl)
+def YOLOv4_tiny(input_layer, NUM_CLASS, dc_head_type, nl="BatchNorm", activate_type='relu'):
+    route_1, conv = backbone.cspdarknet53_tiny(input_layer, nl, activate_type=activate_type)
     if dc_head_type == 1:
         conv_mdc, conv_ldc = DomainClassifier([route_1, conv])
     elif dc_head_type == 2:
